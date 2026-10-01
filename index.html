@@ -139,111 +139,156 @@ table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid var(--li
 const VW=360,VH=190,Y=100;
 const C={tan:'#c9b37a',olive:'#6b7a3a',gray:'#8a8f94',brown:'#6a4a2e',black:'#222',yellow:'#e6c84a',orange:'#e08a2a',red:'#b83a2a',green:'#4f8f3a',white:'#f6f5ef',cream:'#efe3c4',gold:'#d8a63a',copper:'#c4733a',silver:'#c7ccd0',peach:'#f0a98a',rust:'#8a3d1e',dun:'#7d8388'};
 const ln=(x1,y1,x2,y2,c,w=1.5,op=1)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" opacity="${op}"/>`;
+/* colour helpers: shade(hex,k) lightens (k>0) or darkens (k<0) a #rrggbb colour; rn(i) is a repeatable "random" 0..1 so drawings never change between renders */
+function shade(hex,k){
+  if(typeof hex!=='string'||hex[0]!=='#')return hex;
+  if(hex.length===4)hex='#'+[...hex.slice(1)].map(x=>x+x).join('');
+  if(hex.length!==7)return hex;
+  const n=parseInt(hex.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255,f=k<0?0:255,t=Math.abs(k),m=v=>Math.round(v+(f-v)*t);
+  return `rgb(${m(r)},${m(g)},${m(b)})`;
+}
+const dk=(c,k)=>shade(c,-k),lt=(c,k)=>shade(c,k);
+const rn=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+const THREAD='#3a2e22';
 
+/* ---- tails: fibres, strands, strips, shucks ---- */
 function tailSVG(t,hx){
-  if(!t)return'';const L=t.len||40,c=t.c||C.brown,x=hx-4;
+  if(!t)return'';const L=t.len||40,c=t.c||C.brown,x=hx-4;let r='';
   switch(t.t){
-    case'fibers':{const n=t.n||3;let r='';for(let i=0;i<n;i++){const dy=(i-(n-1)/2)*8;r+=`<path d="M${x} ${Y}Q${x+L*.5} ${Y+dy*.2} ${x+L} ${Y+dy}" fill="none" stroke="${c}" stroke-width="1.6" stroke-linecap="round"/>`}return r}
-    case'split':return ln(x,Y,x+L,Y-12,c,1.8)+ln(x,Y,x+L,Y+12,c,1.8);
-    case'marabou':return`<path d="M${x} ${Y-3}C${x+L*.4} ${Y-20} ${x+L*.8} ${Y-14} ${x+L} ${Y+2}C${x+L*.8} ${Y+22} ${x+L*.4} ${Y+16} ${x} ${Y+3}Z" fill="${c}" opacity=".93"/>`;
-    case'strip':return`<path d="M${x} ${Y}C${x+L*.3} ${Y+9} ${x+L*.6} ${Y-9} ${x+L} ${Y+3}" fill="none" stroke="${c}" stroke-width="${t.w||8}" stroke-linecap="round"/>`;
-    case'shuck':return`<path d="M${x} ${Y}q${L*.25} ${L*.5} ${L*.55} ${L*.12}t${L*.45} ${L*.22}" fill="none" stroke="${c}" stroke-width="3.5" stroke-linecap="round" opacity=".85"/>`;
-    case'rubber':return ln(x,Y,x+L,Y-12,c,3)+ln(x,Y,x+L,Y+12,c,3);
-    case'biot':return ln(x,Y,x+L,Y-9,c,3.2)+ln(x,Y,x+L,Y+9,c,3.2);
+    case'fibers':{const n=t.n||3;for(let i=0;i<n;i++){const dy=(i-(n-1)/2)*8,l=L*(.9+rn(i+hx)*.2),d=`M${x} ${Y}Q${x+l*.5} ${Y+dy*.15} ${x+l} ${Y+dy+(rn(i)-.5)*3}`;r+=`<path d="${d}" fill="none" stroke="${dk(c,.4)}" stroke-width="2.4" stroke-linecap="round" opacity=".45"/><path d="${d}" fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${lt(c,.5)}" stroke-width=".5" opacity=".7"/>`}return r}
+    case'split':for(const s of[-1,1])for(let k=0;k<2;k++){const d=`M${x} ${Y}Q${x+L*.55} ${Y+s*(3+k*2)} ${x+L} ${Y+s*(12+k*3)}`;r+=`<path d="${d}" fill="none" stroke="${dk(c,.4)}" stroke-width="2.6" opacity=".4" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="1.6" stroke-linecap="round"/>`}return r;
+    case'marabou':{r=`<path d="M${x} ${Y-3}C${x+L*.4} ${Y-20} ${x+L*.8} ${Y-14} ${x+L} ${Y+2}C${x+L*.8} ${Y+22} ${x+L*.4} ${Y+16} ${x} ${Y+3}Z" fill="${c}"/>`;for(let i=0;i<22;i++){const u=i/21,yy=(u-.5)*30,e=x+L*(.82+rn(i)*.22),col=i%3?lt(c,.18):dk(c,.25);r+=`<path d="M${x+4} ${Y+(u-.5)*5}Q${x+L*.5} ${Y+yy*.7} ${e} ${Y+yy*.55+(rn(i+4)-.5)*8}" fill="none" stroke="${col}" stroke-width=".9" opacity=".75"/>`}return r+`<path d="M${x} ${Y-3}C${x+L*.4} ${Y-20} ${x+L*.8} ${Y-14} ${x+L} ${Y+2}" fill="none" stroke="${lt(c,.35)}" stroke-width="1" opacity=".5"/>`}
+    case'strip':{const w=t.w||8,d=`M${x} ${Y}C${x+L*.3} ${Y+9} ${x+L*.6} ${Y-9} ${x+L} ${Y+3}`;r=`<path d="${d}" fill="none" stroke="${dk(c,.25)}" stroke-width="${w+2}" stroke-linecap="round" opacity=".55"/><path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;for(let i=0;i<26;i++){const u=i/25,px=x+L*u,py=Y+(Math.sin(u*6.2-.6)*5)+(u>.5?0:u*4);r+=ln(px,py-w/2,px+(rn(i)*8-1),py-w/2-3-rn(i+7)*4,lt(c,.2),.9,.8)+ln(px,py+w/2,px+(rn(i+3)*8-1),py+w/2+3+rn(i+9)*4,dk(c,.2),.9,.8)}return r+`<path d="${d}" fill="none" stroke="#fff" stroke-width="1.4" opacity=".25" transform="translate(0,-2)"/>`}
+    case'shuck':{const d=`M${x} ${Y}q${L*.25} ${L*.5} ${L*.55} ${L*.12}t${L*.45} ${L*.22}`;return`<path d="${d}" fill="none" stroke="${dk(c,.3)}" stroke-width="4.6" stroke-linecap="round" opacity=".35"/><path d="${d}" fill="none" stroke="${c}" stroke-width="3.5" stroke-linecap="round" opacity=".88"/><path d="${d}" fill="none" stroke="${lt(c,.6)}" stroke-width="1" stroke-dasharray="2 4" opacity=".8"/>`}
+    case'rubber':for(const s of[-1,1]){const d=`M${x} ${Y}q${L*.5} ${s*2} ${L} ${s*12}`;r+=`<path d="${d}" fill="none" stroke="${dk(c,.4)}" stroke-width="3.8" stroke-linecap="round" opacity=".4"/><path d="${d}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${lt(c,.5)}" stroke-width="1" stroke-dasharray="3 6" opacity=".6"/>`}return r;
+    case'biot':for(const s of[-1,1]){const d=`M${x} ${Y}q${L*.5} ${s*2} ${L} ${s*9}`;r+=`<path d="${d}" fill="none" stroke="${dk(c,.4)}" stroke-width="4" stroke-linecap="round" opacity=".4"/><path d="${d}" fill="none" stroke="${c}" stroke-width="3.2" stroke-linecap="round"/>`;for(let i=1;i<6;i++){const u=i/6;r+=ln(x+L*u,Y+s*9*u*u-2.2,x+L*u,Y+s*9*u*u+2.2,'#000',.8,.35)}}return r;
   }return'';
 }
 
-function bodySVG(b,x0,x1){
-  if(!b)return'';const c=b.c||C.gray,w0=b.w0||5,w1=b.w1||7;let r='';
-  switch(b.t||'taper'){
-    case'ant':return`<ellipse cx="${x0-30}" cy="${Y}" rx="30" ry="15" fill="${c}"/><ellipse cx="${x1+8}" cy="${Y}" rx="17" ry="11" fill="${c}"/><path d="M${x1+22} ${Y}H${x0-58}" stroke="${c}" stroke-width="5"/><ellipse cx="${x0-38}" cy="${Y-5}" rx="14" ry="6" fill="#fff" opacity=".18"/>`;
-    case'egg':return`<circle cx="125" cy="${Y}" r="${b.r||19}" fill="${c}"/><circle cx="125" cy="${Y}" r="${b.r||19}" fill="url(#bsh)"/><circle cx="118" cy="${Y-7}" r="6" fill="#fff" opacity=".45"/><circle cx="125" cy="${Y}" r="${b.r||19}" fill="none" stroke="rgba(0,0,0,.18)"/>`;
-    case'worm':return`<path d="M95 ${Y}c25 -18 40 18 65 0s40 -18 65 0 25 12 40 4" fill="none" stroke="${c}" stroke-width="${b.w||8}" stroke-linecap="round"/><path d="M95 ${Y}c25 -18 40 18 65 0s40 -18 65 0 25 12 40 4" fill="none" stroke="#fff" stroke-width="2" opacity=".25" stroke-linecap="round"/>`;
-    case'oval':{r=`<ellipse cx="160" cy="${Y}" rx="66" ry="19" fill="${c}"/><ellipse cx="160" cy="${Y}" rx="66" ry="19" fill="url(#shd)"/>`;for(let i=1;i<8;i++)r+=`<path d="M${94+i*16.5} ${Y-18}Q${100+i*16.5} ${Y} ${94+i*16.5} ${Y+18}" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="1.3"/>`;r+=`<ellipse cx="160" cy="${Y-6}" rx="60" ry="8" fill="#fff" opacity=".15"/>`;for(let i=0;i<7;i++)r+=ln(106+i*16,Y+17,100+i*16,Y+28,c,1.6);return r+ln(226,Y,242,Y-7,c,2.5)+ln(226,Y,242,Y+7,c,2.5)}
-    case'curl':{r=`<path d="M92 ${Y-6}Q165 ${Y-44} 226 ${Y+16}" fill="none" stroke="${c}" stroke-width="22" stroke-linecap="round"/><path d="M92 ${Y+2}Q165 ${Y-36} 226 ${Y+22}" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="8" stroke-linecap="round"/>`;return r+`<path d="M96 ${Y-14}Q165 ${Y-54} 220 ${Y+4}" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="5"/><path d="M104 ${Y+4}Q165 ${Y-30} 218 ${Y+22}" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="1.5" stroke-dasharray="4 7"/>`+`<path d="M110 ${Y+6}l-5 13M130 ${Y-6}l-4 14M152 ${Y-12}l-3 14M174 ${Y-10}l-1 14M196 ${Y-2}l1 13" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`}
-    case'case':{r=`<rect x="96" y="${Y-12}" width="132" height="24" rx="10" fill="${c}"/>`;for(let i=0;i<22;i++)r+=`<circle cx="${102+(i*37)%122}" cy="${Y-8+(i*13)%17}" r="${2+(i%3)}" fill="${i%2?'#6b5a40':'#b9a98a'}"/>`;return r+`<ellipse cx="94" cy="${Y}" rx="9" ry="8" fill="#222"/>`}
-  }
+/* ---- bodies ---- */
+function taperBody(b,x0,x1){
+  const c=b.c||C.gray,w0=b.w0||5,w1=b.w1||7,X=t=>x0+(x1-x0)*t,W=t=>w0+(w1-w0)*t;
   const bd=`M${x0} ${Y-w0}L${x1} ${Y-w1}L${x1} ${Y+w1}L${x0} ${Y+w0}Z`;
-  r=`<path d="${bd}" fill="${c}" stroke="${c}" stroke-width="2" stroke-linejoin="round"/><path d="${bd}" fill="url(#shd)" stroke="url(#shd)" stroke-width="2" stroke-linejoin="round"/>`;
-  if(b.fuzz)for(let i=0;i<22;i++){const x=x0+(x1-x0)*i/22,w=w0+(w1-w0)*i/22;r+=ln(x,Y-w,x+(i%2?-3:2),Y-w-4,c,1.4)+ln(x,Y+w,x+(i%2?2:-3),Y+w+4,c,1.4)}
-  if(b.seg){const n=b.seg===true?9:b.seg;for(let i=1;i<n;i++){const x=x0+(x1-x0)*i/n,w=w0+(w1-w0)*i/n;r+=ln(x,Y-w,x,Y+w,'rgba(0,0,0,.28)',1.1)}}
-  if(b.rib){const n=b.ribn||9;for(let i=0;i<n;i++){const xa=x0+(x1-x0)*i/n,xb=x0+(x1-x0)*(i+1)/n,wa=w0+(w1-w0)*i/n,wb=w0+(w1-w0)*(i+1)/n;r+=ln(xa,Y-wa,xb,Y+wb,b.rib,1.5)}}
-  if(b.shine)r+=ln(x0,Y-w0+2,x1,Y-w1+2,'#fff',2,.4);
-  if(b.band)r+=`<rect x="${b.band[0]}" y="${Y-w1-1}" width="${b.band[1]}" height="${2*w1+2}" fill="${b.band[2]}"/>`;
+  let r=`<path d="${bd}" fill="${c}" stroke="${dk(c,.4)}" stroke-width="1.4" stroke-linejoin="round"/>`;
+  const ns=b.seg?(b.seg===true?9:b.seg):8;
+  for(let i=0;i<ns;i+=2){const ta=i/ns,tb=(i+1)/ns;r+=`<path d="M${X(ta)} ${Y-W(ta)}L${X(tb)} ${Y-W(tb)}L${X(tb)} ${Y+W(tb)}L${X(ta)} ${Y+W(ta)}Z" fill="#000" opacity="${b.seg?.07:.04}"/>`}
+  r+=`<path d="${bd}" fill="url(#shd)"/>`;
+  r+=`<path d="M${x0} ${Y+w0*.35}L${x1} ${Y+w1*.35}L${x1} ${Y+w1}L${x0} ${Y+w0}Z" fill="#000" opacity=".13"/><path d="M${x0} ${Y-w0*.85}L${x1} ${Y-w1*.85}L${x1} ${Y-w1*.45}L${x0} ${Y-w0*.45}Z" fill="#fff" opacity=".2"/>`;
+  if(b.seg)for(let i=1;i<ns;i++){const x=X(i/ns),w=W(i/ns);r+=ln(x,Y-w,x,Y+w,'rgba(0,0,0,.3)',1.1)+ln(x+1.1,Y-w+.6,x+1.1,Y+w-.6,'#fff',.7,.35)}
+  if(b.rib){const n=b.ribn||9;for(let i=0;i<n;i++){const ta=i/n,tb=(i+1)/n;r+=ln(X(ta),Y-W(ta),X(tb),Y+W(tb),'#000',2.4,.2)+ln(X(ta),Y-W(ta),X(tb),Y+W(tb),b.rib,1.5)+ln(X(ta)+.6,Y-W(ta)-.4,X(tb)+.6,Y+W(tb)-.4,'#fff',.6,.5)}}
+  if(b.fuzz)for(let i=0;i<48;i++){const t=i/48,x=X(t)+(rn(i)-.5)*3,s=i%2?-1:1,w=W(t),l=2.5+rn(i+9)*5,a=(rn(i+3)-.5)*1.4,col=i%3===0?lt(c,.3):i%3===1?dk(c,.3):c;r+=ln(x,Y+s*w*.9,x+a*l,Y+s*(w+l*(.7+rn(i+5)*.4)),col,1.2,.95)}
+  if(b.herl)for(let i=0;i<80;i++){const t=rn(i),x=X(t),w=W(t),yy=Y+(rn(i+11)-.5)*w*1.8,l=2.5+rn(i+2)*3,col=['#2e6a4a','#1f8a7a','#6a5a1a','#3a2a1a','#58b09a','#8aa84a'][i%6];r+=ln(x,yy,x+(rn(i+8)-.5)*l,yy+(rn(i+6)-.5)*l*1.5,col,1,.9)}
+  if(b.shine)r+=ln(x0,Y-w0+2,x1,Y-w1+2,'#fff',2,.45)+ln(x0,Y+w0-2,x1,Y+w1-2,'#fff',.8,.25);
+  if(b.band)r+=`<rect x="${b.band[0]}" y="${Y-w1-1}" width="${b.band[1]}" height="${2*w1+2}" fill="${b.band[2]}"/><rect x="${b.band[0]}" y="${Y-w1-1}" width="${b.band[1]}" height="${2*w1+2}" fill="url(#shd)"/>`;
   return r;
 }
+function bodySVG(b,x0,x1){
+  if(!b)return'';const c=b.c||C.gray;let r='';
+  switch(b.t||'taper'){
+    case'ant':{r=`<path d="M${x1+22} ${Y}H${x0-58}" stroke="${dk(c,.2)}" stroke-width="5" stroke-linecap="round"/>`;for(const[cx,rx,ry]of[[x0-30,30,15],[x1+8,17,11]])r+=`<ellipse cx="${cx}" cy="${Y}" rx="${rx}" ry="${ry}" fill="${c}" stroke="${dk(c,.4)}"/><ellipse cx="${cx}" cy="${Y}" rx="${rx}" ry="${ry}" fill="url(#shd)"/><ellipse cx="${cx-rx*.2}" cy="${Y-ry*.4}" rx="${rx*.55}" ry="${ry*.28}" fill="#fff" opacity=".25"/>`;for(let i=0;i<3;i++)r+=`<path d="M${x1+4+i*12} ${Y+9}q${3} 10 ${6+i*3} 16M${x1+4+i*12} ${Y-9}q${3} -8 ${6+i*3} -14" fill="none" stroke="${dk(c,.2)}" stroke-width="1.5" stroke-linecap="round"/>`;return r+`<path d="M${x1-4} ${Y-8}q-6 -10 -14 -10M${x1-4} ${Y+8}q-6 8 -14 8" fill="none" stroke="${dk(c,.2)}" stroke-width="1.2"/>`}
+    case'egg':{const R=b.r||19;return`<circle cx="125" cy="${Y}" r="${R}" fill="${c}" stroke="${dk(c,.35)}"/><circle cx="125" cy="${Y}" r="${R}" fill="url(#bsh)"/><circle cx="127" cy="${Y+2}" r="${R*.42}" fill="${dk(c,.25)}" opacity=".5"/><circle cx="127" cy="${Y+2}" r="${R*.2}" fill="${dk(c,.45)}" opacity=".55"/><ellipse cx="118" cy="${Y-8}" rx="6" ry="4" fill="#fff" opacity=".6" transform="rotate(-30 118 ${Y-8})"/>`}
+    case'worm':{const d=`M95 ${Y}c25 -18 40 18 65 0s40 -18 65 0 25 12 40 4`,w=b.w||8;r=`<path d="${d}" fill="none" stroke="${dk(c,.4)}" stroke-width="${w+2}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#000" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="1.2 5" opacity=".16"/><path d="${d}" fill="none" stroke="#fff" stroke-width="${Math.max(1.5,w/4)}" opacity=".35" stroke-linecap="round" transform="translate(0,-${w/4})"/>`;return r}
+    case'oval':{r=`<ellipse cx="160" cy="${Y}" rx="66" ry="19" fill="${c}" stroke="${dk(c,.4)}"/><ellipse cx="160" cy="${Y}" rx="66" ry="19" fill="url(#shd)"/>`;for(let i=1;i<8;i++)r+=`<path d="M${94+i*16.5} ${Y-18}Q${100+i*16.5} ${Y} ${94+i*16.5} ${Y+18}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1.3"/><path d="M${95.5+i*16.5} ${Y-17}Q${101.5+i*16.5} ${Y} ${95.5+i*16.5} ${Y+17}" fill="none" stroke="#fff" stroke-width=".7" opacity=".35"/>`;r+=`<ellipse cx="160" cy="${Y-7}" rx="58" ry="7" fill="#fff" opacity=".17"/><path d="M96 ${Y+4}Q160 ${Y+22} 224 ${Y+4}" fill="none" stroke="#000" stroke-width="1" opacity=".18"/>`;for(let i=0;i<7;i++)r+=`<path d="M${106+i*16} ${Y+17}q-3 6 -5 13" fill="none" stroke="${dk(c,.25)}" stroke-width="1.6" stroke-linecap="round"/>`;return r+`<path d="M226 ${Y-3}l16 -9M226 ${Y+3}l16 9" stroke="${dk(c,.2)}" stroke-width="2.4" stroke-linecap="round"/><path d="M96 ${Y-3}q-14 -8 -22 -4M96 ${Y+3}q-14 4 -22 8" fill="none" stroke="${dk(c,.2)}" stroke-width="1.2"/>`}
+    case'curl':{const d1=`M92 ${Y-6}Q165 ${Y-44} 226 ${Y+16}`;r=`<path d="${d1}" fill="none" stroke="${dk(c,.4)}" stroke-width="24" stroke-linecap="round"/><path d="${d1}" fill="none" stroke="${c}" stroke-width="22" stroke-linecap="round"/><path d="M92 ${Y+2}Q165 ${Y-36} 226 ${Y+22}" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="8" stroke-linecap="round"/><path d="M96 ${Y-14}Q165 ${Y-54} 220 ${Y+4}" fill="none" stroke="rgba(255,255,255,.32)" stroke-width="5"/>`;for(let i=0;i<10;i++){const t=(i+.5)/10,x=92+134*t,y=Y-6-38*4*t*(1-t)*.9+16*t*t;r+=`<path d="M${x-1.5} ${y-11}q2 11 0 22" fill="none" stroke="#000" stroke-width="1" opacity=".25"/>`}r+=`<circle cx="98" cy="${Y-12}" r="2.4" fill="#111"/><path d="M92 ${Y-14}q-10 -8 -20 -5M92 ${Y-10}q-10 0 -19 4" fill="none" stroke="${dk(c,.2)}" stroke-width="1.2"/><path d="M226 ${Y+16}l10 -4M226 ${Y+20}l10 5M226 ${Y+24}l9 10" stroke="${dk(c,.2)}" stroke-width="1.8" stroke-linecap="round"/>`;for(let i=0;i<8;i++){const t=(i+1)/9,x=92+134*t,y=Y-6-38*4*t*(1-t)*.9+16*t*t;r+=`<path d="M${x} ${y+8}q-2 6 -5 11" fill="none" stroke="${dk(c,.25)}" stroke-width="1.6" stroke-linecap="round"/>`}return r}
+    case'case':{r=`<rect x="96" y="${Y-12}" width="132" height="24" rx="10" fill="${c}" stroke="${dk(c,.45)}"/>`;for(let i=0;i<46;i++){const px=102+rn(i)*120,py=Y-9+rn(i+3)*18,rr=1.6+rn(i+5)*3.2,col=['#6b5a40','#b9a98a','#8a7a5a','#d6c9a6','#4a3e2c'][i%5];r+=`<ellipse cx="${px}" cy="${py}" rx="${rr}" ry="${rr*.8}" fill="${col}" stroke="rgba(0,0,0,.3)" stroke-width=".5"/>`}return r+`<rect x="96" y="${Y-12}" width="132" height="24" rx="10" fill="url(#shd)"/><ellipse cx="94" cy="${Y}" rx="9" ry="8" fill="#222"/><ellipse cx="92" cy="${Y-3}" rx="3" ry="2" fill="#fff" opacity=".3"/><path d="M226 ${Y-8}q8 -2 10 4" fill="none" stroke="${dk(c,.3)}" stroke-width="1.5"/>`}
+  }
+  return taperBody(b,x0,x1);
+}
 
-function wingSVG(w,hx,thx){
-  if(!w)return'';const c=w.c||C.white,h=w.h||44;
+/* ---- wings ---- */
+function wingSVG(w,hx){
+  if(!w)return'';const c=w.c||C.white,h=w.h||44,E='rgba(0,0,0,.35)';let r='';
   switch(w.t){
-    case'post':return`<rect x="109" y="${Y-6-h}" width="7" height="${h}" rx="2" fill="${c}" stroke="rgba(0,0,0,.35)"/>`;
-    case'fan':{const s=w.s||1;return`<path d="M104 ${Y-6}Q${86} ${Y-6-48*s} 124 ${Y-6-54*s}Q152 ${Y-6-30*s} 124 ${Y-6}Z" fill="${c}" stroke="rgba(0,0,0,.35)"/>`+[0,1,2,3,4].map(i=>ln(112,Y-6,98+i*10,Y-6-44*s,'rgba(0,0,0,.2)',1)).join('')}
-    case'upright':return`<ellipse cx="108" cy="${Y-32}" rx="9" ry="26" transform="rotate(-10 108 ${Y-32})" fill="${c}" opacity=".9" stroke="rgba(0,0,0,.35)"/><ellipse cx="124" cy="${Y-32}" rx="9" ry="26" transform="rotate(10 124 ${Y-32})" fill="${c}" opacity=".9" stroke="rgba(0,0,0,.35)"/><path d="M108 ${Y-52}V${Y-10}M124 ${Y-52}V${Y-10}M104 ${Y-40}Q108 ${Y-30} 106 ${Y-18}M128 ${Y-40}Q124 ${Y-30} 126 ${Y-18}" stroke="rgba(0,0,0,.2)" stroke-width="1" fill="none" transform="rotate(0)"/>`;
-    case'downwing':{const e=w.len||hx+14;return`<path d="M102 ${Y-7}Q130 ${Y-(w.rise||34)} ${e-30} ${Y-16}L${e} ${Y-3}Q${e-60} ${Y-10} 126 ${Y-3}Z" fill="${c}" stroke="rgba(0,0,0,.35)"/>`+[0,1,2,3,4,5,6].map(i=>ln(130+i*14,Y-18+i*1.5,142+i*14,Y-6,'rgba(0,0,0,.18)',1)).join('')}
-    case'spent':return`<ellipse cx="124" cy="${Y-17}" rx="34" ry="7" transform="rotate(-7 124 ${Y-17})" fill="${c}" opacity=".7" stroke="rgba(0,0,0,.3)"/><ellipse cx="124" cy="${Y+17}" rx="34" ry="7" transform="rotate(7 124 ${Y+17})" fill="${c}" opacity=".7" stroke="rgba(0,0,0,.3)"/>`;
-    case'case':return`<path d="M96 ${Y-3}Q118 ${Y-20} ${w.len||150} ${Y-8}L${w.len||150} ${Y}Z" fill="${c}" stroke="rgba(0,0,0,.4)"/>`+(w.shine?ln(104,Y-9,140,Y-9,'#fff',2,.5):'');
-    case'foam':{const a=w.x0||110,b=w.x1||hx-8,rx=(b-a)/2,hh=(w.h||10);return`<path d="M${a} ${Y-1}A${rx} ${hh+8} 0 0 1 ${b} ${Y-1}Z" fill="${c}" stroke="rgba(0,0,0,.35)"/>`}
-    case'v':return`<ellipse cx="144" cy="${Y-12}" rx="30" ry="6" transform="rotate(8 144 ${Y-12})" fill="${c}" stroke="rgba(0,0,0,.35)"/><ellipse cx="144" cy="${Y-7}" rx="30" ry="5" transform="rotate(-4 144 ${Y-7})" fill="${c}" stroke="rgba(0,0,0,.35)"/>`;
-    case'sw':{const e=hx+(w.len||44);let r=`<path d="M92 ${Y+1}Q170 ${Y+(w.drop||6)} ${e} ${Y+10}Q180 ${Y+20} 92 ${Y+8}Z" fill="${w.c2||C.white}" opacity=".95" stroke="rgba(0,0,0,.2)"/>`;return r+`<path d="M92 ${Y-3}Q180 ${Y-34} ${e} ${Y-2}Q180 ${Y-4} 92 ${Y+3}Z" fill="${c}" stroke="rgba(0,0,0,.25)"/>`}
+    case'post':{r=`<rect x="108" y="${Y-6-h}" width="8" height="${h}" rx="3" fill="${c}" stroke="${E}"/>`;for(let i=0;i<9;i++)r+=ln(109+rn(i)*6,Y-8-rn(i+2)*(h-6),109+rn(i)*6,Y-9-rn(i+2)*(h-6)-8,'rgba(0,0,0,.18)',.8);r+=`<ellipse cx="112" cy="${Y-6-h}" rx="5.5" ry="3" fill="${c}" stroke="${E}"/>`;for(let i=0;i<7;i++)r+=ln(112,Y-6-h,108+i*1.3,Y-6-h-4-rn(i)*3,lt(c,.2),.9,.8);return r+`<rect x="109" y="${Y-6-h}" width="2.5" height="${h}" fill="#fff" opacity=".4"/>`}
+    case'fan':{const s=w.s||1;r=`<path d="M104 ${Y-6}Q86 ${Y-6-48*s} 124 ${Y-6-54*s}Q152 ${Y-6-30*s} 124 ${Y-6}Z" fill="${c}" stroke="${E}"/>`;for(let i=0;i<14;i++){const a=i/13,tx=92+a*52,ty=Y-6-(40+Math.sin(a*3.14)*14)*s;r+=ln(112,Y-6,tx,ty,i%2?dk(c,.25):lt(c,.2),.9,.8)+ln(tx,ty,tx+(a-.5)*5,ty-4,dk(c,.3),.8,.7)}return r+`<path d="M104 ${Y-6}Q86 ${Y-6-48*s} 124 ${Y-6-54*s}" fill="none" stroke="#fff" stroke-width="1.4" opacity=".35"/>`}
+    case'upright':{for(const[x,rot]of[[108,-10],[124,10]])r+=`<ellipse cx="${x}" cy="${Y-32}" rx="9" ry="26" transform="rotate(${rot} ${x} ${Y-32})" fill="${c}" opacity=".9" stroke="${E}"/><g transform="rotate(${rot} ${x} ${Y-32})" fill="none" stroke="rgba(0,0,0,.22)" stroke-width=".8"><path d="M${x} ${Y-56}V${Y-8}"/>${[-18,-8,2,12].map(o=>`<path d="M${x} ${Y-32+o}q-5 -3 -8 -8M${x} ${Y-32+o}q5 -3 8 -8"/>`).join('')}</g><ellipse cx="${x-3}" cy="${Y-40}" rx="2.5" ry="12" fill="#fff" opacity=".28" transform="rotate(${rot} ${x} ${Y-32})"/>`;return r}
+    case'downwing':{const e=w.len||hx+14,top=w.rise||34;r=`<path d="M102 ${Y-7}Q130 ${Y-top} ${e-30} ${Y-16}L${e} ${Y-3}Q${e-60} ${Y-10} 126 ${Y-3}Z" fill="${c}" stroke="${E}"/>`;for(let i=0;i<20;i++){const u=i/19,px=118+u*(e-118-8),py=Y-9-(1-Math.abs(u-.4)*1.6)*(top*.45)*(1-u*.4);r+=ln(px,py,Math.min(e+6,px+16+rn(i)*8),Y-5+rn(i+1)*2,i%2?dk(c,.28):lt(c,.2),.9,.75)}r+=`<path d="M${e-30} ${Y-16}L${e+6} ${Y-4}M${e-24} ${Y-14}L${e+2} ${Y-1}M${e-34} ${Y-12}L${e-4} ${Y+1}" stroke="${lt(c,.25)}" stroke-width="1" opacity=".8"/>`;return r+`<path d="M102 ${Y-7}Q130 ${Y-top} ${e-30} ${Y-16}" fill="none" stroke="#fff" stroke-width="1.2" opacity=".3"/>`}
+    case'spent':{for(const s of[-1,1]){const cy=Y+s*17,rot=-s*7;r+=`<ellipse cx="124" cy="${cy}" rx="34" ry="7" transform="rotate(${rot} 124 ${cy})" fill="${c}" opacity=".72" stroke="${E}"/><g transform="rotate(${rot} 124 ${cy})" fill="none" stroke="rgba(0,0,0,.25)" stroke-width=".7"><path d="M92 ${cy}H156"/>${[-20,-8,4,16,26].map(o=>`<path d="M${124+o} ${cy}l5 ${-s*5}M${124+o} ${cy}l5 ${s*4}"/>`).join('')}</g>`}return r}
+    case'case':{const e=w.len||150,d=`M96 ${Y-3}Q118 ${Y-20} ${e} ${Y-8}L${e} ${Y}Z`;r=`<path d="${d}" fill="${c}" stroke="${E}"/><path d="${d}" fill="url(#shd)"/>`;for(let i=1;i<5;i++){const x=96+(e-96)*i/5;r+=ln(x,Y-12+i*1.4,x+2,Y-1,'rgba(0,0,0,.28)',1)}return r+(w.shine?ln(104,Y-9,e-8,Y-9,'#fff',2,.55):ln(104,Y-9,e-14,Y-9,'#fff',1,.25))}
+    case'foam':{const a=w.x0||110,b=w.x1||hx-8,rx=(b-a)/2,hh=(w.h||10),d=`M${a} ${Y-1}A${rx} ${hh+8} 0 0 1 ${b} ${Y-1}Z`;r=`<path d="${d}" fill="${c}" stroke="${E}"/><path d="${d}" fill="url(#shd)"/><path d="M${a+6} ${Y-4}A${rx-6} ${hh+4} 0 0 1 ${b-6} ${Y-4}" fill="none" stroke="#fff" stroke-width="1.4" opacity=".4"/>`;for(let i=1;i<6;i++)r+=ln(a+(b-a)*i/6,Y-1,a+(b-a)*i/6,Y-3-hh*.7,'rgba(0,0,0,.18)',.8);return r}
+    case'v':{for(const[dy,rot,ry]of[[-12,8,6],[-7,-4,5]])r+=`<ellipse cx="144" cy="${Y+dy}" rx="30" ry="${ry}" transform="rotate(${rot} 144 ${Y+dy})" fill="${c}" stroke="${E}"/><path d="M118 ${Y+dy}H170" stroke="rgba(0,0,0,.22)" stroke-width=".7" transform="rotate(${rot} 144 ${Y+dy})"/>`;return r}
+    case'sw':{const e=hx+(w.len||44),belly=`M92 ${Y+1}Q170 ${Y+(w.drop||6)} ${e} ${Y+10}Q180 ${Y+20} 92 ${Y+8}Z`,top=`M92 ${Y-3}Q180 ${Y-34} ${e} ${Y-2}Q180 ${Y-4} 92 ${Y+3}Z`;r=`<path d="${belly}" fill="${w.c2||C.white}" opacity=".95" stroke="rgba(0,0,0,.2)"/><path d="${top}" fill="${c}" stroke="rgba(0,0,0,.25)"/>`;for(let i=0;i<24;i++){const u=i/23,px=100+u*(e-100),py=Y-3-Math.sin(u*3.14)*18*(1-u*.35);r+=ln(px,py,px+10+rn(i)*8,py+3+u*6+rn(i+2)*3,i%2?dk(c,.3):lt(c,.2),.8,.7)}for(let i=0;i<10;i++){const u=i/9,px=104+u*(e-110);r+=ln(px,Y+4,px+14,Y+7+u*3+rn(i)*2,i%2?'#fff':dk(w.c2||C.white,.18),.8,.7)}return r+`<path d="M96 ${Y+1}Q170 ${Y-6} ${e-6} ${Y+3}" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1"/>`}
   }return'';
 }
 
+/* ---- hackle ---- */
 function hackleSVG(h,x0,x1){
   if(!h)return'';const c=h.c||C.brown,L=h.l||16;let r='';
   switch(h.t){
-    case'collar':for(let i=-4;i<=4;i++){const lx=110+i*5,ly=L*(1-Math.abs(i)*.05);r+=`<path d="M110 ${Y}Q${110+i*2} ${Y-ly*.6} ${lx} ${Y-ly}M110 ${Y}Q${110+i*2} ${Y+ly*.6} ${lx} ${Y+ly}" fill="none" stroke="${c}" stroke-width="1.2" opacity=".9"/>`}return r;
-    case'bushy':for(let i=-5;i<=5;i++){r+=ln(112,Y,112+i*3.5,Y-L,c,1.4)+ln(112,Y,112+i*3.5,Y+L,c,1.4)}return r;
-    case'parachute':return`<ellipse cx="112" cy="${Y-7}" rx="${h.rx||32}" ry="6" fill="none" stroke="${c}" stroke-width="3"/><ellipse cx="112" cy="${Y-7}" rx="${(h.rx||32)-8}" ry="4" fill="none" stroke="${c}" stroke-width="2" opacity=".7"/>`;
-    case'palmer':{const n=h.n||11;for(let i=0;i<n;i++){const x=x1+(x0-x1)*i/n;r+=ln(x,Y-5,x-4,Y-5-L*.6,c,1.3)+ln(x,Y+5,x-4,Y+5+L*.6,c,1.3)}return r}
-    case'soft':for(let i=0;i<8;i++){r+=`<path d="M108 ${Y-3}Q${108+L*.8} ${Y-4-i*2} ${108+L*1.5} ${Y-6-i*3.4}M108 ${Y+3}Q${108+L*.8} ${Y+4+i*2} ${108+L*1.5} ${Y+6+i*3.4}" fill="none" stroke="${c}" stroke-width="1.2" opacity=".9"/>`}return r;
+    case'collar':for(let i=-7;i<=7;i++){const lx=110+i*3.2,ly=L*(1-Math.abs(i)*.035)*(.88+rn(i+20)*.24),col=i%2?lt(c,.15):dk(c,.2);r+=`<path d="M110 ${Y}Q${110+i*1.4} ${Y-ly*.6} ${lx} ${Y-ly}M110 ${Y}Q${110+i*1.4} ${Y+ly*.6} ${lx} ${Y+ly}" fill="none" stroke="${col}" stroke-width="1" opacity=".92"/>`}return r+`<ellipse cx="110" cy="${Y}" rx="2.4" ry="7" fill="${dk(c,.3)}"/>`;
+    case'bushy':for(let i=-9;i<=9;i++){const ly=L*(.8+rn(i+30)*.35),col=i%2?lt(c,.18):dk(c,.18);r+=`<path d="M112 ${Y}Q${112+i*1.8} ${Y-ly*.55} ${112+i*3.2} ${Y-ly}M112 ${Y}Q${112+i*1.8} ${Y+ly*.55} ${112+i*3.2} ${Y+ly}" fill="none" stroke="${col}" stroke-width="1.2" opacity=".92"/>`}return r+`<ellipse cx="112" cy="${Y}" rx="3" ry="8" fill="${dk(c,.3)}"/>`;
+    case'parachute':{const rx=h.rx||32;r=`<ellipse cx="112" cy="${Y-7}" rx="${rx}" ry="6" fill="none" stroke="${dk(c,.35)}" stroke-width="4" opacity=".5"/>`;for(let i=0;i<34;i++){const a=i/34*6.283,px=112+Math.cos(a)*rx*.92,py=Y-7+Math.sin(a)*5.2,col=i%3===0?lt(c,.2):i%3===1?dk(c,.25):c;r+=ln(112+Math.cos(a)*rx*.45,Y-7+Math.sin(a)*2.4,px+Math.cos(a)*5,py+Math.sin(a)*1.6,col,1.1,.9)}return r+`<ellipse cx="112" cy="${Y-7}" rx="${rx-8}" ry="4" fill="none" stroke="${c}" stroke-width="2" opacity=".7"/><ellipse cx="112" cy="${Y-8}" rx="${rx-14}" ry="2.4" fill="none" stroke="${lt(c,.3)}" stroke-width="1" opacity=".6"/>`}
+    case'palmer':{const n=h.n||11;r=`<path d="M${x1} ${Y-5}L${x0} ${Y+5}" stroke="${dk(c,.35)}" stroke-width="1.2" opacity=".5"/>`;for(let i=0;i<n;i++){const x=x1+(x0-x1)*i/n;for(let k=0;k<4;k++){const xx=x-k*1.4,ly=L*(.55+rn(i*4+k)*.3),col=k%2?lt(c,.15):dk(c,.2);r+=`<path d="M${xx} ${Y-5}q${-1} ${-ly*.5} ${-4-k} ${-ly}M${xx} ${Y+5}q${-1} ${ly*.5} ${-4-k} ${ly}" fill="none" stroke="${col}" stroke-width="1" opacity=".9"/>`}}return r}
+    case'soft':for(let i=0;i<12;i++){const col=i%2?lt(c,.12):dk(c,.2),ln_=L*(1.35+rn(i+40)*.3);r+=`<path d="M108 ${Y-3}Q${108+L*.8} ${Y-4-i*1.6} ${108+ln_} ${Y-6-i*2.6}M108 ${Y+3}Q${108+L*.8} ${Y+4+i*1.6} ${108+ln_} ${Y+6+i*2.6}" fill="none" stroke="${col}" stroke-width="1.1" opacity=".92"/>`}return r;
   }return'';
 }
 
+/* ---- legs ---- */
 function legsSVG(l){
   if(!l)return'';const c=l.c||C.brown,n=l.n||3;let r='';
   for(let i=0;i<n;i++){const x=104+i*14;
-    if(l.t==='rubber'){r+=`<path d="M${x} ${Y+5}q${6} 14 ${14} 24" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round"/>`;if(l.up)r+=`<path d="M${x} ${Y-5}q${6} -14 ${14} -24" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round"/>`}
-    else r+=ln(x,Y+5,x+10,Y+22,c,1.6)+(l.up?ln(x,Y-5,x+10,Y-22,c,1.6):'')}
+    for(const s of(l.up?[1,-1]:[1])){
+      if(l.t==='rubber'){const d=`M${x} ${Y+s*5}q${6} ${s*14} ${14} ${s*24}`;r+=`<path d="${d}" fill="none" stroke="${dk(c,.4)}" stroke-width="3.6" stroke-linecap="round" opacity=".4"/><path d="${d}" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${lt(c,.5)}" stroke-width="1" stroke-dasharray="2 5" opacity=".6"/>`}
+      else{const kx=x+6,ky=Y+s*14,fx=x+11+rn(i)*3,fy=Y+s*25;r+=`<path d="M${x} ${Y+s*5}L${kx} ${ky}L${fx} ${fy}" fill="none" stroke="${dk(c,.2)}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M${fx} ${fy}l3 ${s*2}M${fx} ${fy}l-2 ${s*3}" stroke="${dk(c,.3)}" stroke-width="1"/><circle cx="${kx}" cy="${ky}" r="1.3" fill="${lt(c,.3)}"/>`}}}
   return r;
 }
 
+/* ---- heads ---- */
 function headSVG(a){
   const h=a.head||{};
-  if(h.t==='deer'){let r=`<ellipse cx="102" cy="${Y}" rx="30" ry="18" fill="${h.c||C.brown}"/>`;for(let i=0;i<14;i++){const ang=i/14*6.28;r+=ln(102+Math.cos(ang)*26,Y+Math.sin(ang)*15,102+Math.cos(ang)*34,Y+Math.sin(ang)*22,h.c||C.brown,2)}return r}
-  if(h.t==='ball')return`<circle cx="90" cy="${Y}" r="9" fill="${h.c||C.black}"/>`;
-  if(a.cone)return`<path d="M64 ${Y}L94 ${Y-10}L94 ${Y+10}Z" fill="${a.cone}" stroke="rgba(0,0,0,.4)"/><path d="M64 ${Y}L94 ${Y-10}L94 ${Y+10}Z" fill="url(#shd)"/>`;
-  if(a.bead){const r=a.br||7;return`<circle cx="${74+r-6}" cy="${Y}" r="${r}" fill="${a.bead}" stroke="rgba(0,0,0,.4)"/><circle cx="${74+r-6}" cy="${Y}" r="${r}" fill="url(#bsh)"/>`}
-  if(a.eyes)return`<ellipse cx="78" cy="${Y}" rx="6" ry="5" fill="#2b2118"/><circle cx="96" cy="${Y+9}" r="6.5" fill="${a.eyes}" stroke="rgba(0,0,0,.5)"/><circle cx="96" cy="${Y+9}" r="2.4" fill="#111"/>`;
-  return`<ellipse cx="77" cy="${Y}" rx="8" ry="5.5" fill="${h.c||'#2b2118'}"/><path d="M73 ${Y-5}l1 10M77 ${Y-5.4}l1 10.8M81 ${Y-5}l1 10" stroke="rgba(255,255,255,.28)" stroke-width="1"/>`;
+  if(h.t==='deer'){const c=h.c||C.brown;let r=`<ellipse cx="102" cy="${Y}" rx="30" ry="18" fill="${dk(c,.3)}"/>`;for(let i=0;i<64;i++){const ang=rn(i)*6.283,rr=.55+rn(i+5)*.6,l=5+rn(i+8)*8,cx=102+Math.cos(ang)*26*rr,cy=Y+Math.sin(ang)*15*rr;r+=ln(cx,cy,cx+Math.cos(ang)*l,cy+Math.sin(ang)*l*.75,i%3===0?lt(c,.25):i%3===1?c:dk(c,.2),1.7,.95)}return r+`<ellipse cx="94" cy="${Y-6}" rx="16" ry="7" fill="#fff" opacity=".1"/><path d="M76 ${Y+6}q10 10 26 12" fill="none" stroke="#000" stroke-width="1.5" opacity=".15"/>`}
+  if(h.t==='ball'){const c=h.c||C.black;return`<circle cx="90" cy="${Y}" r="9" fill="${c}" stroke="${dk(c,.4)}"/><circle cx="90" cy="${Y}" r="9" fill="url(#bsh)"/>`}
+  if(a.cone){const c=a.cone;return`<path d="M64 ${Y}L94 ${Y-10}L94 ${Y+10}Z" fill="${c}" stroke="${dk(c,.5)}"/><path d="M64 ${Y}L94 ${Y-10}L94 ${Y+10}Z" fill="url(#shd)"/><path d="M72 ${Y-3}L72 ${Y+3}M80 ${Y-6}L80 ${Y+6}M88 ${Y-8}L88 ${Y+8}" stroke="#000" stroke-width="1" opacity=".18"/><path d="M66 ${Y-1}L92 ${Y-8}" stroke="#fff" stroke-width="1.6" opacity=".55"/><ellipse cx="94" cy="${Y}" rx="2.2" ry="10" fill="${dk(c,.3)}"/>`}
+  if(a.bead){const r=a.br||7,cx=74+r-6;return`<circle cx="${cx}" cy="${Y}" r="${r}" fill="${a.bead}" stroke="${dk(a.bead,.5)}" stroke-width="1"/><circle cx="${cx}" cy="${Y}" r="${r}" fill="url(#bsh)"/><ellipse cx="${cx-r*.1}" cy="${Y-r*.4}" rx="${r*.35}" ry="${r*.2}" fill="#fff" opacity=".75"/><ellipse cx="${cx+r*.9}" cy="${Y}" rx="1.4" ry="${r*.45}" fill="#000" opacity=".3"/>`}
+  if(a.eyes){const e=a.eyes;return`<ellipse cx="78" cy="${Y}" rx="6" ry="5" fill="#2b2118"/><circle cx="93" cy="${Y+11}" r="6" fill="${dk(e,.3)}" opacity=".6"/><circle cx="96" cy="${Y+9}" r="6.5" fill="${e}" stroke="rgba(0,0,0,.55)"/><circle cx="96" cy="${Y+9}" r="6.5" fill="url(#bsh)"/><circle cx="96" cy="${Y+9}" r="2.8" fill="#111"/><circle cx="95" cy="${Y+8}" r="1" fill="#fff" opacity=".8"/>`}
+  const c=h.c||'#2b2118';
+  return`<ellipse cx="77" cy="${Y}" rx="8" ry="5.5" fill="${c}" stroke="${dk(c,.4)}" stroke-width=".8"/><path d="M72.5 ${Y-4.8}q2 4.8 0 9.6M76 ${Y-5.3}q2 5.3 0 10.6M79.5 ${Y-4.8}q2 4.8 0 9.6" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1"/><ellipse cx="76" cy="${Y-2.4}" rx="4.5" ry="1.4" fill="#fff" opacity=".28"/>`;
 }
 
-const DEFS='<defs><linearGradient id="shd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".34"/></linearGradient><radialGradient id="bsh" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".35" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".4"/></radialGradient></defs>';
+const DEFS='<defs><linearGradient id="shd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".34"/></linearGradient><radialGradient id="bsh" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".35" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".4"/></radialGradient><linearGradient id="steel" gradientUnits="userSpaceOnUse" x1="0" y1="94" x2="0" y2="152"><stop offset="0" stop-color="#9aa1a8"/><stop offset=".15" stop-color="#6a7077"/><stop offset=".5" stop-color="#8a9097"/><stop offset="1" stop-color="#5d6369"/></linearGradient><linearGradient id="bgsub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef6fb"/><stop offset="1" stop-color="#c6dcec"/></linearGradient><linearGradient id="bgsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf7"/><stop offset="1" stop-color="#f1eee2"/></linearGradient><linearGradient id="bgwat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9ebf6"/><stop offset="1" stop-color="#b4d2e6"/></linearGradient></defs>';
+
+let FID=0;
 function fly(a,o={}){
+  const u='g'+(FID++);
   const hx=({std:228,long:266,xlong:290})[a.hook||'std'];
-  let ctx=o.noctx?'plain':(a.ctx||'sub');
-  let s=DEFS;
-  if(ctx==='surface'){const wl=Y+16;s+=`<rect width="${VW}" height="${VH}" fill="#fbfaf5"/><rect y="${wl}" width="${VW}" height="${VH-wl}" fill="#d6e9f5"/><path d="M0 ${wl}H${VW}" stroke="#4d93bf" stroke-width="2"/>`}
-  else if(ctx==='film'){const wl=Y-1;s+=`<rect width="${VW}" height="${VH}" fill="#fbfaf5"/><rect y="${wl}" width="${VW}" height="${VH-wl}" fill="#d6e9f5"/><path d="M0 ${wl}H${VW}" stroke="#4d93bf" stroke-width="2"/>`}
-  else if(ctx==='plain')s+=`<rect width="${VW}" height="${VH}" fill="#fbfaf5"/>`;
-  else s+=`<rect width="${VW}" height="${VH}" fill="#e3eff7"/>`;
+  const ctx=o.noctx?'plain':(a.ctx||'sub');
+  let s=DEFS.replace(/id="(\w+)"/g,'id="'+u+'$1"'),after='';
+  const wl=ctx==='surface'?Y+16:Y-1;
+  if(ctx==='surface'||ctx==='film'){
+    s+=`<rect width="${VW}" height="${VH}" fill="url(#bgsky)"/><rect y="${wl}" width="${VW}" height="${VH-wl}" fill="url(#bgwat)"/><path d="M0 ${wl}H${VW}" stroke="#4d93bf" stroke-width="2"/><path d="M0 ${wl+2.5}H${VW}" stroke="#fff" stroke-width="1" opacity=".5"/>`;
+    for(let i=0;i<9;i++)s+=`<path d="M${50+i*38+rn(i)*14} ${wl+8+rn(i+4)*26}h${12+rn(i+2)*18}" stroke="#fff" stroke-width="1" opacity=".35"/>`;
+    s+=`<g opacity=".1" transform="translate(0,${2*wl-2*Y}) scale(1,-1) translate(0,${-0})"></g>`;
+    // meniscus dimples where the fly touches the surface
+    if(a.hackle||a.wing)after+=`<ellipse cx="112" cy="${wl}" rx="26" ry="2.6" fill="none" stroke="#4d93bf" stroke-width="1" opacity=".55"/><ellipse cx="112" cy="${wl}" rx="38" ry="3.6" fill="none" stroke="#4d93bf" stroke-width=".7" opacity=".35"/>`;
+    after+=`<ellipse cx="${hx-4}" cy="${wl}" rx="16" ry="2.2" fill="none" stroke="#4d93bf" stroke-width=".8" opacity=".45"/>`;
+  }else if(ctx==='plain')s+=`<rect width="${VW}" height="${VH}" fill="url(#bgsky)"/>`;
+  else{
+    s+=`<rect width="${VW}" height="${VH}" fill="url(#bgsub)"/>`;
+    for(let i=0;i<4;i++)s+=`<path d="M${60+i*80} 40l30 120l22 0l-30 -120z" fill="#fff" opacity=".12"/>`;
+    for(let i=0;i<7;i++)s+=`<circle cx="${55+rn(i+60)*270}" cy="${50+rn(i+70)*100}" r="${1+rn(i+80)*2}" fill="none" stroke="#fff" stroke-width=".8" opacity=".55"/>`;
+    s+=`<ellipse cx="200" cy="${156}" rx="120" ry="3" fill="#000" opacity=".07"/>`;
+  }
   const thx=a.thorax?126:null;
   const x0=hx-6,x1=a.body&&a.body.x1||(thx||((a.bead||a.cone||a.head)?98:96));
   s+=tailSVG(a.tail,hx);
-  if(a.flash)s+=ln(hx,Y,hx+54,Y-14,a.flash,1.2)+ln(hx,Y,hx+60,Y+4,a.flash,1.2)+ln(hx,Y,hx+52,Y+16,a.flash,1.2);
-  // hook
+  if(a.flash){for(let i=0;i<4;i++){const dy=-14+i*10;s+=`<path d="M${hx} ${Y}Q${hx+30} ${Y+dy*.3} ${hx+52+i*3} ${Y+dy}" fill="none" stroke="${a.flash}" stroke-width="1.2"/><path d="M${hx+4} ${Y}Q${hx+30} ${Y+dy*.3} ${hx+52+i*3} ${Y+dy}" fill="none" stroke="#fff" stroke-width=".4" opacity=".7"/>`}}
+  // hook: dark outline + steel shine, eye ring, barbed point
   const bend=`M${hx} ${Y}C${hx+34} ${Y} ${hx+40} ${Y+48} ${hx+8} ${Y+50}C${hx-14} ${Y+51} ${hx-20} ${Y+30} ${hx-12} ${Y+20}`;
-  s+=`<g fill="none" stroke="#6f747a" stroke-width="2.9" stroke-linecap="round"><circle cx="62" cy="${Y}" r="5"/><path d="M67 ${Y}H${hx}"/><path d="${bend}"/></g><g fill="none" stroke="#dfe3e6" stroke-width=".9" opacity=".8"><path d="M68 ${Y-1}H${hx}"/><path d="M${hx} ${Y-1}C${hx+33} ${Y-1} ${hx+38} ${Y+46} ${hx+8} ${Y+48}"/></g><path d="M${hx-12} ${Y+20}l7 -2" stroke="#6f747a" stroke-width="2.2" stroke-linecap="round"/>`;
-  if(a.artic)s+=`<g fill="none" stroke="#6b6b6b" stroke-width="2.4"><path d="M${hx} ${Y}H${hx+34}"/><path d="M${hx+34} ${Y}C${hx+54} ${Y} ${hx+58} ${Y+30} ${hx+40} ${Y+32}"/></g>`;
+  s+=`<g fill="none" stroke-linecap="round"><g stroke="#3d4247" stroke-width="3.8"><circle cx="62" cy="${Y}" r="5.2"/><path d="M67 ${Y}H${hx}"/><path d="${bend}"/></g><g stroke="url(#steel)" stroke-width="2.6"><circle cx="62" cy="${Y}" r="5.2"/><path d="M67 ${Y}H${hx}"/><path d="${bend}"/></g><g stroke="#f0f3f5" stroke-width=".9" opacity=".85"><path d="M68 ${Y-1.1}H${hx}"/><path d="M${hx} ${Y-1.1}C${hx+33} ${Y-1.1} ${hx+38} ${Y+46} ${hx+8} ${Y+48}"/><path d="M58.5 ${Y-3}a4.4 4.4 0 0 1 4 -1.6"/></g></g><path d="M${hx-12.5} ${Y+19.5}l-3 -8" stroke="#3d4247" stroke-width="2.4" stroke-linecap="round"/><path d="M${hx-12} ${Y+17}l8 -1.5l-5 6z" fill="#6a7077"/>`;
+  if(a.artic)s+=`<g fill="none" stroke="#3d4247" stroke-width="3.4" stroke-linecap="round"><path d="M${hx} ${Y}H${hx+34}"/><path d="M${hx+34} ${Y}C${hx+54} ${Y} ${hx+58} ${Y+30} ${hx+40} ${Y+32}"/></g><g fill="none" stroke="url(#steel)" stroke-width="2.2" stroke-linecap="round"><path d="M${hx} ${Y}H${hx+34}"/><path d="M${hx+34} ${Y}C${hx+54} ${Y} ${hx+58} ${Y+30} ${hx+40} ${Y+32}"/></g><circle cx="${hx+2}" cy="${Y}" r="3" fill="none" stroke="#9aa1a8" stroke-width="1.3"/>`;
   s+=bodySVG(a.body,x0,x1);
-  if(a.thorax){const t=a.thorax,r=t.r||17;s+=`<ellipse cx="112" cy="${Y}" rx="${r}" ry="${(t.ry||r*.75)}" fill="${t.c||C.black}" stroke="${t.c||C.black}"/><ellipse cx="112" cy="${Y}" rx="${r}" ry="${(t.ry||r*.75)}" fill="url(#shd)"/>`;if(t.fuzz)for(let i=0;i<10;i++){const g=i/10*6.28;s+=ln(112+Math.cos(g)*r,Y+Math.sin(g)*r*.75,112+Math.cos(g)*(r+4),Y+Math.sin(g)*(r*.75+4),t.c,1.3)}}
-  if(a.sheath)s+=`<ellipse cx="160" cy="${Y}" rx="76" ry="${a.sheath}" fill="#fff" opacity=".35" stroke="#fff" stroke-opacity=".7"/>`;
+  if(a.body&&(!a.body.t||a.body.t==='taper')){const w=a.body.w0||5;s+=`<ellipse cx="${x0}" cy="${Y}" rx="3.6" ry="${w+.8}" fill="${THREAD}" stroke="rgba(0,0,0,.3)" stroke-width=".6"/><path d="M${x0-1.4} ${Y-w}v${2*w}M${x0+1.2} ${Y-w}v${2*w}" stroke="rgba(255,255,255,.28)" stroke-width=".8"/>`}
+  if(a.thorax){const t=a.thorax,r=t.r||17,ry=t.ry||r*.75,c=t.c||C.black;s+=`<ellipse cx="112" cy="${Y}" rx="${r}" ry="${ry}" fill="${c}" stroke="${dk(c,.4)}"/><ellipse cx="112" cy="${Y}" rx="${r}" ry="${ry}" fill="url(#shd)"/><ellipse cx="108" cy="${Y-ry*.45}" rx="${r*.5}" ry="${ry*.25}" fill="#fff" opacity=".22"/>`;if(t.fuzz)for(let i=0;i<26;i++){const g=i/26*6.283,l=2.5+rn(i)*3.5;s+=ln(112+Math.cos(g)*r*.95,Y+Math.sin(g)*ry*.95,112+Math.cos(g)*(r+l),Y+Math.sin(g)*(ry+l),i%3?lt(c,.25):dk(c,.2),1.2,.95)}}
+  if(a.sheath)s+=`<ellipse cx="160" cy="${Y}" rx="76" ry="${a.sheath}" fill="#fff" opacity=".3" stroke="#fff" stroke-opacity=".75"/><ellipse cx="160" cy="${Y-a.sheath*.55}" rx="62" ry="${a.sheath*.3}" fill="#fff" opacity=".35"/><path d="M96 ${Y-a.sheath*.2}Q160 ${Y-a.sheath*.6} 224 ${Y-a.sheath*.2}" fill="none" stroke="#fff" stroke-width="1" opacity=".6"/>`;
   s+=legsSVG(a.legs);
   s+=wingSVG(a.wing,hx);
   if(a.hackle)s+=hackleSVG(a.hackle,x0,x1);
-  if(a.antenna)s+=`<path d="M70 ${Y-3}q-14 -18 -34 -14M70 ${Y+2}q-16 -4 -34 8" fill="none" stroke="#555" stroke-width="1.3"/>`;
+  if(a.antenna)s+=`<path d="M70 ${Y-3}q-8 -16 -21 -13M70 ${Y+2}q-9 -3 -21 7" fill="none" stroke="#555" stroke-width="1.4"/><circle cx="49" cy="${Y-16}" r="1.4" fill="#555"/><circle cx="49" cy="${Y+9}" r="1.4" fill="#555"/>`;
   if(a.head&&a.head.t==='popper'){s+=`<path d="M62 ${Y-22}L132 ${Y-22}Q142 ${Y} 132 ${Y+18}L62 ${Y+18}Q80 ${Y-2} 62 ${Y-22}Z" fill="${a.head.c}" stroke="rgba(0,0,0,.4)"/><circle cx="112" cy="${Y-8}" r="4" fill="#fff"/><circle cx="112" cy="${Y-8}" r="1.8" fill="#111"/>`}
   else s+=headSVG(a);
   if(a.xtra)s+=a.xtra;
+  s+=after;
+  s=s.replace(/url\(#(\w+)\)/g,(m,id)=>id.startsWith(u)?m:'url(#'+u+id+')');
   const hint=o.hint?`<text x="8" y="16" font-size="11" fill="#5d6b73" font-family="sans-serif">${o.hint}</text>`:'';
   return`<svg viewBox="44 40 312 118" width="${o.w||'100%'}" role="img" aria-label="${o.label||'fly'}" style="display:block;border-radius:8px">${s}${hint}</svg>`;
 }
@@ -823,6 +868,8 @@ Object.assign(ART,{
  'Crayfish pattern':{ctx:'sub',hook:'long',tail:T('split','#8a4a2a',30),body:{c:'#8a4a2a',w0:6,w1:8,seg:9},legs:{t:'rubber',c:'#8a4a2a',n:3},xtra:`<ellipse cx="84" cy="${Y-15}" rx="17" ry="6" transform="rotate(-24 84 ${Y-15})" fill="#8a4a2a"/><ellipse cx="84" cy="${Y+15}" rx="17" ry="6" transform="rotate(24 84 ${Y+15})" fill="#8a4a2a"/>`,v:'Two claws up front, a segmented rust-orange body, legs and a short tail fan.'}
 });
 Object.assign(VIS,{'Classic streamers':['Traditional feather or bucktail wing over a silver or yellow body.','Slim, “minnow” shaped; usually no bead.'],'Crayfish':['Two claws at the head, segmented rust body, legs and a short tail fan.']});
+['Griffith’s Gnat','Renegade','Royal Wulff','Coachman Trude','Royal Coachman Wet','Prince Nymph','Zug Bug'].forEach(n=>{ART[n].body.herl=true});
+['Elk Hair Caddis','X-Caddis','Stimulator','Sofa Pillow','Yellow Sally','Madam X'].forEach(n=>{ART[n].antenna=true});
 (function addMore(){
   const f=(n,name)=>n.n===name?n:n.k.map(c=>f(c,name)).find(Boolean);
   const put=(p,...x)=>f(TREE,p).k.push(...x);
