@@ -24,9 +24,10 @@ section{display:none;padding:16px 26px 50px}section.on{display:block}
 .pgrid{display:grid;grid-template-columns:1fr minmax(260px,340px);gap:24px;align-items:start}
 .facts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
 .fact{display:inline-flex;gap:6px;align-items:center;font-size:13px;background:#f1efe6;border-radius:999px;padding:3px 11px 3px 8px}
-.cal{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;max-width:560px;margin:8px 0 4px}
+.cal{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;max-width:560px;margin:2px 0 4px}
 .cal div{text-align:center;font-size:11.5px;border-radius:4px;padding:2px 0;background:#ece9dc;color:#8a8f94}.cal .on{color:#fff;font-weight:700}.cal .se{background:none;font-size:14px;padding:0}
-.row{margin:5px 0;font-size:14px;display:flex;gap:8px;align-items:center}.row .ic{flex:0 0 22px;text-align:center}.row ul{margin:0;padding-left:16px}
+.row{margin:6px 0;font-size:14px;display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:start}
+.row .ic{text-align:center;line-height:1.5}.row .ic.tall{line-height:28px}.rowsep{border:0;border-top:1px dashed var(--line);margin:10px 0}.row .ic{flex:0 0 22px;text-align:center}.row ul{margin:0;padding-left:16px}
 .rchip{display:inline-block;background:#f4efe3;border:1px solid #e0d8c2;border-radius:6px;padding:1px 8px;margin:2px 3px 2px 0;font-size:13px}
 .pcols{columns:2 300px;column-gap:26px}.pcols .dl{break-inside:avoid;margin:0 0 10px}
 .mont{grid-template-columns:repeat(2,1fr)!important}
@@ -45,7 +46,7 @@ table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid var(--li
 
 .glh{margin:22px 0 8px}.glgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}.glcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px}.glcard b{display:block;margin-bottom:2px}
 .chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:5px 0 2px}.chain span{background:#eef3f6;border:1px solid #c9d7df;border-radius:8px;padding:3px 9px;font-size:13px}.chain .fl{background:#fff3e8;border-color:#e6b98d;font-weight:700}.chain i{color:#c4622d;font-style:normal}
-.facts b{margin-right:2px}.row>div,.row>span:last-child{flex:1;min-width:0}.row .facts{margin:0;align-items:center}.row .cal{width:100%}
+.facts b,.sw b{margin-right:6px;min-width:0}.sw{gap:0}.sw .swb{margin-left:0}.row>div,.row>span:last-child{min-width:0}.row .facts{margin:0;align-items:center}.row .cal{width:100%}
 .swb{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #9aa5ac;cursor:pointer;margin-right:7px;padding:0;vertical-align:middle}.swb.on{box-shadow:0 0 0 3px #1f2a30}.sw{display:flex;align-items:center;flex-wrap:wrap;gap:2px}
 .mnav{display:flex;gap:10px;align-items:center;margin:4px 0 10px;flex-wrap:wrap}
 .mback{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;cursor:pointer}
@@ -1110,13 +1111,14 @@ function info(n){
   let t=`<div class="crumb">${path.map(p=>p.n).join(' › ')}</div><h2 style="color:${n.c}">${n.n}</h2>`;
   if(n.s)t+=`<div>${fs(n.s)}</div>`;
   const wl={r:icoRiver('#1d6fa5')+' River',s:icoPond('#2a8a6a')+' Still water'};
-  const chipRow=(ic,lab,items)=>items?`<div class="row"><span class="ic">${ic}</span><span class="facts"><b>${lab}:</b> ${items}</span></div>`:'';
+  const chipRow=(ic,lab,items)=>items?`<div class="row"><span class="ic tall">${ic}</span><span class="facts"><b>${lab}:</b> ${items}</span></div>`:'';
   t+=chipRow('💧','Water',[...m.w].sort().map(w=>`<span class="fact">${wl[w]}</span>`).join(''));
   t+=chipRow('⬇️','Depth',[...m.d].map(d=>`<span class="fact">${icoDepth(d)} ${DEPTHN[d]}</span>`).join(''));
   t+=chipRow('📏','Size',n.z?`<span class="fact">${n.z}</span>`:'');
   const vs=VARIANTS[n.n];
-  if(leaf&&vs){const cur=VAR[n.n]||0;t+=`<div class="row"><span class="ic">🎨</span><span class="sw">${vs.map((v,i)=>`<button class="swb${i===cur?' on':''}" data-var="${n.id}" data-i="${i}" title="${v[0]}" aria-label="${v[0]}" style="background:${v[1]}"></button>`).join('')}<span class="small mute"> ${vs[cur][0]}</span></span></div>`}
+  if(leaf&&vs){const cur=VAR[n.n]||0;t+=`<div class="row"><span class="ic tall">🎨</span><span class="sw"><b>Colour:</b>${vs.map((v,i)=>`<button class="swb${i===cur?' on':''}" data-var="${n.id}" data-i="${i}" title="${v[0]}" aria-label="${v[0]}" style="background:${v[1]}"></button>`).join('')}<span class="small mute"> ${vs[cur][0]}</span></span></div>`}
   if(m.m.size)t+=`<div class="row"><span class="ic">📅</span><div><b>Season:</b>${calHTML(m.m,n.c)}</div></div>`;
+  t+='<hr class="rowsep">';
   t+=rigHTML(n);
   if(leaf&&a)t+=`<div class="row"><span class="ic">🔍</span><span><b>Spot it:</b> ${a.v}</span></div>`;
   else if(VIS[n.n])t+=`<div class="row"><span class="ic">🔍</span><ul>${VIS[n.n].slice(0,3).map(v=>`<li>${v}</li>`).join('')}</ul></div>`;
