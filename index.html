@@ -977,8 +977,8 @@ const HALF=Math.max((TREE.k.length-1)/2*(TW+12)+TW/2,
   ...TREE.k.map(f=>(f.k.length-1)/2*TGX+TW/2),
   ...TREE.k.flatMap(f=>f.k.map(g=>{const r=Math.ceil(g.k.length/6),p=Math.ceil(g.k.length/r);return (p*(LW+GAP)-GAP)/2+10})))+6;   // widest layout
 const flyAt=(a,x,y,w)=>fly(a,{w,label:''}).replace('<svg ',`<svg x="${x}" y="${y}" height="${w*118/312}" `);
-const mq=matchMedia('(max-width:760px)');
-const isMobile=()=>mq.matches;
+const isMobile=()=>innerWidth<760;
+let lastMode=isMobile();
 function curNode(){const oF=TREE.k.find(f=>open.has(f.id)),oG=oF?oF.k.find(g=>open.has(g.id)):null;return oG||oF||TREE}
 function drawMobile(){
   const cur=curNode(),path=[];for(let p=cur;p;p=p.p0)path.unshift(p);
@@ -1112,12 +1112,12 @@ function info(n){
   if(n.s)t+=`<div>${fs(n.s)}</div>`;
   const wl={r:icoRiver('#1d6fa5')+' River',s:icoPond('#2a8a6a')+' Still water'};
   const chipRow=(ic,lab,items)=>items?`<div class="row"><span class="ic tall">${ic}</span><span class="facts"><b>${lab}:</b> ${items}</span></div>`:'';
+  if(m.m.size)t+=`<div class="row"><span class="ic">📅</span><div><b>Season:</b>${calHTML(m.m,n.c)}</div></div>`;
   t+=chipRow('💧','Water',[...m.w].sort().map(w=>`<span class="fact">${wl[w]}</span>`).join(''));
   t+=chipRow('⬇️','Depth',[...m.d].map(d=>`<span class="fact">${icoDepth(d)} ${DEPTHN[d]}</span>`).join(''));
   t+=chipRow('📏','Size',n.z?`<span class="fact">${n.z}</span>`:'');
   const vs=VARIANTS[n.n];
   if(leaf&&vs){const cur=VAR[n.n]||0;t+=`<div class="row"><span class="ic tall">🎨</span><span class="sw"><b>Colour:</b>${vs.map((v,i)=>`<button class="swb${i===cur?' on':''}" data-var="${n.id}" data-i="${i}" title="${v[0]}" aria-label="${v[0]}" style="background:${v[1]}"></button>`).join('')}<span class="small mute"> ${vs[cur][0]}</span></span></div>`}
-  if(m.m.size)t+=`<div class="row"><span class="ic">📅</span><div><b>Season:</b>${calHTML(m.m,n.c)}</div></div>`;
   t+='<hr class="rowsep">';
   t+=rigHTML(n);
   if(leaf&&a)t+=`<div class="row"><span class="ic">🔍</span><span><b>Spot it:</b> ${a.v}</span></div>`;
@@ -1153,7 +1153,10 @@ $('#treebox').onclick=e=>{
   const n=ALLN[+g.dataset.id];select(n,true);
   if(isMobile()&&!n.k.length)$('#infobox').scrollIntoView({behavior:'smooth',block:'start'});
 };
-mq.onchange=()=>{draw();fixInfoHeight()};
+function modeCheck(){const m=isMobile();if(m!==lastMode){lastMode=m;draw();fixInfoHeight()}}
+addEventListener('resize',modeCheck);addEventListener('load',modeCheck);
+if(window.ResizeObserver)new ResizeObserver(modeCheck).observe(document.documentElement);
+setTimeout(modeCheck,300);setTimeout(modeCheck,1200);
 $('#expAll').onclick=()=>{ALLN.filter(n=>n.k.length).forEach(n=>open.add(n.id));draw()};
 $('#colAll').onclick=()=>{open.clear();open.add(TREE.id);draw()};
 $('#reset').onclick=()=>{reset();select(TREE,false)};
