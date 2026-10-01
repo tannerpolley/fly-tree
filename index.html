@@ -42,6 +42,21 @@ table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid var(--li
 .part{cursor:pointer}.part:hover *,.part.sel *{stroke:#c4622d!important;stroke-width:3!important}
 .lbl{font-size:12.5px;fill:#1f2a30;pointer-events:none}
 .g2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+
+.mnav{display:flex;gap:10px;align-items:center;margin:4px 0 10px;flex-wrap:wrap}
+.mback{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;cursor:pointer}
+.mcrumb{font-size:13px;color:var(--mute)}
+.mcard{color:#fff;border-radius:12px;padding:16px;margin:8px 0;display:flex;justify-content:space-between;font-weight:700;font-size:16px;cursor:pointer}
+.mcard span{font-weight:400;font-size:13px;opacity:.9}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mleaf{background:#fff;border:2px solid;border-radius:10px;padding:6px;cursor:pointer;font-size:13px}.mleaf.sel{outline:3px solid #000}.mleaf b{display:block;text-align:center;margin-top:4px}
+@media(max-width:760px){
+ header{padding:14px 14px 6px}nav{flex-wrap:nowrap;overflow-x:auto;padding:8px 14px}nav button{white-space:nowrap}
+ section{padding:12px 12px 40px}.card{padding:12px}
+ .pgrid{grid-template-columns:1fr}.pgrid>div:last-child{order:-1}
+ .colrow{grid-template-columns:1fr}.pair{grid-template-columns:1fr}
+ .tb button{padding:9px 14px}.qopt{padding:13px 14px}
+}
 </style>
 </head>
 <body>
@@ -579,7 +594,19 @@ const HALF=Math.max((TREE.k.length-1)/2*(TW+12)+TW/2,
   ...TREE.k.map(f=>(f.k.length-1)/2*TGX+TW/2),
   ...TREE.k.flatMap(f=>f.k.map(g=>(g.k.length*(LW+GAP)-GAP)/2+10)))+6;   // widest layout
 const flyAt=(a,x,y,w)=>fly(a,{w,label:''}).replace('<svg ',`<svg x="${x}" y="${y}" height="${w*112/312}" `);
+const mq=matchMedia('(max-width:760px)');
+const isMobile=()=>mq.matches;
+function curNode(){const oF=TREE.k.find(f=>open.has(f.id)),oG=oF?oF.k.find(g=>open.has(g.id)):null;return oG||oF||TREE}
+function drawMobile(){
+  const cur=curNode(),path=[];for(let p=cur;p;p=p.p0)path.unshift(p);
+  let s=`<div class="mnav">${cur!==TREE?'<button class="mback" data-back="1">◀ Back</button>':''}<span class="mcrumb">${path.map(p=>p.n).join(' › ')}</span></div>`;
+  if(cur.k.length&&!cur.k[0].k.length)
+    s+=`<div class="mgrid">${cur.k.map(c=>`<div class="node mleaf${c===sel?' sel':''}" data-id="${c.id}" style="border-color:${c.c}">${fly(ART[c.n],{w:'100%',label:c.n})}<b>${c.n}</b></div>`).join('')}</div>`;
+  else s+=cur.k.map(c=>`<div class="node mcard" data-id="${c.id}" style="background:${c.c}">${c.n}<span>${c.k.length} inside ▸</span></div>`).join('');
+  $('#treebox').innerHTML=s;
+}
 function draw(){
+  if(isMobile()){drawMobile();return}
   const FG=TW+12,rootOpen=open.has(TREE.id),fams=TREE.k;
   const oF=rootOpen?fams.find(f=>open.has(f.id)):null;
   const vis=[TREE];TREE.cx=0;
@@ -670,12 +697,19 @@ function select(n,toggle){
 function fixInfoHeight(){
   const box=$('#infobox'),keep=sel;let max=0;
   box.style.height='auto';
+  if(isMobile()){box.innerHTML=info(keep);return}
   ALLN.forEach(n=>{box.innerHTML=info(n);max=Math.max(max,box.scrollHeight)});
   box.style.height=max+'px';box.innerHTML=info(keep);
 }
 let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(fixInfoHeight,150)});
 $('#infobox').onclick=e=>{const c=e.target.dataset.go;if(c!=null)goTo(ALLN[+c])};
-$('#treebox').onclick=e=>{const g=e.target.closest('.node');if(g)select(ALLN[+g.dataset.id],true)};
+$('#treebox').onclick=e=>{
+  if(e.target.closest('[data-back]')){const c=curNode();leavesFold(c);select(c.p0||TREE,false);return}
+  const g=e.target.closest('.node');if(!g)return;
+  const n=ALLN[+g.dataset.id];select(n,true);
+  if(isMobile()&&!n.k.length)$('#infobox').scrollIntoView({behavior:'smooth',block:'start'});
+};
+mq.onchange=()=>{draw();fixInfoHeight()};
 $('#expAll').onclick=()=>{ALLN.filter(n=>n.k.length).forEach(n=>open.add(n.id));draw()};
 $('#colAll').onclick=()=>{open.clear();open.add(TREE.id);draw()};
 $('#reset').onclick=()=>{reset();select(TREE,false)};
