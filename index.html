@@ -239,7 +239,7 @@ function fly(a,o={}){
   else s+=headSVG(a);
   if(a.xtra)s+=a.xtra;
   const hint=o.hint?`<text x="8" y="16" font-size="11" fill="#5d6b73" font-family="sans-serif">${o.hint}</text>`:'';
-  return`<svg viewBox="44 46 312 112" width="${o.w||'100%'}" role="img" aria-label="${o.label||'fly'}" style="display:block;border-radius:8px">${s}${hint}</svg>`;
+  return`<svg viewBox="44 40 312 118" width="${o.w||'100%'}" role="img" aria-label="${o.label||'fly'}" style="display:block;border-radius:8px">${s}${hint}</svg>`;
 }
 
 /* ---------------- pattern art (trout flies). v = how to spot it ---------------- */
@@ -546,6 +546,84 @@ const TREE=N('Flies',{s:'Every fly is an imitation (or attractor) of something a
  ])
 ]);
 
+
+/* ---------- more trout patterns (Fly Deal-style coverage) ---------- */
+Object.assign(ART,{
+ 'BWO Thorax Dun':{ctx:'surface',tail:T('split','#6e747a',36),body:{c:'#6b7a3a',w0:3,w1:5,seg:9},thorax:{c:'#55603a',r:11},wing:{t:'upright',c:'#aab0b6'},hackle:{t:'collar',c:'#8a8f94',l:14},v:'Small olive body, a pair of upright gray wings and a hackle at the thorax; slimmer than a Catskill.'},
+ 'PMD Dun':{ctx:'surface',tail:T('split','#d9c98a',38),body:{c:'#e0cc7a',w0:4,w1:6,seg:9},wing:{t:'upright',c:'#d8dcdf'},hackle:{t:'collar',c:'#d9c98a',l:16},v:'Pale yellow-cream body with light gray wings.'},
+ 'Western March Brown':{ctx:'surface',tail:T('fibers','#6a4a2e',38,3),body:{c:'#7a4a30',w0:4,w1:7,seg:9},wing:{t:'upright',c:'#9a8a74'},hackle:{t:'collar',c:'#6a4a2e',l:17},v:'Brown body and mottled upright wings; bigger than a BWO.'},
+ 'Callibaetis (pond mayfly)':{ctx:'surface',tail:T('split','#8a8f94',40),body:{c:'#9a8a6a',w0:4,w1:6,seg:9,rib:'#6a5a40'},wing:{t:'upright',c:'#bdb7a8'},hackle:{t:'collar',c:'#8a7a5a',l:15},v:'Speckled tan-gray body with a mottled wing: the still-water mayfly.'},
+ 'Goddard Caddis':{ctx:'surface',body:{c:'#b8a070',w0:9,w1:10,fuzz:true},wing:{t:'downwing',c:'#a88a5a',len:236,rise:30},head:{t:'deer',c:'#8a6a3a'},antenna:true,v:'Bulky clipped deer-hair body and head, wing swept back, with antennae.'},
+ 'Sofa Pillow':{ctx:'surface',hook:'long',tail:T('fibers','#5a3a22',30,3),body:{c:'#c85a2a',w0:6,w1:8,seg:8},wing:{t:'downwing',c:'#8a6a3a',len:270,rise:42},hackle:{t:'collar',c:'#5a3a22',l:18},v:'Big orange-red body under a heavy hair wing: a golden stonefly.'},
+ 'Palomino Midge':{ctx:'film',body:{c:'#9a8f5a',w0:2.5,w1:3.5,seg:10},wing:{t:'post',c:C.white,h:18},v:'Tiny tan body with a short white post.'},
+ 'Madam X':{ctx:'surface',hook:'long',body:{c:'#e0c04a',w0:6,w1:8,seg:8},wing:{t:'downwing',c:'#c9a867',len:262,rise:30},legs:{t:'rubber',c:'#f0e8d0',n:3,up:true},hackle:{t:'collar',c:'#6a4a2e',l:16},v:'Hopper with a yellow body, hair wing, white rubber legs and a bushy collar.'},
+ 'Foam Inchworm':{ctx:'surface',body:{c:'#8fc04a',w0:4,w1:4,seg:12,x1:96},v:'A long, bright green, ribbed foam rope: no wing, no tail.'},
+ 'Renegade':{ctx:'surface',body:{c:'#2e4a3a',w0:5,w1:6,band:[168,24,'#7a4a2a']},hackle:{t:'bushy',c:'#e8e8e0',l:18},xtra:[0,1,2,3,4,5].map(i=>ln(186+i*3,Y,186+i*5,Y-17,'#6a4a2e',1.4)+ln(186+i*3,Y,186+i*5,Y+17,'#6a4a2e',1.4)).join(''),v:'Hackle-heavy: white at the head, brown at the back, peacock in the middle.'},
+ 'Coachman Trude':{ctx:'surface',tail:T('fibers','#7a3a22',34,3),body:{c:'#2e4a3a',w0:5,w1:6,band:[150,30,'#b83a2a']},wing:{t:'downwing',c:'#f2f2ee',len:226,rise:26},hackle:{t:'collar',c:'#5a3a22',l:16},v:'Peacock-and-red body under a white hair wing laid flat over the back.'},
+ 'Barr Emerger':{ctx:'film',tail:T('split','#8a8f94',24),body:{c:'#6b6b3a',w0:3,w1:5,seg:9},thorax:{c:'#5a4a30',r:11},wing:{t:'post',c:'#d8d8d8',h:14},legs:{t:'fibers',c:'#6a5a40',n:3},v:'Slim olive body, swollen thorax and a tiny gray wing bud.'},
+ 'Mother Shucker':{ctx:'film',tail:T('shuck','#c9b45a',40),body:{c:'#2b2b2b',w0:2.5,w1:4,seg:10,rib:'#cfcfcf'},thorax:{c:'#222',r:10},wing:{t:'post',c:'#f4f4f4',h:16},v:'Midge emerger: dark slim body, round thorax, white wing nub and a trailing shuck.'},
+ 'Pheasant Tail Soft Hackle':{ctx:'sub',bead:C.copper,body:{c:'#7a4a1a',w0:3,w1:5,seg:10},thorax:{c:'#2f3a24',r:10,fuzz:true},hackle:{t:'soft',c:'#8a7a5a',l:22},v:'Slim banded body with a small bead and a swept-back soft collar.'},
+ 'Royal Coachman Wet':{ctx:'sub',tail:T('fibers','#e0a030',26,3),body:{c:'#2e4a3a',w0:5,w1:6,band:[150,32,'#b83a2a']},wing:{t:'downwing',c:'#f2f2ee',len:214,rise:20},hackle:{t:'soft',c:'#6a3a22',l:20},v:'Peacock-red-peacock body, white wing swept flat back, soft brown hackle.'},
+ 'Frenchie':{ctx:'sub',bead:'#e0709a',tail:T('fibers','#7a4a1a',24,3),body:{c:'#7a4a1a',w0:3,w1:5,seg:10,shine:true},thorax:{c:'#e8a040',r:11},v:'Slim pheasant-tail body with a bright pink bead and a hot orange collar.'},
+ 'Rainbow Warrior':{ctx:'sub',bead:C.silver,tail:T('fibers','#6a6a6a',22,2),body:{c:'#6b5a3a',w0:3,w1:5,rib:'#c0e8ff'},thorax:{c:'#d9a0b0',r:11,fuzz:true},wing:{t:'case',c:'#9ee8ff',len:132,shine:true},v:'Slim body with a shiny rainbow-flash back, pink thorax and a bead.'},
+ 'Peeking Caddis':{ctx:'sub',body:{t:'case',c:'#9a8a68'},xtra:`<ellipse cx="90" cy="${Y}" rx="13" ry="9" fill="#6aa82a"/><circle cx="80" cy="${Y}" r="6" fill="#222"/>`,v:'A pebble case with a green grub poking out the front.'},
+ 'Brassie':{ctx:'sub',body:{c:'#c4733a',w0:2.5,w1:3.5,seg:14,shine:true},head:{c:'#2f3a24'},v:'A thin copper-wire body with a tiny dark head: a wire worm.'},
+ 'Black Beauty':{ctx:'sub',bead:'#222',br:6,body:{c:'#1c1c1c',w0:2.5,w1:3.5,rib:'#d8d8d8',ribn:8},thorax:{c:'#1c1c1c',r:9},v:'Slim black body, silver rib, black bead and a small round thorax.'},
+ 'Squirmy Worm':{ctx:'sub',body:{t:'worm',c:'#e08a5a',w:12},v:'A thick rubbery worm, fatter than a San Juan.'},
+ 'Zug Bug':{ctx:'sub',bead:C.gold,tail:T('fibers','#2f3a24',28,3),body:{c:'#2e4a3a',w0:5,w1:7,fuzz:true,rib:'#d8d8d8'},hackle:{t:'soft',c:'#6a4a2e',l:14},wing:{t:'case',c:'#c9a070',len:142},v:'Peacock body with silver rib, brown hackle and a mottled wing case.'},
+ 'Matuka':{ctx:'sub',hook:'long',body:{c:'#d8c8a0',w0:5,w1:6,rib:'#c0c0c0'},wing:{t:'sw',c:'#6a5030',c2:'#d8c8a0',len:40},hackle:{t:'soft',c:'#6a5030',l:16},v:'Feather wing laid flat along the back and tied down with wire, tip beyond the hook.'},
+ 'Mickey Finn':{ctx:'sub',hook:'long',body:{c:C.silver,w0:4,w1:5,rib:'#8a9096',shine:true},wing:{t:'sw',c:'#e6c84a',c2:'#b83a2a',len:36},v:'Silver body with a bucktail wing banded yellow-red-yellow.'},
+ 'Grey Ghost':{ctx:'sub',hook:'long',body:{c:'#e6d078',w0:5,w1:6,rib:'#c7ccd0'},wing:{t:'sw',c:'#9aa0a6',c2:'#e9e4d8',len:40},hackle:{t:'soft',c:'#9aa0a6',l:16},v:'Gray feather wing over a yellow silver-ribbed body: a smelt imitation.'},
+ 'Sculpzilla':{ctx:'sub',hook:'long',body:{c:'#6a5a30',w0:6,w1:8},wing:{t:'sw',c:'#5a4a28',c2:'#c9b078',len:30},legs:{t:'rubber',c:'#6a5030',n:2},head:{t:'deer',c:'#5a4a30'},v:'Wide flat head, rubber fins, mottled tan body: a sculpin.'},
+ 'Rabbit Strip Leech':{ctx:'sub',hook:'long',cone:C.gold,tail:T('strip','#2b2b2b',92,9),body:{c:'#2b2b2b',w0:5,w1:6,fuzz:true},v:'Long wavy rabbit-strip tail, no hackle, usually black or olive.'},
+ 'Circus Peanut':{ctx:'sub',hook:'xlong',artic:true,cone:C.gold,tail:T('strip','#efe6c8',64,9),body:{c:'#efe6c8',w0:7,w1:9,shine:true},head:{t:'deer',c:'#c9a867'},wing:{t:'sw',c:'#d8b878',c2:'#efe6c8',len:24},v:'Huge, jointed, cream-colored, with a big head and flowing tail.'},
+ 'Crayfish pattern':{ctx:'sub',hook:'long',tail:T('split','#8a4a2a',30),body:{c:'#8a4a2a',w0:6,w1:8,seg:9},legs:{t:'rubber',c:'#8a4a2a',n:3},xtra:`<ellipse cx="84" cy="${Y-15}" rx="17" ry="6" transform="rotate(-24 84 ${Y-15})" fill="#8a4a2a"/><ellipse cx="84" cy="${Y+15}" rx="17" ry="6" transform="rotate(24 84 ${Y+15})" fill="#8a4a2a"/>`,v:'Two claws up front, a segmented rust-orange body, legs and a short tail fan.'}
+});
+Object.assign(VIS,{'Classic streamers':['Traditional feather or bucktail wing over a silver or yellow body.','Slim, “minnow” shaped; usually no bead.'],'Crayfish':['Two claws at the head, segmented rust body, legs and a short tail fan.']});
+(function addMore(){
+  const f=(n,name)=>n.n===name?n:n.k.map(c=>f(c,name)).find(Boolean);
+  const put=(p,...x)=>f(TREE,p).k.push(...x);
+  put('Mayfly adults',
+    N('BWO Thorax Dun',{z:'#18–22',i:'Blue-winged olive dun',h:'Fish gray-weather hatches on flat water with 6X; match the size closely.'}),
+    N('PMD Dun',{z:'#14–18',i:'Pale morning dun',h:'Fish the hatch mid-morning on riffles and runs; match the cream-yellow colour.'}),
+    N('Western March Brown',{z:'#12–14',i:'Western March Brown mayfly',h:'Early-season hatch; fish in the afternoon in riffles.'}),
+    N('Callibaetis (pond mayfly)',{z:'#12–16',i:'Still-water speckled-wing mayfly',h:'Cast to cruising or rising fish near weeds and let it sit.'}));
+  put('Caddis adults',N('Goddard Caddis',{z:'#10–14',i:'Large adult caddis',h:'Skate or twitch across the surface in the evening; floats high.'}));
+  put('Stonefly adults',N('Sofa Pillow',{z:'#6–10',i:'Golden stonefly adult',h:'Cast tight to the bank in fast water; floats high and carries a dropper.'}));
+  put('Midge adults',N('Palomino Midge',{z:'#18–22',i:'Midge adult / cripple',h:'Dead-drift on flat water; the white post helps you see it.'}));
+  put('Terrestrials',
+    N('Madam X',{z:'#6–10',i:'Grasshopper / big stonefly',h:'Slap near grassy banks; great as the top fly with a nymph dropper.'}),
+    N('Foam Inchworm',{z:'#12–16',i:'Green inchworm falling from trees',h:'Plop under overhanging trees and let it sit.'}));
+  put('Attractor dries',
+    N('Renegade',{z:'#10–14',i:'Generic bug / drowned insect',h:'High-floating search fly; also fished semi-sunk.'}),
+    N('Coachman Trude',{z:'#10–14',i:'Generic caddis/ mayfly attractor',h:'Fish in riffles; the white wing makes it easy to see.'}));
+  put('Emergers',
+    N('Barr Emerger',{z:'#16–20',i:'BWO emerger',h:'Fish just under the surface during BWO hatches; use a long fine tippet.'}),
+    N('Mother Shucker',{z:'#18–22',i:'Midge emerger',h:'Dead-drift in the film; fish it on Provo midge hatches.'}));
+  put('Soft hackles & wets',
+    N('Pheasant Tail Soft Hackle',{z:'#14–18',i:'Emerging mayfly',h:'Swing or dead-drift as a dropper.'}),
+    N('Royal Coachman Wet',{z:'#10–14',i:'Classic wet fly (attractor)',h:'Swing across current and let it hang at the end.'}));
+  put('Mayfly nymphs',
+    N('Frenchie',{z:'#14–18',i:'Mayfly nymph (tungsten jig style)',h:'Tight-line or indicator; the pink bead is the trigger.'}),
+    N('Rainbow Warrior',{z:'#16–20',i:'Mayfly/ midge nymph',h:'Second nymph on a dropper; a Provo favourite.'}));
+  put('Caddis larvae & pupae',N('Peeking Caddis',{z:'#12–16',i:'Case-building caddis larva',h:'Dead-drift near the bottom in riffles.'}));
+  put('Midge larvae & pupae',
+    N('Brassie',{z:'#16–20',i:'Midge larva',h:'Small, deep dead-drift; a classic Utah pattern.'}),
+    N('Black Beauty',{z:'#18–22',i:'Midge pupa',h:'Trailing fly under a bigger nymph; fish deep runs.'}));
+  put('Worms & eggs',N('Squirmy Worm',{z:'#8–12',i:'Aquatic worm',h:'Dead-drift after rain or high water.'}));
+  put('Attractor nymphs',N('Zug Bug',{z:'#10–14',i:'Generic caddis/ mayfly',h:'Classic searching nymph in riffles.'}));
+  put('Sculpin',N('Sculpzilla',{z:'#4–8',i:'Sculpin',h:'Strip along the bottom or swing through runs.'}));
+  put('Leeches',N('Rabbit Strip Leech',{z:'#4–8',i:'Leech / baitfish',h:'Slow strip with pauses or swing; the tail does the work.'}));
+  put('Articulated & big',N('Circus Peanut',{z:'#2–4',i:'Large baitfish / crayfish',h:'Heavy tippet; strip with long pauses; good in dirty water.'}));
+  put('Streamers',
+    N('Classic streamers',{s:'Traditional feather- and bucktail-wing flies; still great for trout.',i:'Smelt, shiners, sculpins'},[
+      N('Matuka',{z:'#4–8',i:'Baitfish / sculpin',h:'Swing or strip; the tied-down wing keeps its shape.'}),
+      N('Mickey Finn',{z:'#4–10',i:'Baitfish',h:'Swing across current and strip in runs.'}),
+      N('Grey Ghost',{z:'#4–8',i:'Smelt',h:'Strip or swing in cold water; good in ponds too.'})]),
+    N('Crayfish',{s:'Crayfish imitations: a big meal for large trout.',i:'Crayfish'},[
+      N('Crayfish pattern',{z:'#4–8',i:'Crayfish',h:'Hop it along the bottom with short strips.'})]));
+})();
+
 /* ---------- assign ids, parents, family colors ---------- */
 const FC=['#2c3e50','#d9a21c','#8e6bbf','#3c8d5a','#b8443a','#2a8a6a','#6b7a85'];
 let id=0;
@@ -553,6 +631,8 @@ let id=0;
 const ALLN=[];(function g(n){ALLN.push(n);n.k.forEach(g)})(TREE);
 
 const GEN={
+ 'Classic streamers':{h:'Swing across current or strip with pauses; fish low light and cloudy days.'},
+ 'Crayfish':{h:'Hop along the bottom with short strips; best in rocky runs and ponds.'},
  'Flies':{h:'Start with what the fish are eating and where: surface, film, mid-water, bottom, or chasing baitfish.'},
  'Dry flies':{p:'Stiff tail fibers • slim body • wing (post, fan, upright, hair tent or foam) • stiff rooster hackle • thin-wire hook'},
  'Emergers & wets':{p:'Short wing or post • trailing shuck • soft (not stiff) collar • dull body that hangs in the film'},
@@ -589,11 +669,12 @@ reset();
 const TW=134,TH=54,TGX=142,TGY=86,LW=150,LHt=102,GAP=8;
 const wrap2=s=>{if(s.length<=17)return[s];const w=s.split(' ');let best=null;for(let i=1;i<w.length;i++){const a=w.slice(0,i).join(' '),b=w.slice(i).join(' '),m=Math.max(a.length,b.length);if(!best||m<best[0])best=[m,[a,b]]}return best?best[1]:[s]};
 const Yn=n=>n.d*TGY+6;
-const CH=2*TGY+6+TH+26+LHt+12+14;                       // tallest layout: root, family, group, picture tray
+const MAXROWS=Math.max(...TREE.k.flatMap(f=>f.k.map(g=>Math.ceil(g.k.length/6))));
+const CH=2*TGY+6+TH+26+(MAXROWS*(LHt+GAP)-GAP)+12+14;                       // tallest layout: root, family, group, picture tray
 const HALF=Math.max((TREE.k.length-1)/2*(TW+12)+TW/2,
   ...TREE.k.map(f=>(f.k.length-1)/2*TGX+TW/2),
-  ...TREE.k.flatMap(f=>f.k.map(g=>(g.k.length*(LW+GAP)-GAP)/2+10)))+6;   // widest layout
-const flyAt=(a,x,y,w)=>fly(a,{w,label:''}).replace('<svg ',`<svg x="${x}" y="${y}" height="${w*112/312}" `);
+  ...TREE.k.flatMap(f=>f.k.map(g=>{const r=Math.ceil(g.k.length/6),p=Math.ceil(g.k.length/r);return (p*(LW+GAP)-GAP)/2+10})))+6;   // widest layout
+const flyAt=(a,x,y,w)=>fly(a,{w,label:''}).replace('<svg ',`<svg x="${x}" y="${y}" height="${w*118/312}" `);
 const mq=matchMedia('(max-width:760px)');
 const isMobile=()=>mq.matches;
 function curNode(){const oF=TREE.k.find(f=>open.has(f.id)),oG=oF?oF.k.find(g=>open.has(g.id)):null;return oG||oF||TREE}
@@ -615,18 +696,18 @@ function draw(){
     if(oF)oF.k.forEach((g,j)=>{g.cx=(j-(oF.k.length-1)/2)*TGX;vis.push(g)});
   }
   const oG=oF?oF.k.find(g=>open.has(g.id)):null;
-  const tw=oG?oG.k.length*(LW+GAP)-GAP:0,trayY=2*TGY+6+TH+26;
+  const nL=oG?oG.k.length:0,rows=Math.max(1,Math.ceil(nL/6)),per=Math.ceil(nL/rows)||1,tw=oG?per*(LW+GAP)-GAP:0,th=rows*(LHt+GAP)-GAP,trayY=2*TGY+6+TH+26;
   const half=HALF;
   let s='',tr='',lf='',bottom=oF?3*TGY:2*TGY;
   if(oG){
     const x0=-tw/2,gx=oG.cx,gy=Yn(oG)+TH,tx=x0+tw/2,m=(gy+trayY-6)/2;
-    tr+=`<rect x="${x0-6}" y="${trayY-6}" width="${tw+12}" height="${LHt+12}" rx="10" fill="${oG.c}" opacity=".09" stroke="${oG.c}" stroke-dasharray="4 4"/><path class="link" d="M${gx},${gy}C${gx},${m} ${tx},${m} ${tx},${trayY-6}"/>`;
+    tr+=`<rect x="${x0-6}" y="${trayY-6}" width="${tw+12}" height="${th+12}" rx="10" fill="${oG.c}" opacity=".09" stroke="${oG.c}" stroke-dasharray="4 4"/><path class="link" d="M${gx},${gy}C${gx},${m} ${tx},${m} ${tx},${trayY-6}"/>`;
     oG.k.forEach((c,i)=>{
-      const x=x0+i*(LW+GAP),y=trayY,lines=wrap2(c.n);
+      const r=Math.floor(i/per),cnt=Math.min(per,nL-r*per),x=-(cnt*(LW+GAP)-GAP)/2+(i%per)*(LW+GAP),y=trayY+r*(LHt+GAP),lines=wrap2(c.n);
       lf+=`<g class="node leaf${c===sel?' sel':''}" data-id="${c.id}"><rect x="${x}" y="${y}" width="${LW}" height="${LHt}" rx="9" fill="#fff" stroke="${c.c}"/>${flyAt(ART[c.n],x+6,y+6,LW-12)}`;
       lines.forEach((t,j)=>{lf+=`<text x="${x+LW/2}" y="${y+LHt-8-(lines.length-1-j)*13}" text-anchor="middle" fill="#1f2a30" font-weight="600">${t}</text>`});
       lf+='</g>'});
-    bottom=trayY+LHt+12;
+    bottom=trayY+th+12;
   }
   vis.forEach(n=>{if(n.k.length&&open.has(n.id)&&n.d<2)n.k.forEach(c=>{const x1=n.cx,y1=Yn(n)+TH,x2=c.cx,y2=Yn(c),m=(y1+y2)/2;s+=`<path class="link" d="M${x1},${y1}C${x1},${m} ${x2},${m} ${x2},${y2}"/>`})});
   vis.forEach(n=>{
@@ -654,6 +735,14 @@ const META={
  'Copper John':['4-10','r','bot'],'Prince Nymph':['4-10','r','mid'],'Flashback Pheasant Tail':['3-11','r','mid'],
  'Woolly Bugger':[ALLY,'rs','any'],'Zonker':['9-11,3-4','r','any'],'Clouser Minnow':['5-10','rs','any'],'Slumpbuster':['3-11','r','any'],'Muddler Minnow':['5-10','r','any'],'Mohair Leech':[ALLY,'s','any'],'Balanced Leech':[ALLY,'s','any'],'Sex Dungeon / Dungeon':['9-11,3-4','r','any']
 };
+Object.assign(META,{
+ 'BWO Thorax Dun':['3-5,9-11','r','surf'],'PMD Dun':['6-9','r','surf'],'Western March Brown':['3-4','r','surf'],'Callibaetis (pond mayfly)':['5-9','s','surf'],
+ 'Goddard Caddis':['6-9','r','surf'],'Sofa Pillow':['5-7','r','surf'],'Palomino Midge':[ALLY,'rs','film'],'Madam X':['7-10','r','surf'],'Foam Inchworm':['7-9','r','surf'],
+ 'Renegade':['6-9','r','surf'],'Coachman Trude':['6-9','r','surf'],'Barr Emerger':['3-5,9-11','r','film'],'Mother Shucker':[ALLY,'r','film'],
+ 'Pheasant Tail Soft Hackle':['3-11','r','mid'],'Royal Coachman Wet':['5-9','r','mid'],'Frenchie':[ALLY,'r','bot'],'Rainbow Warrior':[ALLY,'r','bot'],
+ 'Peeking Caddis':[ALLY,'r','bot'],'Brassie':[ALLY,'rs','bot'],'Black Beauty':[ALLY,'r','bot'],'Squirmy Worm':['3-7','r','bot'],'Zug Bug':['4-10','r','mid'],
+ 'Matuka':['3-11','r','any'],'Mickey Finn':['5-10','r','any'],'Grey Ghost':['4-6,9-10','rs','any'],'Sculpzilla':['3-11','r','any'],'Rabbit Strip Leech':[ALLY,'rs','any'],'Circus Peanut':['9-11,3-4','r','any'],'Crayfish pattern':['5-10','r','bot']
+});
 const DEPTHN={surf:'Surface',film:'Film',mid:'Mid-water',bot:'Bottom',any:'Any depth'};
 function metaOf(n){
   if(!n.k.length){const m=META[n.n];return m?{m:parseM(m[0]),w:new Set(m[1]),d:new Set([m[2]])}:{m:new Set(),w:new Set(),d:new Set()}}
