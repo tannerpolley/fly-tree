@@ -1180,65 +1180,84 @@ function rigParts(c){
   });
   return p;
 }
+const sizeNum=z=>{const m=(z||'').match(/\d+/g);return m?m.map(Number).reduce((x,y)=>x+y,0)/m.length:12};
+const flyW=sz=>Math.max(84,Math.min(300,332-sz*13));        // hook size #20 draws small, #2 draws big
 function rigSVG(n,r,K){
-  const two=K.k==='indicator'&&K.f.length>1,W=780,H=two?314:K.k==='drydrop'?294:268,wl=118,leaf=!n.k.length,esc=t=>String(t).replace(/&/g,'&amp;');
-  const P=rigParts(r.c),thisArt=leaf?n.n:firstLeaf(n).n,thisName=leaf?n.n:'this fly';
+  const two=K.k==='indicator'&&K.f.length>1,W=780,H=two?344:K.k==='drydrop'?320:(K.k==='dry'||K.k==='film')?244:K.k==='streamer'?272:286,wl=118,leaf=!n.k.length,esc=t=>String(t).replace(/&/g,'&amp;');
+  const P=rigParts(r.c),thisLeaf=leaf?n:firstLeaf(n),thisArt=thisLeaf.n,thisName=leaf?n.n:'this fly';
+  const nodeOf=i=>K.f[i]==='this'?thisLeaf:ALLN.find(x=>x.n===GENERIC[K.f[i]]);
+  const szTxt=i=>{const z=nodeOf(i)&&nodeOf(i).z;return z?' · '+z:''};
+  const fwOf=i=>flyW(sizeNum(nodeOf(i)&&nodeOf(i).z));
   const put=(name,ex,ey,w,al)=>{const s=w/312;return fly(A(name),{w,bare:true}).replace('<svg ',`<svg x="${ex-18*s}" y="${ey-60*s}" height="${w*118/312}" overflow="visible" opacity="${al}" `)};
   const bend=(name,ex,ey,w)=>{const a=ART[name],hx=({std:228,long:266,xlong:290})[a.hook||'std'],s=w/312;return[ex+(hx+10-62)*s,ey+(Y+46-100)*s]};
   const lab=(x,y,t,anc='start',col='#1f2a30',wt=500)=>`<text x="${x}" y="${y}" font-size="13" font-weight="${wt}" fill="${col}" stroke="#fff" stroke-width="3.4" paint-order="stroke" text-anchor="${anc}" font-family="system-ui,sans-serif">${esc(t)}</text>`;
-  const path=(d,col,w,extra='')=>`<path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" ${extra}/>`;
-  const flyNames=K.f.map(f=>f==='this'?thisArt:GENERIC[f]);
+  const flyNames=K.f.map((f,i)=>f==='this'?thisArt:GENERIC[f]);
   const isThis=i=>K.f[i]==='this';
-  const flyLabel=(i,x,y,an='start')=>isThis(i)?lab(x,y,'★ '+thisName,an,'#c4622d',700):lab(x,y,K.f[i]+' (example)',an,'#6b7a85',500);
-  const under=(ey,w)=>ey+50*(w/312)+19;                      // y just below a fly of width w whose eye is at ey
-  let s=`<defs><linearGradient id="rgS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf7"/><stop offset="1" stop-color="#f1eee2"/></linearGradient><linearGradient id="rgW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9ebf6"/><stop offset="1" stop-color="#a9cbe0"/></linearGradient></defs>`;
+  const flyLabel=(i,x,y,an='start')=>isThis(i)?lab(x,y,'★ '+thisName+szTxt(i),an,'#c4622d',700):lab(x,y,K.f[i]+' (example)'+szTxt(i),an,'#6b7a85',500);
+  const under=(ey,w)=>ey+50*(w/312)+19;
+  // colour code: fly line (gold) → leader (teal) → tippet (rose); thinner each step
+  const LINE='#f2c230',SINK='#3b4650',LEAD='#2f8f86',TIP='#d4527a',SIGHT='#9bd12f';
+  const stroke=(d,col,w,op=1)=>`<path d="${d}" fill="none" stroke="#000" stroke-opacity=".22" stroke-width="${w+1.6}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" opacity="${op}"/><path d="${d}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="${Math.max(.6,w/4)}" stroke-linecap="round" transform="translate(0,-${w/4})"/>`;
+  const taper=(x1,y1,x2,y2,w1,w2,col)=>{const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),nx=-dy/L,ny=dx/L;return`<polygon points="${x1+nx*w1/2},${y1+ny*w1/2} ${x2+nx*w2/2},${y2+ny*w2/2} ${x2-nx*w2/2},${y2-ny*w2/2} ${x1-nx*w1/2},${y1-ny*w1/2}" fill="${col}" stroke="#000" stroke-opacity=".25" stroke-width=".8" stroke-linejoin="round"/>`};
+  const knot=(x,y,col)=>`<circle cx="${x}" cy="${y}" r="3" fill="${col}" stroke="#fff" stroke-width="1.2"/>`;
+  let s=`<defs><linearGradient id="rgS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf7"/><stop offset="1" stop-color="#f1eee2"/></linearGradient><linearGradient id="rgW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9ebf6"/><stop offset="1" stop-color="#a9cbe0"/></linearGradient><linearGradient id="rgR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a5159"/><stop offset="1" stop-color="#1f2326"/></linearGradient></defs>`;
   s+=`<rect width="${W}" height="${H}" fill="url(#rgS)"/><rect y="${wl}" width="${W}" height="${H-wl}" fill="url(#rgW)"/><path d="M0 ${wl}H${W}" stroke="#4d93bf" stroke-width="2"/>`;
-  for(let i=0;i<14;i++)s+=`<path d="M${30+i*55+rn(i)*20} ${wl+14+rn(i+4)*(H-wl-30)}h${14+rn(i+2)*26}" stroke="#fff" stroke-width="1" opacity=".4"/>`;
-  s+=path('M10 100L42 82','#c9a06a',10)+path('M40 83L152 26','#2b2b2b',4.2)+path('M40 83L152 26','#555',1.2,'transform="translate(0,-1)"');
-  [[84,60.5],[117,43.5],[141,31.5]].forEach(([x,y])=>s+=`<circle cx="${x}" cy="${y}" r="3.2" fill="none" stroke="#444" stroke-width="1.3"/>`);
-  s+=lab(14,20,'Rod','start','#5d6b73',600)+(P.rod?lab(14,36,P.rod.replace(/\s*rod/i,''),'start','#1f2a30',600):'');
-  const LINE='#e0a22e',LEAD='#7d8e99',TIP='#9db3c0';
+  for(let i=0;i<14;i++)s+=`<path d="M${30+i*55+rn(i)*20} ${wl+14+rn(i+4)*(H-wl-44)}h${14+rn(i+2)*26}" stroke="#fff" stroke-width="1" opacity=".4"/>`;
+  // rod (9 ft ≈ 200 px here: leader and rod are drawn at about the same scale): tapered blank, cork grip, reel, guides
+  const B=[8,106],T=[198,22],dx=T[0]-B[0],dy=T[1]-B[1],RL=Math.hypot(dx,dy),nx=-dy/RL,ny=dx/RL;
+  s+=`<polygon points="${B[0]+nx*3.6},${B[1]+ny*3.6} ${T[0]+nx*.8},${T[1]+ny*.8} ${T[0]-nx*.8},${T[1]-ny*.8} ${B[0]-nx*3.6},${B[1]-ny*3.6}" fill="url(#rgR)"/>`;
+  const at=t=>[B[0]+dx*t,B[1]+dy*t];
+  s+=`<path d="M${B[0]} ${B[1]}L${at(.2)[0]} ${at(.2)[1]}" stroke="#d2a86f" stroke-width="12" stroke-linecap="round"/><path d="M${B[0]} ${B[1]}L${at(.2)[0]} ${at(.2)[1]}" stroke="#8a6a3a" stroke-width="12" stroke-linecap="round" stroke-dasharray="1.5 4" opacity=".35"/><path d="M${at(.2)[0]-3} ${at(.2)[1]+5}L${at(.24)[0]-3} ${at(.24)[1]+5}" stroke="#b7791f" stroke-width="2.4"/>`;
+  s+=`<circle cx="30" cy="116" r="13" fill="#5b6670" stroke="#2f3a43" stroke-width="2"/><circle cx="30" cy="116" r="8" fill="#9aa5ae" stroke="#2f3a43"/><circle cx="30" cy="116" r="2.4" fill="#2f3a43"/><path d="M30 103V96" stroke="#2f3a43" stroke-width="3"/>`;
+  [.34,.5,.64,.78,.9,.99].forEach((t,i)=>{const p=at(t);s+=`<circle cx="${p[0]-nx*(4-i*.4)}" cy="${p[1]-ny*(4-i*.4)}" r="${3.2-i*.28}" fill="none" stroke="#9aa1a8" stroke-width="1.3"/>`});
+  s+=lab(14,18,'Rod','start','#5d6b73',600)+(P.rod?lab(14,34,P.rod.replace(/\s*rod/i,''),'start','#1f2a30',600):'');
+  const Lx=336,lineSeg=(x2)=>stroke(`M${T[0]} ${T[1]}C240 26 288 66 ${Lx-26} ${wl-3}L${x2} ${wl-3}`,LINE,6);
+  const lineLab=K.k==='tight'?'':K.sink?lab(262,66,P.line||'Fly line','end'):lab(262,64,P.line||'Fly line','end');
   const fl=(name,ex,ey,w,al=1)=>put(name,ex,ey,w,al);
-  const lineIn=(x2)=>path(`M152 26C200 34 250 84 300 ${wl-3}L${x2} ${wl-3}`,LINE,5);
+  const lead=(x1,y1,x2,y2)=>taper(x1,y1,x2,y2,3.8,1.9,LEAD);
   if(K.k==='dry'||K.k==='film'){
-    const w=280,sc=w/312,ex=470,ey=K.k==='film'?wl+1:wl-16*sc;
-    s+=lineIn(350)+path(`M350 ${wl-3}L${ex-135} ${wl-8}`,LEAD,2.6)+path(`M${ex-135} ${wl-8}Q${ex-60} ${wl-4} ${ex} ${ey}`,TIP,1.5);
-    s+=fl(flyNames[0],ex,ey,w)+lab(214,66,P.line||'Fly line')+lab(352,wl-17,P.leader||'Leader')+lab(ex-140,wl+22,P.tip[0]||'tippet','start','#37566b');
-    s+=flyLabel(0,ex+8,under(ey,w)+(K.k==='film'?0:2))+lab(ex+8,under(ey,w)+17,K.k==='film'?'rides in the surface film':'floats on the surface','start','#5d6b73',400);
+    const w=fwOf(0),sc=w/312,ex=Lx+215,ey=K.k==='film'?wl+1:wl-16*sc,kx=ex-52,ky=wl-7;
+    s+=lineSeg(Lx)+lead(Lx,wl-3,kx,ky)+stroke(`M${kx} ${ky}Q${kx+28} ${ky+3} ${ex} ${ey}`,TIP,1.5)+knot(Lx,wl-3,'#fff')+knot(kx,ky,TIP);
+    s+=fl(flyNames[0],ex,ey,w)+lineLab+lab(Lx+14,wl-17,P.leader||'Leader','start','#1d6e68')+lab(kx-30,wl+22,P.tip[0]||'tippet','start','#a43a5e');
+    s+=flyLabel(0,ex+6,Math.max(under(ey,w)+2,wl+54))+lab(ex+6,Math.max(under(ey,w)+2,wl+54)+17,K.k==='film'?'rides in the surface film':'floats on the surface','start','#5d6b73',400);
   }else if(K.k==='drydrop'){
-    const w=230,sc=w/312,ex=400,ey=wl-16*sc,dw=200,dx=520,dy=wl+104,b=bend(flyNames[0],ex,ey,w);
-    s+=lineIn(330)+path(`M330 ${wl-3}L${ex-120} ${wl-8}`,LEAD,2.6)+path(`M${ex-120} ${wl-8}Q${ex-60} ${wl-4} ${ex} ${ey}`,TIP,1.5);
-    s+=path(`M${b[0]} ${b[1]}C${b[0]} ${b[1]+40} ${dx-34} ${dy-36} ${dx} ${dy}`,TIP,1.4);
+    const w=fwOf(0),sc=w/312,ex=Lx+150,ey=wl-16*sc,dw=fwOf(1),dx=ex+60,dy=wl+108,b=bend(flyNames[0],ex,ey,w),kx=ex-48,ky=wl-7;
+    s+=lineSeg(Lx)+lead(Lx,wl-3,kx,ky)+stroke(`M${kx} ${ky}Q${kx+24} ${ky+3} ${ex} ${ey}`,TIP,1.5)+knot(Lx,wl-3,'#fff')+knot(kx,ky,TIP);
+    s+=stroke(`M${b[0]} ${b[1]}C${b[0]} ${b[1]+44} ${dx-30} ${dy-40} ${dx} ${dy}`,TIP,1.4)+knot(b[0],b[1],TIP);
     s+=fl(flyNames[0],ex,ey,w,isThis(0)?1:.6)+fl(flyNames[1],dx,dy,dw,isThis(1)?1:.6);
-    s+=lab(214,66,P.line||'Fly line')+lab(332,wl-17,P.leader||'Leader')+lab(b[0]-60,b[1]+46,P.tip[P.tip.length-1]||'dropper tippet','start','#37566b')+flyLabel(0,ex+4,wl+36)+flyLabel(1,dx+4,under(dy,dw));
+    s+=lineLab+lab(Lx+8,wl-17,P.leader||'Leader','start','#1d6e68')+lab(b[0]+8,b[1]+40,P.tip[P.tip.length-1]||'dropper tippet','start','#a43a5e')+flyLabel(0,ex-4,wl+34)+flyLabel(1,dx+4,under(dy,dw));
   }else if(K.k==='indicator'){
-    const ix=372,sx=412,sy=wl+34,fw=two?200:250,ex=two?400:430,ey=two?wl+58:wl+64;
-    s+=lineIn(330)+path(`M330 ${wl-3}L${ix-9} ${wl-6}`,LEAD,2.6)+path(`M${ix+9} ${wl-2}Q${ix+28} ${wl+12} ${sx} ${sy-2}`,LEAD,2.2);
+    const ix=368,sx=432,sy=wl+36,fw=fwOf(0),ex=two?446:470,ey=two?wl+58:wl+68;
+    s+=lineSeg(Lx)+lead(Lx,wl-3,ix-9,wl-6)+stroke(`M${ix+9} ${wl-2}Q${ix+34} ${wl+14} ${sx} ${sy-2}`,LEAD,2.4)+knot(Lx,wl-3,'#fff');
     s+=`<circle cx="${ix}" cy="${wl-7}" r="10" fill="#e8742a" stroke="#a84c12"/><circle cx="${ix-3}" cy="${wl-10}" r="3.2" fill="#fff" opacity=".6"/>`;
     s+=`<circle cx="${sx}" cy="${sy}" r="4.6" fill="#6a6f74" stroke="#3d4247"/><circle cx="${sx+7}" cy="${sy+4}" r="4.2" fill="#7c8186" stroke="#3d4247"/>`;
-    s+=path(`M${sx+7} ${sy+7}Q${sx+12} ${ey-22} ${ex} ${ey}`,TIP,1.5);
+    s+=stroke(`M${sx+7} ${sy+7}Q${sx+12} ${ey-20} ${ex} ${ey}`,TIP,1.5)+knot(sx+9,sy+9,TIP);
     s+=fl(flyNames[0],ex,ey,fw,isThis(0)?1:.6);
-    if(two){const b=bend(flyNames[0],ex,ey,fw),dx=ex+112,dy=wl+132,dw=170;s+=path(`M${b[0]} ${b[1]}C${b[0]} ${b[1]+30} ${dx-26} ${dy-32} ${dx} ${dy}`,TIP,1.4)+fl(flyNames[1],dx,dy,dw,isThis(1)?1:.6)+flyLabel(1,dx+4,under(dy,dw))+lab(b[0]-70,b[1]+44,P.tip[P.tip.length-1]||'dropper tippet','start','#37566b');}
-    s+=lab(214,66,P.line||'Fly line')+lab(ix,wl-26,'Indicator','middle')+lab(sx+16,sy-6,'Split shot')+lab(150,wl+30,P.leader||'Leader')+(two?flyLabel(0,ex-12,ey+30,'end'):flyLabel(0,ex+4,under(ey,fw)));
-    if(!two&&P.tip[0])s+=lab(ex-100,sy+46,P.tip[0],'start','#37566b');
+    if(two){const w2=fwOf(1),b=bend(flyNames[0],ex,ey,fw),dx2=ex+118,dy2=wl+138;s+=stroke(`M${b[0]} ${b[1]}C${b[0]} ${b[1]+30} ${dx2-26} ${dy2-34} ${dx2} ${dy2}`,TIP,1.4)+knot(b[0],b[1],TIP)+fl(flyNames[1],dx2,dy2,w2,isThis(1)?1:.6)+flyLabel(1,dx2+4,under(dy2,w2))+lab(b[0]-76,b[1]+46,P.tip[P.tip.length-1]||'dropper tippet','start','#a43a5e');}
+    s+=lineLab+lab(ix,wl-26,'Indicator','middle')+lab(sx+16,sy-6,'Split shot')+lab(150,wl+30,P.leader||'Leader','start','#1d6e68')+(two?flyLabel(0,ex-12,ey+34,'end'):flyLabel(0,ex+4,under(ey,fw)));
+    if(!two&&P.tip[0])s+=lab(ex-110,sy+50,P.tip[0],'start','#a43a5e');
   }else if(K.k==='tight'){
-    const fw=250,ex=470,ey=wl+64;
-    s+=path('M152 26C230 40 290 52 336 62','#e0a22e',5)+path('M336 62L398 88','#ff7a2a',4.2)+path(`M398 88Q440 ${wl+14} ${ex} ${ey}`,TIP,1.5);
-    s+=fl(flyNames[0],ex,ey,fw)+lab(206,36,'Fly line held off the water')+lab(350,52,'Sighter (coloured leader section)')+lab(414,wl+16,P.tip[0]||'tippet','start','#37566b')+flyLabel(0,ex+4,under(ey,fw));
-    s+=lab(14,H-14,'No indicator: you feel the take','start','#5d6b73',400);
+    const fw=fwOf(0),ex=480,ey=wl+66;
+    s+=stroke(`M${T[0]} ${T[1]}C250 30 310 52 352 64`,LINE,6)+stroke('M352 64L410 90',SIGHT,4.6)+stroke(`M410 90Q452 ${wl+16} ${ex} ${ey}`,TIP,1.5)+knot(410,90,'#fff')+knot(412,91,TIP);
+    s+=fl(flyNames[0],ex,ey,fw)+lab(300,18,'Fly line held off the water')+lab(360,56,'Sighter (coloured leader section)','start','#5f7d12')+lab(426,wl+16,P.tip[0]||'tippet','start','#a43a5e')+flyLabel(0,ex+4,under(ey,fw));
+    s+=lab(14,H-38,'No indicator: you feel the take','start','#5d6b73',400);
   }else if(K.k==='streamer'){
-    const fw=300,ex=400,ey=wl+54;
-    if(K.sink)s+=path(`M152 26C190 34 250 70 300 ${wl-3}`,LINE,5)+path(`M300 ${wl-3}L336 ${wl+14}`,LINE,5)+path(`M336 ${wl+14}L372 ${wl+36}`,'#555',6.5)+path(`M372 ${wl+36}L${ex} ${ey}`,LEAD,2.4);
-    else s+=lineIn(336)+path(`M336 ${wl-3}Q380 ${wl+6} ${ex} ${ey}`,LEAD,2.4);
-    s+=fl(flyNames[0],ex,ey,fw)+lab(214,66,P.line||'Fly line')+lab(K.sink?392:350,K.sink?wl+24:wl-14,P.leader||'Leader')+flyLabel(0,ex+4,under(ey,fw));
-    s+=lab(14,H-14,'Strip or swing; vary speed and pauses','start','#5d6b73',400);
+    const fw=fwOf(0),ex=430,ey=wl+56;
+    if(K.sink)s+=stroke(`M${T[0]} ${T[1]}C240 26 286 56 306 ${wl-3}`,LINE,6)+stroke(`M306 ${wl-3}L342 ${wl+14}`,LINE,6)+stroke(`M342 ${wl+14}L384 ${wl+38}`,SINK,7)+stroke(`M384 ${wl+38}L${ex} ${ey}`,LEAD,2.6)+knot(384,wl+38,'#fff');
+    else s+=lineSeg(Lx)+stroke(`M${Lx} ${wl-3}Q386 ${wl+6} ${ex} ${ey}`,LEAD,2.6)+knot(Lx,wl-3,'#fff');
+    s+=fl(flyNames[0],ex,ey,fw)+lineLab+lab(K.sink?398:360,K.sink?wl+22:wl-14,P.leader||'Leader','start','#1d6e68')+flyLabel(0,ex+4,under(ey,fw));
+    s+=lab(14,H-38,'Strip or swing; vary speed and pauses','start','#5d6b73',400);
   }else if(K.k==='pond'){
-    const ix=402,ex=424,ey=wl+72,fw=250;
-    s+=lineIn(330)+path(`M330 ${wl-3}L${ix-9} ${wl-6}`,LEAD,2.6)+path(`M${ix} ${wl+3}L${ex} ${ey}`,LEAD,2);
+    const ix=408,ex=428,ey=wl+78,fw=fwOf(0);
+    s+=lineSeg(Lx)+lead(Lx,wl-3,ix-9,wl-6)+stroke(`M${ix} ${wl+3}L${ex} ${ey}`,LEAD,2.2)+knot(Lx,wl-3,'#fff');
     s+=`<circle cx="${ix}" cy="${wl-7}" r="10" fill="#e8742a" stroke="#a84c12"/><circle cx="${ix-3}" cy="${wl-10}" r="3.2" fill="#fff" opacity=".6"/>`;
-    s+=fl(flyNames[0],ex,ey,fw)+lab(214,66,P.line||'Fly line')+lab(ix,wl-26,'Indicator','middle')+lab(ix-210,wl+34,P.leader||'Leader')+flyLabel(0,ex+4,under(ey,fw));
-    s+=lab(14,H-14,'Fly hangs level under the indicator','start','#5d6b73',400);
+    s+=fl(flyNames[0],ex,ey,fw)+lineLab+lab(ix,wl-26,'Indicator','middle')+lab(ix-216,wl+34,P.leader||'Leader','start','#1d6e68')+flyLabel(0,ex+4,under(ey,fw));
+    s+=lab(14,H-38,'Fly hangs level under the indicator','start','#5d6b73',400);
   }
+  // colour key + scale note
+  const key=[['Fly line',LINE],['Leader',LEAD],['Tippet',TIP]].concat(K.k==='tight'?[['Sighter',SIGHT]]:K.k==='indicator'||K.k==='pond'?[['Indicator','#e8742a'],['Split shot','#6a6f74']]:K.sink?[['Sink-tip',SINK]]:[]);
+  let kx=14;key.forEach(([t,c])=>{s+=`<rect x="${kx}" y="${H-22}" width="22" height="7" rx="3" fill="${c}" stroke="#000" stroke-opacity=".3"/><text x="${kx+28}" y="${H-15}" font-size="11.5" fill="#37474f" font-family="system-ui,sans-serif">${t}</text>`;kx+=28+t.length*6.6+16});
+  s+=`<text x="${W-10}" y="${H-15}" font-size="11" fill="#5d6b73" text-anchor="end" font-family="system-ui,sans-serif">Rod, line, leader to scale · flies enlarged, sized by hook size</text>`;
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Rig diagram">${s}</svg>`;
 }
 function rigHTML(n){
