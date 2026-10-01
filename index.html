@@ -26,7 +26,7 @@ section{display:none;padding:16px 26px 50px}section.on{display:block}
 .fact{display:inline-flex;gap:6px;align-items:center;font-size:13px;background:#f1efe6;border-radius:999px;padding:3px 11px 3px 8px}
 .cal{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;max-width:560px;margin:8px 0 4px}
 .cal div{text-align:center;font-size:11.5px;border-radius:4px;padding:2px 0;background:#ece9dc;color:#8a8f94}.cal .on{color:#fff;font-weight:700}.cal .se{background:none;font-size:14px;padding:0}
-.row{margin:7px 0;font-size:14px;display:flex;gap:8px}.row .ic{flex:0 0 22px;text-align:center}.row ul{margin:0;padding-left:16px}
+.row{margin:5px 0;font-size:14px;display:flex;gap:8px;align-items:center}.row .ic{flex:0 0 22px;text-align:center}.row ul{margin:0;padding-left:16px}
 .rchip{display:inline-block;background:#f4efe3;border:1px solid #e0d8c2;border-radius:6px;padding:1px 8px;margin:2px 3px 2px 0;font-size:13px}
 .pcols{columns:2 300px;column-gap:26px}.pcols .dl{break-inside:avoid;margin:0 0 10px}
 .mont{grid-template-columns:repeat(2,1fr)!important}
@@ -44,6 +44,8 @@ table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid var(--li
 .g2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
 
 .glh{margin:22px 0 8px}.glgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}.glcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px}.glcard b{display:block;margin-bottom:2px}
+.chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:5px 0 2px}.chain span{background:#eef3f6;border:1px solid #c9d7df;border-radius:8px;padding:3px 9px;font-size:13px}.chain .fl{background:#fff3e8;border-color:#e6b98d;font-weight:700}.chain i{color:#c4622d;font-style:normal}
+.facts b{margin-right:2px}.row>div,.row>span:last-child{flex:1;min-width:0}.row .facts{margin:0;align-items:center}.row .cal{width:100%}
 .swb{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #9aa5ac;cursor:pointer;margin-right:7px;padding:0;vertical-align:middle}.swb.on{box-shadow:0 0 0 3px #1f2a30}.sw{display:flex;align-items:center;flex-wrap:wrap;gap:2px}
 .mnav{display:flex;gap:10px;align-items:center;margin:4px 0 10px;flex-wrap:wrap}
 .mback{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;cursor:pointer}
@@ -1051,6 +1053,52 @@ function metaOf(n){
 const icoRiver=c=>`<svg width="22" height="18" viewBox="0 0 24 20"><path d="M1 5q3-3 6 0t6 0 6 0M1 11q3-3 6 0t6 0 6 0M1 17q3-3 6 0t6 0 6 0" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round"/></svg>`;
 const icoPond=c=>`<svg width="22" height="18" viewBox="0 0 24 20"><ellipse cx="12" cy="10" rx="10" ry="6" fill="none" stroke="${c}" stroke-width="2"/><ellipse cx="12" cy="10" rx="5" ry="3" fill="none" stroke="${c}" stroke-width="2"/></svg>`;
 const icoDepth=k=>{const y={surf:3,film:6,mid:11,bot:17,any:11}[k];return `<svg width="16" height="22" viewBox="0 0 16 22"><path d="M0 5q2-2 4 0t4 0 4 0 4 0" fill="none" stroke="#4d93bf" stroke-width="1.6"/><rect x="0" y="5" width="16" height="17" fill="#d6e9f5" opacity=".6"/><rect x="0" y="20" width="16" height="2" fill="#a89573"/>${k==='any'?'<path d="M8 3v17M5 7l3-4 3 4M5 16l3 4 3-4" stroke="#c4622d" stroke-width="1.6" fill="none"/>':`<circle cx="8" cy="${y}" r="3" fill="#c4622d"/>`}</svg>`};
+/* ---------- how each fly is normally rigged. ★ marks where this fly goes. ---------- */
+const RIGG={
+ 'Dry flies':{t:'Dry fly on a long, fine leader',c:['Floating line','9–12′ leader to 5X–6X','★'],n:'Dead-drift upstream; add a small nymph dropper when fish aren’t rising.'},
+ 'Mayfly adults':{t:'Single dry fly',c:['Floating line','9–12′ leader','18–24″ of 5X–6X tippet','★']},
+ 'Caddis adults':{t:'Single dry, or dry-dropper',c:['Floating line','9′ leader to 4X–5X','★','optional: 24″ 5X → caddis pupa']},
+ 'Stonefly adults':{t:'Top fly of a dry-dropper',c:['Floating line','9′ leader to 3X–4X','★','24–30″ of 4X–5X','nymph (dropper)']},
+ 'Midge adults':{t:'Single dry on very fine tippet',c:['Floating line','12′ leader','6X–7X tippet','★']},
+ 'Terrestrials':{t:'Single dry, or hopper-dropper',c:['Floating line','9′ leader to 3X–4X','★','optional: 24″ 5X → nymph']},
+ 'Attractor dries':{t:'Top fly of a dry-dropper',c:['Floating line','9′ leader to 3X–4X','★','24–30″ of 4X–5X','nymph (dropper)']},
+ 'Emergers':{t:'In the film: alone or 14–18″ behind a dry',c:['Floating line','9–12′ leader to 6X','★ (greased tip)']},
+ 'Cripples':{t:'In the film, alone on fine tippet',c:['Floating line','12′ leader to 6X','★']},
+ 'Soft hackles & wets':{t:'Dropper under a dry, or swung',c:['Floating line','9′ leader to 4X–5X','dry fly or indicator','14–18″ of 5X','★ (dropper)']},
+ 'Mayfly nymphs':{t:'Indicator or tight-line nymph rig',c:['Floating line','9′ 4X leader','indicator','split shot','★ (point or dropper) on 5X–6X']},
+ 'Caddis larvae & pupae':{t:'Indicator nymph rig',c:['Floating line','9′ 4X leader','indicator','split shot','★ (point or dropper)']},
+ 'Stonefly nymphs':{t:'Heavy top fly of a two-nymph rig',c:['Floating line','9′ 3X–4X leader','indicator','★ (top fly)','18″ of 5X','small nymph (dropper)']},
+ 'Midge larvae & pupae':{t:'Small trailing fly',c:['Floating line','9′ 4X leader','indicator','larger nymph (top)','14–18″ of 5X–6X','★ (trailing)']},
+ 'Crustaceans':{t:'Indicator or tight-line nymph rig',c:['Floating line','9′ 4X leader','indicator','split shot','★']},
+ 'Worms & eggs':{t:'Top fly above a small nymph',c:['Floating line','9′ 4X leader','indicator','★ (top)','14–18″ of 5X','nymph (dropper)']},
+ 'Attractor nymphs':{t:'Lead fly of a two-nymph rig',c:['Floating line','9′ 4X leader','indicator','★ (lead, heavier)','18″ of 5X','small nymph']},
+ 'Streamers':{t:'Streamer rig',c:['9′ 5–6wt rod','Floating line (sink-tip if deep)','3–5′ leader to 0X–2X','★'],n:'Strip with pauses or swing across current.'},
+ 'Generalists':{t:'Streamer rig',c:['9′ 5–6wt rod','Floating line (sink-tip if deep)','4′ leader to 1X–2X','★']},
+ 'Baitfish':{t:'Streamer rig',c:['9′ 5–6wt rod','Floating or sink-tip line','4–5′ leader to 1X–2X','★']},
+ 'Sculpin':{t:'Sink-tip streamer rig',c:['9′ 6wt rod','Sink-tip line','3–4′ leader to 0X–2X','★']},
+ 'Leeches':{t:'Strip rig, or under an indicator in ponds',c:['9′ 5wt rod','Floating line','9–10′ leader to 3X–4X','★']},
+ 'Articulated & big':{t:'Heavy sink-tip streamer rig',c:['9′ 6–7wt rod','Sink-tip line','3′ leader to 0X–1X','★']},
+ 'Classic streamers':{t:'Swing or strip rig',c:['9′ 5wt rod','Floating line','7–9′ leader to 2X–3X','★']},
+ 'Crayfish':{t:'Bottom-hop rig',c:['9′ 6wt rod','Sink-tip line','3–4′ leader to 2X','★']}
+};
+const RIGO={
+ 'Egg / Mop / pellet':{t:'Above a nymph, or alone in a pond',c:['Floating line','9′ 4X leader','indicator','★ (egg)','14″ of 5X','nymph (dropper)']},
+ 'Balanced Leech':{t:'Hung under an indicator in ponds',c:['9′ 5wt rod','Floating line','10–12′ 4X leader','indicator','★ (hangs level)']},
+ 'Czech Nymph':{t:'Tight-line (Euro) nymph rig',c:['10–11′ 3wt rod','sighter','4X–5X tippet','★ (heavy point fly)']},
+ 'Perdigon':{t:'Point fly of a tight-line rig',c:['10–11′ 3wt rod','sighter','5X tippet','★ (point)','optional: second nymph above']},
+ 'Pat’s Rubber Legs':{t:'Heavy top fly of a two-nymph rig',c:['Floating line','9′ 3X–4X leader','indicator','★ (top fly, heavy)','18″ of 5X','small nymph']},
+ 'Woolly Bugger':{t:'Strip rig (rivers) or slow strip (ponds)',c:['9′ 5–6wt rod','Floating line (sink-tip if deep)','4–6′ leader to 1X–3X','★']},
+ 'Griffith’s Gnat':{t:'Dry on very fine tippet, or behind a bigger dry',c:['Floating line','12′ leader','6X–7X tippet','★']},
+ 'Chubby Chernobyl':{t:'Top fly of a dry-dropper',c:['Floating line','9′ 3X leader','★','24–30″ of 4X','beadhead nymph (dropper)']},
+ 'Hopper':{t:'Hopper-dropper',c:['Floating line','9′ 3X leader','★','24–30″ of 4X','nymph (dropper)']},
+ 'Madam X':{t:'Hopper-dropper',c:['Floating line','9′ 3X leader','★','24–30″ of 4X','nymph (dropper)']}
+};
+const rigFor=n=>RIGO[n.n]||RIGG[n.p0&&n.p0.n]||RIGG[n.n]||RIGG[n.p0&&n.p0.p0&&n.p0.p0.n]||null;
+function rigHTML(n){
+  const r=rigFor(n);if(!r)return'';
+  const leaf=!n.k.length,name=leaf?n.n:'this fly';
+  return `<div class="row"><span class="ic">🪢</span><div><b>Rig:</b> ${r.t}<div class="chain">${r.c.map((c,i)=>(i?'<i>→</i>':'')+(c.startsWith('★')?`<span class="fl">${name}${c.slice(1)}</span>`:`<span>${c}</span>`)).join('')}</div>${r.n?`<div class="small mute">${r.n}</div>`:''}</div></div>`;
+}
 const fs=t=>{if(!t)return'';const m=t.match(/^.*?[.!?](?=\s+[A-Z“]|$)/);return m?m[0]:t};
 const strip=t=>t.replace(/<[^>]+>/g,'');
 function calHTML(set,c){
@@ -1062,13 +1110,14 @@ function info(n){
   let t=`<div class="crumb">${path.map(p=>p.n).join(' › ')}</div><h2 style="color:${n.c}">${n.n}</h2>`;
   if(n.s)t+=`<div>${fs(n.s)}</div>`;
   const wl={r:icoRiver('#1d6fa5')+' River',s:icoPond('#2a8a6a')+' Still water'};
-  let facts=[...m.w].sort().map(w=>`<span class="fact">${wl[w]}</span>`).join('');
-  facts+=[...m.d].map(d=>`<span class="fact">${icoDepth(d)} ${DEPTHN[d]}</span>`).join('');
-  if(n.z)facts+=`<span class="fact">📏 ${n.z}</span>`;
-  if(facts)t+=`<div class="facts">${facts}</div>`;
+  const chipRow=(ic,lab,items)=>items?`<div class="row"><span class="ic">${ic}</span><span class="facts"><b>${lab}:</b> ${items}</span></div>`:'';
+  t+=chipRow('💧','Water',[...m.w].sort().map(w=>`<span class="fact">${wl[w]}</span>`).join(''));
+  t+=chipRow('⬇️','Depth',[...m.d].map(d=>`<span class="fact">${icoDepth(d)} ${DEPTHN[d]}</span>`).join(''));
+  t+=chipRow('📏','Size',n.z?`<span class="fact">${n.z}</span>`:'');
   const vs=VARIANTS[n.n];
   if(leaf&&vs){const cur=VAR[n.n]||0;t+=`<div class="row"><span class="ic">🎨</span><span class="sw">${vs.map((v,i)=>`<button class="swb${i===cur?' on':''}" data-var="${n.id}" data-i="${i}" title="${v[0]}" aria-label="${v[0]}" style="background:${v[1]}"></button>`).join('')}<span class="small mute"> ${vs[cur][0]}</span></span></div>`}
-  if(m.m.size)t+=calHTML(m.m,n.c);
+  if(m.m.size)t+=`<div class="row"><span class="ic">📅</span><div><b>Season:</b>${calHTML(m.m,n.c)}</div></div>`;
+  t+=rigHTML(n);
   if(leaf&&a)t+=`<div class="row"><span class="ic">🔍</span><span><b>Spot it:</b> ${a.v}</span></div>`;
   else if(VIS[n.n])t+=`<div class="row"><span class="ic">🔍</span><ul>${VIS[n.n].slice(0,3).map(v=>`<li>${v}</li>`).join('')}</ul></div>`;
   if(n.i)t+=`<div class="row"><span class="ic">🪲</span><span><b>Imitates:</b> ${strip(n.i)}</span></div>`;
