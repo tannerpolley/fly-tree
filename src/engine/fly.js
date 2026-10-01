@@ -1,0 +1,76 @@
+/* Fly illustration engine, part 3: frame and compose one fly into an SVG string. */
+import { FANH, HKS, PSC, RC, THREAD, TS, UPH, Y, beginFly, filtersSVG, hookDepth, hookSVG, lg, lt, r1, studioBG, wraps } from './core.js';
+import { antennaeSVG, bodySVG, clawsSVG, flashSVG, hackleSVG, headSVG, legsSVG, sheathSVG, subBG, tailSVG, thoraxSVG, waterBG, wingSVG } from './parts.js';
+
+/* ====================== compose one fly ======================
+   o.q: 0 small card · 1 gallery card · 2 close-up;  o.studio: soft studio backdrop;  o.bare: no backdrop (rig diagram) */
+/* where does the top of the fly reach, and how far right?  (so tall wings and long tails are never cut off) */
+export function topExtent(a){
+  let t=Y-14;const hk=a.hackle,w=a.wing,m=Math.min;
+  if(hk&&(hk.t==='collar'||hk.t==='bushy'))t=m(t,Y-(hk.l||16)*HKS-2);
+  if(hk&&hk.t==='parachute')t=m(t,Y-16);
+  if(a.collar)t=m(t,Y-(a.collar.l||18)*HKS-2);
+  if(hk&&hk.t==='palmer')t=m(t,Y-8-(hk.l||14));
+  if(w){if(w.t==='upright')t=m(t,Y-8-UPH-4);else if(w.t==='spent')t=m(t,Y-34);else if(w.t==='fan')t=m(t,Y-6-(FANH+8)*(w.s||1));else if(w.t==='post')t=m(t,Y-6-(w.h||44)*PSC-6);else if(w.t==='downwing')t=m(t,Y-(w.rise||34)*1.15-4);else if(w.t==='sw')t=m(t,Y-34);else if(w.t==='zstrip')t=m(t,Y-18);else if(w.t==='foam')t=m(t,Y-10-(w.h||10));else t=m(t,Y-16)}
+  if(a.post)t=m(t,Y-6-a.post.h*PSC-6);
+  if(a.head&&a.head.t==='deer')t=m(t,Y-20);
+  if(a.legs&&a.legs.up)t=m(t,Y-34);
+  if(a.body&&a.body.t==='curl')t=m(t,Y-52);
+  if(a.body&&a.body.t==='ant')t=m(t,Y-28);
+  if(a.antenna)t=m(t,Y-18);
+  return t;
+}
+export function rightExtent(a,hx,D){
+  let x=hx+.62*D;const t=a.tail;
+  if(t)x=Math.max(x,hx+(t.t==='fibers'||t.t==='split'?Math.min(110,(t.len||40)*TS):(t.len||40))+4);
+  if(a.flash)x=Math.max(x,hx+58);
+  if(a.wing&&a.wing.t==='downwing')x=Math.max(x,(a.wing.len||hx+14)+8);
+  if(a.wing&&a.wing.t==='sw')x=Math.max(x,hx+(a.wing.len||44)+6);
+  if(a.artic)x=Math.max(x,hx+60);
+  if(a.wing&&a.wing.t==='zstrip')x=Math.max(x,hx+(a.wing.len||70)+8);
+  return x;
+}
+export function frameVB(top,xmax,D,studio){
+  const asp=studio?332/186:312/150,bottom=Y+D+(studio?24:8),topE=top-(studio?20:10),xmin=48;
+  const W=Math.max(studio?312:262,(xmax-xmin)+(studio?36:14),(bottom-topE)*asp),H=W/asp,cx=(xmin+xmax)/2;
+  return{vb:`${r1(cx-W/2)} ${r1(bottom-H)} ${r1(W)} ${r1(H)}`,cx,bottom};
+}
+
+/* ====================== compose one fly ======================
+   o.q: 0 small card · 1 gallery card · 2 close-up;  o.studio: soft studio backdrop;  o.bare: no backdrop (rig diagram) */
+export function fly(a,o={}){
+  const q=o.q!=null?o.q:(o.hq?2:0),hx=({std:228,long:266,xlong:290,grub:228})[a.hook||'std'],D=hookDepth(a.hook);
+  const ctx=o.bare?'bare':o.studio?'studio':o.noctx?'plain':(a.ctx||'sub');
+  beginFly({n:0,defs:'',k:{},q,dq:[.3,.62,1.5][q],seed:[...(a.v||'x')].reduce((s,ch)=>s+ch.charCodeAt(0),0)%997});
+  const gy=a.hook==='grub'?16:0,top=a.flip?Y-D-gy-14:Math.min(topExtent(a),a.hook==='grub'?Y-52:99),xmax=rightExtent(a,hx,D),dBot=a.flip?32:D+gy,fr=ctx==='bare'?{vb:'40 -20 360 220',cx:220,bottom:Y+D}:frameVB(top,xmax,dBot,ctx==='studio');
+  RC.defs+=filtersSVG(q,fr.vb);
+  let bg='',after='';
+  if(ctx==='studio')bg=studioBG(fr.cx,Y+dBot+5,(xmax-56)*.56);
+  else if(ctx==='surface'||ctx==='film'){const hk=a.hackle,wl=ctx==='film'?Y-1:(hk&&hk.t==='parachute'?Y-4:hk&&(hk.t==='collar'||hk.t==='bushy')?Y+Math.round((hk.l||16)*HKS*.82):a.collar?Y+Math.round((a.collar.l||18)*HKS*.8):Y+(a.body&&a.body.w1||6)+10);const w=waterBG(ctx,wl,hx,a);bg=w.s;after=w.after}
+  else if(ctx==='plain')bg=`<rect x="-300" y="-300" width="1000" height="900" fill="${lg([[0,'#fffdf7'],[1,'#f1eee2']])}"/>`;
+  else if(ctx==='sub')bg=subBG();
+  const headR=a.bead?(74+2*(a.br||7)-6):a.cone?94:(a.head&&a.head.t==='deer')?110:a.eyes?90:87,thr=a.thorax&&a.thorax.r||0,thCx=a.thorax?headR+thr*.88:112;
+  const thx=a.thorax?126:null,x0=hx-6,x1=a.body&&a.body.x1||(thx||(a.bead?(74+2*(a.br||7)-6+1):a.cone?93:(a.head&&a.head.t==='deer')?112:a.head?98:88));
+  const fin=a.hk||(a.hook==='long'||a.hook==='xlong'?(a.ctx==='sub'&&a.wing&&a.wing.t==='sw'?'nickel':'bronze'):'bronze');
+  const leg=legsSVG(a.legs,a.thorax?thCx-8:104),hk=hackleSVG(a.hackle,x0,x1),wg=wingSVG(a.wing,hx);
+  let s='';
+  s+=leg.b+hk.b+wg.b;
+  s+=hookSVG(hx,fin,a.artic,D,a.hook==='grub');
+  s+=a.hook==='grub'?`<g transform="translate(0 16)">${tailSVG(a.tail,hx)}</g>`:tailSVG(a.tail,hx);
+  if(a.flash)s+=flashSVG(a.flash,hx);
+  s+=bodySVG(a.body,x0,x1,a);
+  if(a.body&&(!a.body.t||a.body.t==='taper'))s+=wraps(x0-2.4,(a.body.w0||5)+.6,3,lt(a.thread||THREAD,.1),1);
+  if(a.thorax)s+=thoraxSVG(a.thorax,thCx);
+  if(a.sheath)s+=sheathSVG(a,a.sheath);
+  s+=leg.f+wg.f+hk.f;
+  if(a.collar){const cc=hackleSVG({t:'collar',c:a.collar.c,l:a.collar.l||18,x:a.collar.x},x0,x1);s+=cc.b+cc.f}
+  if(a.post)s+=wingSVG({t:'post',c:a.post.c,h:a.post.h||30},hx).f;
+  if(a.claws)s+=clawsSVG(a.claws);
+  if(a.antenna)s+=antennaeSVG();
+  s+=headSVG(a);
+  if(a.xtra)s+=a.xtra;
+  if(a.flip)s=`<g transform="translate(0 ${2*Y}) scale(1 -1)">${s}</g>`;
+  s+=after;
+  const hint=o.hint?`<text x="8" y="16" font-size="11" fill="#5d6b73" font-family="sans-serif">${o.hint}</text>`:'';
+  return`<svg viewBox="${fr.vb}" width="${o.w||'100%'}" role="img" aria-label="${o.label||'fly'}" style="display:block;border-radius:8px"><defs>${RC.defs}</defs>${bg}${s}${hint}</svg>`;
+}
