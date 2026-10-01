@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fly Family Tree — learn fly types &amp; parts</title>
+<style>
+:root{--bg:#f6f4ee;--card:#fff;--ink:#1f2a30;--mute:#5d6b73;--line:#d9d5c8;--accent:#c4622d}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:18px 26px 8px}h1{margin:0;font-size:23px}.sub{color:var(--mute)}
+nav{display:flex;gap:6px;padding:8px 26px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+nav button,.tb button{border:1px solid var(--line);background:#fff;padding:6px 14px;border-radius:999px;cursor:pointer;font:inherit}
+nav button.on,.tb button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tb{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+section{display:none;padding:16px 26px 50px}section.on{display:block}
+.wrap{display:block}.wrap>.card{margin-bottom:14px}
+#anatSvg{max-width:860px;margin:auto;display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+#treebox{overflow-x:auto;padding:6px}
+#infobox{border-top:2px solid var(--line);margin-top:10px;padding-top:14px}
+.node.leaf:hover rect,.node:hover>rect{filter:brightness(.97);stroke-width:3}
+
+.pgrid{display:grid;grid-template-columns:1fr minmax(260px,340px);gap:24px;align-items:start}
+.facts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.fact{display:inline-flex;gap:6px;align-items:center;font-size:13px;background:#f1efe6;border-radius:999px;padding:3px 11px 3px 8px}
+.cal{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;max-width:560px;margin:8px 0 4px}
+.cal div{text-align:center;font-size:11.5px;border-radius:4px;padding:2px 0;background:#ece9dc;color:#8a8f94}.cal .on{color:#fff;font-weight:700}.cal .se{background:none;font-size:14px;padding:0}
+.row{margin:7px 0;font-size:14px;display:flex;gap:8px}.row .ic{flex:0 0 22px;text-align:center}.row ul{margin:0;padding-left:16px}
+.rchip{display:inline-block;background:#f4efe3;border:1px solid #e0d8c2;border-radius:6px;padding:1px 8px;margin:2px 3px 2px 0;font-size:13px}
+.pcols{columns:2 300px;column-gap:26px}.pcols .dl{break-inside:avoid;margin:0 0 10px}
+.mont{grid-template-columns:repeat(2,1fr)!important}
+@media(max-width:800px){.pgrid{grid-template-columns:1fr}}
+.crumb{font-size:12px;color:var(--mute);margin-bottom:6px}
+.dl{margin:8px 0 0}.dl>b.lab{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}
+.chip{display:inline-block;background:#eef3f6;border:1px solid #c9d7df;border-radius:999px;padding:1px 9px;margin:2px 3px 2px 0;font-size:13px;cursor:pointer}
+.node{cursor:pointer}.node rect{stroke-width:1.5}.node text{font-size:12.5px;pointer-events:none}
+.node.sel rect{stroke:#000;stroke-width:3}
+.link{fill:none;stroke:#b9b3a1;stroke-width:1.6}
+.hint{font-size:13px;color:var(--mute);margin:0 0 8px}
+table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top;font-size:14px}th{background:#efece2}
+.part{cursor:pointer}.part:hover *,.part.sel *{stroke:#c4622d!important;stroke-width:3!important}
+.lbl{font-size:12.5px;fill:#1f2a30;pointer-events:none}
+.g2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+</style>
+</head>
+<body>
+<header><h1>🪰 Fly Family Tree</h1><div class="sub">Click any box: it opens its branch and explains it below the chart.</div></header>
+<nav id="nav"></nav>
+
+<section id="tree">
+  <div class="tb"><button id="expAll">Expand all</button><button id="colAll">Collapse all</button><button id="reset">Reset</button></div>
+  <div class="wrap">
+    <div class="card"><p class="hint">Click a coloured box to open its branch; click a picture card for that fly. Details appear below.</p><div id="treebox"></div><div id="infobox"></div></div>
+    
+  </div>
+</section>
+
+<section id="anat">
+  <div class="tb" id="anatTabs"></div>
+  <div class="wrap">
+    <div class="card"><svg id="anatSvg" viewBox="0 0 700 330" width="100%"></svg><p class="hint">Click a labeled part. Fly head (eye end) is on the left, tail on the right.</p></div>
+    <div class="card" id="anatPanel"></div>
+  </div>
+  <div class="g2" style="margin-top:14px">
+    <div class="card"><h2 style="margin-top:0">Hooks &amp; sizes</h2>
+      <table>
+      <tr><th>Term</th><th>Meaning</th></tr>
+      <tr><td><b>Size number</b></td><td>Bigger number = <i>smaller</i> hook. #8 is big (stonefly/hopper), #14 medium (caddis/PMD), #20 small (BWO), #24 tiny (midge).</td></tr>
+      <tr><td><b>Dry-fly hook</b></td><td>Thin wire so it floats; e.g. standard-length, fine wire.</td></tr>
+      <tr><td><b>Nymph hook</b></td><td>Heavier wire, often curved (“scud/ grub”) to sink and shape a curled body.</td></tr>
+      <tr><td><b>Streamer hook</b></td><td>Long shank (2XL–6XL) so a long body hangs off one hook; strong wire.</td></tr>
+      <tr><td><b>Barbless / barbed</b></td><td>Pinch the barb down: easier release, less damage to fish; required on many waters.</td></tr>
+      <tr><td><b>Gap</b></td><td>The opening between shank and point; wider gap = better hookup, narrower = more hidden.</td></tr>
+      </table></div>
+    <div class="card"><h2 style="margin-top:0">Materials: what each does</h2>
+      <table>
+      <tr><th>Material</th><th>Use</th></tr>
+      <tr><td>Thread</td><td>Holds everything; color shows through thin bodies; 6/0–8/0 common, 14/0+ for midges.</td></tr>
+      <tr><td>Hackle (rooster)</td><td>Stiff fibers; floats a dry fly, kicks the legs of a dry.</td></tr>
+      <tr><td>Hen / partridge</td><td>Soft, pulsing fibers for soft hackles and wets.</td></tr>
+      <tr><td>Dubbing</td><td>Fuzzy fur/synthetic spun on thread for a buggy body (hare’s ear, beaver, Superfine).</td></tr>
+      <tr><td>CDC</td><td>Duck rump feathers: float and trap air; great for emergers.</td></tr>
+      <tr><td>Deer / elk hair</td><td>Hollow, buoyant; wings (Comparadun, Elk Hair Caddis) and heads.</td></tr>
+      <tr><td>Marabou</td><td>Wavy feather that breathes in water: streamer tails and wings.</td></tr>
+      <tr><td>Pheasant tail</td><td>Brown, banded fibers: nymph tails, bodies, legs.</td></tr>
+      <tr><td>Wire / tinsel</td><td>Ribbing: segments the body, adds flash and protects it.</td></tr>
+      <tr><td>Bead (brass/tungsten)</td><td>Head and weight; tungsten is ~1.7× heavier. Colors act as a hot spot.</td></tr>
+      <tr><td>Lead / non-lead wire</td><td>Wraps on the shank for weight under the body.</td></tr>
+      <tr><td>Foam</td><td>Closed-cell: unsinkable bodies for terrestrials and poppers.</td></tr>
+      <tr><td>Flash (Krystal Flash)</td><td>Adds a bit of sparkle to streamers and attractors.</td></tr>
+      </table></div>
+  </div>
+</section>
+
+<section id="gallery"><div id="galleryBody"></div></section>
+<section id="insects"><div class="card"><h2 style="margin-top:0">By insect (how shops like Fly Deal sort them)</h2><div class="small mute">Same insect, different life stage = different fly family.</div></div><div id="insectBody"></div></section>
+<section id="quiz"><div class="tb" id="quizTabs"></div><div id="quizBody"></div></section>
+<section id="how">
+  <div class="card"><h2 style="margin-top:0">How the tree is organised (read this once)</h2>
+    <ol>
+      <li><b>Where the fly rides</b> in the water decides the family: surface (dry), film (emerger), sub-surface (nymph/wet), anything-depth (streamer).</li>
+      <li><b>What it copies</b> decides the branch: a mayfly, caddis, stonefly, midge, terrestrial, crustacean, or baitfish.</li>
+      <li><b>How it’s built</b> decides the pattern (Parachute vs Comparadun vs Catskill are all mayfly dries, built differently).</li>
+    </ol>
+    <p class="mute">The insect life cycle explains why one insect gives you several flies: <b>egg → nymph/larva → (pupa for caddis/midge) → emerger → adult (dun) → spinner</b>. Fish eat every stage, so there’s a fly for each.</p>
+    <table><tr><th>Insect</th><th>Life stages (and fly family for each)</th></tr>
+    <tr><td>Mayfly</td><td>Nymph (nymph) → emerger (film) → dun (dry) → spinner (spent dry)</td></tr>
+    <tr><td>Caddis</td><td>Larva (nymph) → pupa (nymph/soft hackle) → adult (dry)</td></tr>
+    <tr><td>Stonefly</td><td>Nymph crawls to bank, hatches on land; adult returns to lay eggs (dry)</td></tr>
+    <tr><td>Midge</td><td>Larva (nymph) → pupa (emerger) → adult (cluster dry)</td></tr></table>
+  </div>
+</section>
+
+<script>
+/* Fly illustration engine + pattern art + visual ID cues.
+   Convention: side view, hook eye (head) on the LEFT, tail on the RIGHT. */
+const VW=360,VH=190,Y=100;
+const C={tan:'#c9b37a',olive:'#6b7a3a',gray:'#8a8f94',brown:'#6a4a2e',black:'#222',yellow:'#e6c84a',orange:'#e08a2a',red:'#b83a2a',green:'#4f8f3a',white:'#f6f5ef',cream:'#efe3c4',gold:'#d8a63a',copper:'#c4733a',silver:'#c7ccd0',peach:'#f0a98a',rust:'#8a3d1e',dun:'#7d8388'};
+const ln=(x1,y1,x2,y2,c,w=1.5,op=1)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" opacity="${op}"/>`;
+
+function tailSVG(t,hx){
+  if(!t)return'';const L=t.len||40,c=t.c||C.brown,x=hx-4;
+  switch(t.t){
+    case'fibers':{const n=t.n||3;let r='';for(let i=0;i<n;i++){const dy=(i-(n-1)/2)*8;r+=`<path d="M${x} ${Y}Q${x+L*.5} ${Y+dy*.2} ${x+L} ${Y+dy}" fill="none" stroke="${c}" stroke-width="1.6" stroke-linecap="round"/>`}return r}
+    case'split':return ln(x,Y,x+L,Y-12,c,1.8)+ln(x,Y,x+L,Y+12,c,1.8);
+    case'marabou':return`<path d="M${x} ${Y-3}C${x+L*.4} ${Y-20} ${x+L*.8} ${Y-14} ${x+L} ${Y+2}C${x+L*.8} ${Y+22} ${x+L*.4} ${Y+16} ${x} ${Y+3}Z" fill="${c}" opacity=".93"/>`;
+    case'strip':return`<path d="M${x} ${Y}C${x+L*.3} ${Y+9} ${x+L*.6} ${Y-9} ${x+L} ${Y+3}" fill="none" stroke="${c}" stroke-width="${t.w||8}" stroke-linecap="round"/>`;
+    case'shuck':return`<path d="M${x} ${Y}q${L*.25} ${L*.5} ${L*.55} ${L*.12}t${L*.45} ${L*.22}" fill="none" stroke="${c}" stroke-width="3.5" stroke-linecap="round" opacity=".85"/>`;
+    case'rubber':return ln(x,Y,x+L,Y-12,c,3)+ln(x,Y,x+L,Y+12,c,3);
+    case'biot':return ln(x,Y,x+L,Y-9,c,3.2)+ln(x,Y,x+L,Y+9,c,3.2);
+  }return'';
+}
+
+function bodySVG(b,x0,x1){
+  if(!b)return'';const c=b.c||C.gray,w0=b.w0||5,w1=b.w1||7;let r='';
+  switch(b.t||'taper'){
+    case'ant':return`<ellipse cx="${x0-30}" cy="${Y}" rx="30" ry="15" fill="${c}"/><ellipse cx="${x1+8}" cy="${Y}" rx="17" ry="11" fill="${c}"/><path d="M${x1+22} ${Y}H${x0-58}" stroke="${c}" stroke-width="5"/><ellipse cx="${x0-38}" cy="${Y-5}" rx="14" ry="6" fill="#fff" opacity=".18"/>`;
+    case'egg':return`<circle cx="125" cy="${Y}" r="${b.r||19}" fill="${c}"/><circle cx="125" cy="${Y}" r="${b.r||19}" fill="url(#bsh)"/><circle cx="118" cy="${Y-7}" r="6" fill="#fff" opacity=".45"/><circle cx="125" cy="${Y}" r="${b.r||19}" fill="none" stroke="rgba(0,0,0,.18)"/>`;
+    case'worm':return`<path d="M95 ${Y}c25 -18 40 18 65 0s40 -18 65 0 25 12 40 4" fill="none" stroke="${c}" stroke-width="${b.w||8}" stroke-linecap="round"/><path d="M95 ${Y}c25 -18 40 18 65 0s40 -18 65 0 25 12 40 4" fill="none" stroke="#fff" stroke-width="2" opacity=".25" stroke-linecap="round"/>`;
+    case'oval':{r=`<ellipse cx="160" cy="${Y}" rx="66" ry="19" fill="${c}"/><ellipse cx="160" cy="${Y}" rx="66" ry="19" fill="url(#shd)"/>`;for(let i=1;i<8;i++)r+=`<path d="M${94+i*16.5} ${Y-18}Q${100+i*16.5} ${Y} ${94+i*16.5} ${Y+18}" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="1.3"/>`;r+=`<ellipse cx="160" cy="${Y-6}" rx="60" ry="8" fill="#fff" opacity=".15"/>`;for(let i=0;i<7;i++)r+=ln(106+i*16,Y+17,100+i*16,Y+28,c,1.6);return r+ln(226,Y,242,Y-7,c,2.5)+ln(226,Y,242,Y+7,c,2.5)}
+    case'curl':{r=`<path d="M92 ${Y-6}Q165 ${Y-44} 226 ${Y+16}" fill="none" stroke="${c}" stroke-width="22" stroke-linecap="round"/><path d="M92 ${Y+2}Q165 ${Y-36} 226 ${Y+22}" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="8" stroke-linecap="round"/>`;return r+`<path d="M96 ${Y-14}Q165 ${Y-54} 220 ${Y+4}" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="5"/><path d="M104 ${Y+4}Q165 ${Y-30} 218 ${Y+22}" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="1.5" stroke-dasharray="4 7"/>`+`<path d="M110 ${Y+6}l-5 13M130 ${Y-6}l-4 14M152 ${Y-12}l-3 14M174 ${Y-10}l-1 14M196 ${Y-2}l1 13" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`}
+    case'case':{r=`<rect x="96" y="${Y-12}" width="132" height="24" rx="10" fill="${c}"/>`;for(let i=0;i<22;i++)r+=`<circle cx="${102+(i*37)%122}" cy="${Y-8+(i*13)%17}" r="${2+(i%3)}" fill="${i%2?'#6b5a40':'#b9a98a'}"/>`;return r+`<ellipse cx="94" cy="${Y}" rx="9" ry="8" fill="#222"/>`}
+  }
+  const bd=`M${x0} ${Y-w0}L${x1} ${Y-w1}L${x1} ${Y+w1}L${x0} ${Y+w0}Z`;
+  r=`<path d="${bd}" fill="${c}" stroke="${c}" stroke-width="2" stroke-linejoin="round"/><path d="${bd}" fill="url(#shd)" stroke="url(#shd)" stroke-width="2" stroke-linejoin="round"/>`;
+  if(b.fuzz)for(let i=0;i<22;i++){const x=x0+(x1-x0)*i/22,w=w0+(w1-w0)*i/22;r+=ln(x,Y-w,x+(i%2?-3:2),Y-w-4,c,1.4)+ln(x,Y+w,x+(i%2?2:-3),Y+w+4,c,1.4)}
+  if(b.seg){const n=b.seg===true?9:b.seg;for(let i=1;i<n;i++){const x=x0+(x1-x0)*i/n,w=w0+(w1-w0)*i/n;r+=ln(x,Y-w,x,Y+w,'rgba(0,0,0,.28)',1.1)}}
+  if(b.rib){const n=b.ribn||9;for(let i=0;i<n;i++){const xa=x0+(x1-x0)*i/n,xb=x0+(x1-x0)*(i+1)/n,wa=w0+(w1-w0)*i/n,wb=w0+(w1-w0)*(i+1)/n;r+=ln(xa,Y-wa,xb,Y+wb,b.rib,1.5)}}
+  if(b.shine)r+=ln(x0,Y-w0+2,x1,Y-w1+2,'#fff',2,.4);
+  if(b.band)r+=`<rect x="${b.band[0]}" y="${Y-w1-1}" width="${b.band[1]}" height="${2*w1+2}" fill="${b.band[2]}"/>`;
+  return r;
+}
+
+function wingSVG(w,hx,thx){
+  if(!w)return'';const c=w.c||C.white,h=w.h||44;
+  switch(w.t){
+    case'post':return`<rect x="109" y="${Y-6-h}" width="7" height="${h}" rx="2" fill="${c}" stroke="rgba(0,0,0,.35)"/>`;
+    case'fan':{const s=w.s||1;return`<path d="M104 ${Y-6}Q${86} ${Y-6-48*s} 124 ${Y-6-54*s}Q152 ${Y-6-30*s} 124 ${Y-6}Z" fill="${c}" stroke="rgba(0,0,0,.35)"/>`+[0,1,2,3,4].map(i=>ln(112,Y-6,98+i*10,Y-6-44*s,'rgba(0,0,0,.2)',1)).join('')}
+    case'upright':return`<ellipse cx="108" cy="${Y-32}" rx="9" ry="26" transform="rotate(-10 108 ${Y-32})" fill="${c}" opacity=".9" stroke="rgba(0,0,0,.35)"/><ellipse cx="124" cy="${Y-32}" rx="9" ry="26" transform="rotate(10 124 ${Y-32})" fill="${c}" opacity=".9" stroke="rgba(0,0,0,.35)"/><path d="M108 ${Y-52}V${Y-10}M124 ${Y-52}V${Y-10}M104 ${Y-40}Q108 ${Y-30} 106 ${Y-18}M128 ${Y-40}Q124 ${Y-30} 126 ${Y-18}" stroke="rgba(0,0,0,.2)" stroke-width="1" fill="none" transform="rotate(0)"/>`;
+    case'downwing':{const e=w.len||hx+14;return`<path d="M102 ${Y-7}Q130 ${Y-(w.rise||34)} ${e-30} ${Y-16}L${e} ${Y-3}Q${e-60} ${Y-10} 126 ${Y-3}Z" fill="${c}" stroke="rgba(0,0,0,.35)"/>`+[0,1,2,3,4,5,6].map(i=>ln(130+i*14,Y-18+i*1.5,142+i*14,Y-6,'rgba(0,0,0,.18)',1)).join('')}
+    case'spent':return`<ellipse cx="124" cy="${Y-17}" rx="34" ry="7" transform="rotate(-7 124 ${Y-17})" fill="${c}" opacity=".7" stroke="rgba(0,0,0,.3)"/><ellipse cx="124" cy="${Y+17}" rx="34" ry="7" transform="rotate(7 124 ${Y+17})" fill="${c}" opacity=".7" stroke="rgba(0,0,0,.3)"/>`;
+    case'case':return`<path d="M96 ${Y-3}Q118 ${Y-20} ${w.len||150} ${Y-8}L${w.len||150} ${Y}Z" fill="${c}" stroke="rgba(0,0,0,.4)"/>`+(w.shine?ln(104,Y-9,140,Y-9,'#fff',2,.5):'');
+    case'foam':{const a=w.x0||110,b=w.x1||hx-8,rx=(b-a)/2,hh=(w.h||10);return`<path d="M${a} ${Y-1}A${rx} ${hh+8} 0 0 1 ${b} ${Y-1}Z" fill="${c}" stroke="rgba(0,0,0,.35)"/>`}
+    case'v':return`<ellipse cx="144" cy="${Y-12}" rx="30" ry="6" transform="rotate(8 144 ${Y-12})" fill="${c}" stroke="rgba(0,0,0,.35)"/><ellipse cx="144" cy="${Y-7}" rx="30" ry="5" transform="rotate(-4 144 ${Y-7})" fill="${c}" stroke="rgba(0,0,0,.35)"/>`;
+    case'sw':{const e=hx+(w.len||44);let r=`<path d="M92 ${Y+1}Q170 ${Y+(w.drop||6)} ${e} ${Y+10}Q180 ${Y+20} 92 ${Y+8}Z" fill="${w.c2||C.white}" opacity=".95" stroke="rgba(0,0,0,.2)"/>`;return r+`<path d="M92 ${Y-3}Q180 ${Y-34} ${e} ${Y-2}Q180 ${Y-4} 92 ${Y+3}Z" fill="${c}" stroke="rgba(0,0,0,.25)"/>`}
+  }return'';
+}
+
+function hackleSVG(h,x0,x1){
+  if(!h)return'';const c=h.c||C.brown,L=h.l||16;let r='';
+  switch(h.t){
+    case'collar':for(let i=-4;i<=4;i++){const lx=110+i*5,ly=L*(1-Math.abs(i)*.05);r+=`<path d="M110 ${Y}Q${110+i*2} ${Y-ly*.6} ${lx} ${Y-ly}M110 ${Y}Q${110+i*2} ${Y+ly*.6} ${lx} ${Y+ly}" fill="none" stroke="${c}" stroke-width="1.2" opacity=".9"/>`}return r;
+    case'bushy':for(let i=-5;i<=5;i++){r+=ln(112,Y,112+i*3.5,Y-L,c,1.4)+ln(112,Y,112+i*3.5,Y+L,c,1.4)}return r;
+    case'parachute':return`<ellipse cx="112" cy="${Y-7}" rx="${h.rx||32}" ry="6" fill="none" stroke="${c}" stroke-width="3"/><ellipse cx="112" cy="${Y-7}" rx="${(h.rx||32)-8}" ry="4" fill="none" stroke="${c}" stroke-width="2" opacity=".7"/>`;
+    case'palmer':{const n=h.n||11;for(let i=0;i<n;i++){const x=x1+(x0-x1)*i/n;r+=ln(x,Y-5,x-4,Y-5-L*.6,c,1.3)+ln(x,Y+5,x-4,Y+5+L*.6,c,1.3)}return r}
+    case'soft':for(let i=0;i<8;i++){r+=`<path d="M108 ${Y-3}Q${108+L*.8} ${Y-4-i*2} ${108+L*1.5} ${Y-6-i*3.4}M108 ${Y+3}Q${108+L*.8} ${Y+4+i*2} ${108+L*1.5} ${Y+6+i*3.4}" fill="none" stroke="${c}" stroke-width="1.2" opacity=".9"/>`}return r;
+  }return'';
+}
+
+function legsSVG(l){
+  if(!l)return'';const c=l.c||C.brown,n=l.n||3;let r='';
+  for(let i=0;i<n;i++){const x=104+i*14;
+    if(l.t==='rubber'){r+=`<path d="M${x} ${Y+5}q${6} 14 ${14} 24" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round"/>`;if(l.up)r+=`<path d="M${x} ${Y-5}q${6} -14 ${14} -24" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round"/>`}
+    else r+=ln(x,Y+5,x+10,Y+22,c,1.6)+(l.up?ln(x,Y-5,x+10,Y-22,c,1.6):'')}
+  return r;
+}
+
+function headSVG(a){
+  const h=a.head||{};
+  if(h.t==='deer'){let r=`<ellipse cx="102" cy="${Y}" rx="30" ry="18" fill="${h.c||C.brown}"/>`;for(let i=0;i<14;i++){const ang=i/14*6.28;r+=ln(102+Math.cos(ang)*26,Y+Math.sin(ang)*15,102+Math.cos(ang)*34,Y+Math.sin(ang)*22,h.c||C.brown,2)}return r}
+  if(h.t==='ball')return`<circle cx="90" cy="${Y}" r="9" fill="${h.c||C.black}"/>`;
+  if(a.cone)return`<path d="M64 ${Y}L94 ${Y-10}L94 ${Y+10}Z" fill="${a.cone}" stroke="rgba(0,0,0,.4)"/><path d="M64 ${Y}L94 ${Y-10}L94 ${Y+10}Z" fill="url(#shd)"/>`;
+  if(a.bead){const r=a.br||7;return`<circle cx="${74+r-6}" cy="${Y}" r="${r}" fill="${a.bead}" stroke="rgba(0,0,0,.4)"/><circle cx="${74+r-6}" cy="${Y}" r="${r}" fill="url(#bsh)"/>`}
+  if(a.eyes)return`<ellipse cx="78" cy="${Y}" rx="6" ry="5" fill="#2b2118"/><circle cx="96" cy="${Y+9}" r="6.5" fill="${a.eyes}" stroke="rgba(0,0,0,.5)"/><circle cx="96" cy="${Y+9}" r="2.4" fill="#111"/>`;
+  return`<ellipse cx="77" cy="${Y}" rx="8" ry="5.5" fill="${h.c||'#2b2118'}"/><path d="M73 ${Y-5}l1 10M77 ${Y-5.4}l1 10.8M81 ${Y-5}l1 10" stroke="rgba(255,255,255,.28)" stroke-width="1"/>`;
+}
+
+const DEFS='<defs><linearGradient id="shd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".34"/></linearGradient><radialGradient id="bsh" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".35" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".4"/></radialGradient></defs>';
+function fly(a,o={}){
+  const hx=({std:228,long:266,xlong:290})[a.hook||'std'];
+  let ctx=o.noctx?'plain':(a.ctx||'sub');
+  let s=DEFS;
+  if(ctx==='surface'){const wl=Y+16;s+=`<rect width="${VW}" height="${VH}" fill="#fbfaf5"/><rect y="${wl}" width="${VW}" height="${VH-wl}" fill="#d6e9f5"/><path d="M0 ${wl}H${VW}" stroke="#4d93bf" stroke-width="2"/>`}
+  else if(ctx==='film'){const wl=Y-1;s+=`<rect width="${VW}" height="${VH}" fill="#fbfaf5"/><rect y="${wl}" width="${VW}" height="${VH-wl}" fill="#d6e9f5"/><path d="M0 ${wl}H${VW}" stroke="#4d93bf" stroke-width="2"/>`}
+  else if(ctx==='plain')s+=`<rect width="${VW}" height="${VH}" fill="#fbfaf5"/>`;
+  else s+=`<rect width="${VW}" height="${VH}" fill="#e3eff7"/>`;
+  const thx=a.thorax?126:null;
+  const x0=hx-6,x1=a.body&&a.body.x1||(thx||((a.bead||a.cone||a.head)?98:96));
+  s+=tailSVG(a.tail,hx);
+  if(a.flash)s+=ln(hx,Y,hx+54,Y-14,a.flash,1.2)+ln(hx,Y,hx+60,Y+4,a.flash,1.2)+ln(hx,Y,hx+52,Y+16,a.flash,1.2);
+  // hook
+  const bend=`M${hx} ${Y}C${hx+34} ${Y} ${hx+40} ${Y+48} ${hx+8} ${Y+50}C${hx-14} ${Y+51} ${hx-20} ${Y+30} ${hx-12} ${Y+20}`;
+  s+=`<g fill="none" stroke="#6f747a" stroke-width="2.9" stroke-linecap="round"><circle cx="62" cy="${Y}" r="5"/><path d="M67 ${Y}H${hx}"/><path d="${bend}"/></g><g fill="none" stroke="#dfe3e6" stroke-width=".9" opacity=".8"><path d="M68 ${Y-1}H${hx}"/><path d="M${hx} ${Y-1}C${hx+33} ${Y-1} ${hx+38} ${Y+46} ${hx+8} ${Y+48}"/></g><path d="M${hx-12} ${Y+20}l7 -2" stroke="#6f747a" stroke-width="2.2" stroke-linecap="round"/>`;
+  if(a.artic)s+=`<g fill="none" stroke="#6b6b6b" stroke-width="2.4"><path d="M${hx} ${Y}H${hx+34}"/><path d="M${hx+34} ${Y}C${hx+54} ${Y} ${hx+58} ${Y+30} ${hx+40} ${Y+32}"/></g>`;
+  s+=bodySVG(a.body,x0,x1);
+  if(a.thorax){const t=a.thorax,r=t.r||17;s+=`<ellipse cx="112" cy="${Y}" rx="${r}" ry="${(t.ry||r*.75)}" fill="${t.c||C.black}" stroke="${t.c||C.black}"/><ellipse cx="112" cy="${Y}" rx="${r}" ry="${(t.ry||r*.75)}" fill="url(#shd)"/>`;if(t.fuzz)for(let i=0;i<10;i++){const g=i/10*6.28;s+=ln(112+Math.cos(g)*r,Y+Math.sin(g)*r*.75,112+Math.cos(g)*(r+4),Y+Math.sin(g)*(r*.75+4),t.c,1.3)}}
+  if(a.sheath)s+=`<ellipse cx="160" cy="${Y}" rx="76" ry="${a.sheath}" fill="#fff" opacity=".35" stroke="#fff" stroke-opacity=".7"/>`;
+  s+=legsSVG(a.legs);
+  s+=wingSVG(a.wing,hx);
+  if(a.hackle)s+=hackleSVG(a.hackle,x0,x1);
+  if(a.antenna)s+=`<path d="M70 ${Y-3}q-14 -18 -34 -14M70 ${Y+2}q-16 -4 -34 8" fill="none" stroke="#555" stroke-width="1.3"/>`;
+  if(a.head&&a.head.t==='popper'){s+=`<path d="M62 ${Y-22}L132 ${Y-22}Q142 ${Y} 132 ${Y+18}L62 ${Y+18}Q80 ${Y-2} 62 ${Y-22}Z" fill="${a.head.c}" stroke="rgba(0,0,0,.4)"/><circle cx="112" cy="${Y-8}" r="4" fill="#fff"/><circle cx="112" cy="${Y-8}" r="1.8" fill="#111"/>`}
+  else s+=headSVG(a);
+  if(a.xtra)s+=a.xtra;
+  const hint=o.hint?`<text x="8" y="16" font-size="11" fill="#5d6b73" font-family="sans-serif">${o.hint}</text>`:'';
+  return`<svg viewBox="44 46 312 112" width="${o.w||'100%'}" role="img" aria-label="${o.label||'fly'}" style="display:block;border-radius:8px">${s}${hint}</svg>`;
+}
+
+/* ---------------- pattern art (trout flies). v = how to spot it ---------------- */
+const T=(t,c,len,n)=>({t,c,len,n});
+const ART={
+ 'Parachute Adams':{ctx:'surface',tail:T('fibers','#8a8a8a',34,3),body:{c:'#8d8b87',w0:5,w1:7},wing:{t:'post',c:C.white},hackle:{t:'parachute',c:'#5a4030'},v:'White post sticking up + hackle wound flat around the post base.'},
+ 'Comparadun':{ctx:'surface',tail:T('split','#b8a678',36),body:{c:C.tan,w0:4,w1:7,seg:8},wing:{t:'fan',c:'#bfae86'},v:'Fan-shaped deer-hair wing and NO hackle at all.'},
+ 'Catskill dry (Light Cahill)':{ctx:'surface',tail:T('fibers',C.cream,36,3),body:{c:C.cream,w0:4,w1:7},wing:{t:'upright',c:'#efe7cf'},hackle:{t:'collar',c:'#b7894a',l:20},v:'Two upright split wings + a vertical hackle collar standing on stiff tails.'},
+ 'Rusty Spinner':{ctx:'surface',tail:T('split',C.gray,54),body:{c:C.rust,w0:3,w1:5,seg:10},wing:{t:'spent',c:'#d6e8f5'},v:'Wings laid out flat to both sides (spent) + very long split tails.'},
+ 'Trico Spinner':{ctx:'surface',hook:'std',tail:T('split',C.gray,56),body:{c:'#1c1c1c',w0:2.5,w1:4,seg:12},thorax:{c:'#1c1c1c',r:11},wing:{t:'spent',c:'#e9f3fb'},v:'Tiny; black slim body, clear spent wings, very long tails.'},
+ 'Paradrake':{ctx:'surface',hook:'long',tail:T('fibers','#3a3a3a',44,3),body:{c:'#6a7a2f',w0:5,w1:8,seg:10,rib:'#d9c98a'},wing:{t:'post',c:C.white,h:50},hackle:{t:'parachute',c:'#444',rx:36},v:'Big olive-banded body with a tall white post: a parachute scaled up.'},
+ 'Elk Hair Caddis':{ctx:'surface',body:{c:'#7b8f3a',w0:5,w1:6},wing:{t:'downwing',c:'#c9a867'},hackle:{t:'palmer',c:C.brown,l:14},v:'Wing lies back over the body like a roof; no tail; hackle wound along the body.'},
+ 'X-Caddis':{ctx:'surface',tail:T('shuck','#c1a45a',36),body:{c:C.tan,w0:4,w1:6},wing:{t:'downwing',c:'#b8a57c',len:224},v:'Sparse tent wing + a trailing shuck at the rear.'},
+ 'Stimulator':{ctx:'surface',hook:'long',tail:T('fibers','#c9a867',28,4),body:{c:'#e0902f',w0:6,w1:8},hackle:{t:'palmer',c:'#b77a3a',l:16,n:12},wing:{t:'downwing',c:'#c9a867',rise:48,len:272},xtra:`<g stroke="#8c8c8c" stroke-width="1.4">${[-3,-2,-1,0,1,2,3].map(i=>ln(110,Y,110+i*5,Y-20,'#6a4a2e',1.4)+ln(110,Y,110+i*5,Y+20,'#6a4a2e',1.4)).join('')}</g>`,v:'Big, bushy: palmered hackle + thick hair wing extending past the bend; orange body.'},
+ 'Yellow Sally':{ctx:'surface',body:{c:C.yellow,w0:3.5,w1:5},wing:{t:'downwing',c:'#e6e0b6',rise:26},hackle:{t:'collar',c:'#d9d2a8',l:13},v:'Slim yellow body with a pale, flat wing; no tail.'},
+ 'Griffith’s Gnat':{ctx:'surface',body:{c:'#2e4a3a',w0:3,w1:5,fuzz:true},hackle:{t:'palmer',c:'#a9a9a9',l:12,n:14},v:'Tiny; peacock-green body with grizzly hackle spiraled over it. No wing, no tail.'},
+ 'Hopper':{ctx:'surface',hook:'long',body:{c:'#c5b24a',w0:6,w1:8,seg:8},wing:{t:'downwing',c:'#8a6a3a',len:262,rise:30},legs:{t:'rubber',c:'#8a6a3a',n:3,up:true},v:'Long yellow body, folded hair wing, rubber legs.'},
+ 'Ant':{ctx:'surface',body:{t:'ant',c:'#1a1a1a',w0:6,w1:8,x1:100},v:'Two round blobs (head/thorax + abdomen) with a pinched “waist”.'},
+ 'Beetle':{ctx:'surface',body:{c:'#2b2b2b',w0:10,w1:10,x1:104},wing:{t:'foam',c:'#161616',x0:104,x1:222,h:12},legs:{t:'fibers',c:'#222',n:3},v:'Short, round and glossy: foam shell humped over the back.'},
+ 'Cricket':{ctx:'surface',hook:'long',body:{c:'#1c1c1c',w0:7,w1:9},wing:{t:'downwing',c:'#2a2a2a',len:268,rise:30},legs:{t:'rubber',c:'#1c1c1c',n:3,up:true},v:'All-black, bulky, with rubber legs.'},
+ 'Royal Wulff':{ctx:'surface',tail:T('fibers',C.brown,38,4),body:{c:'#2e4a3a',w0:6,w1:7,band:[158,36,'#b83a2a']},wing:{t:'upright',c:C.white},hackle:{t:'bushy',c:'#5a3a22',l:20},v:'White upright hair wings + red band on the body + bushy brown hackle.'},
+ 'Chubby Chernobyl':{ctx:'surface',hook:'long',body:{c:'#e0a44a',w0:8,w1:9,x1:104},wing:{t:'foam',c:'#d65a3a',x0:104,x1:250,h:14},legs:{t:'rubber',c:'#222',n:3,up:true},xtra:`<rect x="109" y="${Y-52}" width="7" height="30" fill="#f08030" stroke="rgba(0,0,0,.3)"/>`,v:'Two-layer foam body with a bright wing post and rubber legs.'},
+ 'Humpy':{ctx:'surface',tail:T('fibers',C.brown,38,4),body:{c:'#b8b040',w0:6,w1:8,band:[150,16,'#b83a2a']},wing:{t:'fan',c:'#b7a37a',s:.8},hackle:{t:'bushy',c:'#5a3a22',l:20},v:'Humped deer-hair back with upright hair wings; bushy and bouncy.'},
+ 'RS2':{ctx:'film',tail:T('fibers','#8a8f94',30,2),body:{c:'#8a8f94',w0:3,w1:5,seg:10},wing:{t:'post',c:'#e8e8e8',h:22},v:'Slim gray body with a very short wing nub in the film.'},
+ 'CDC Emerger':{ctx:'film',tail:T('shuck','#c1a45a',38),body:{c:'#7a7a40',w0:4,w1:6},wing:{t:'fan',c:'#d8d8d0',s:.55},v:'Fluffy CDC puff on top, trailing shuck behind.'},
+ 'Sparkle Dun':{ctx:'film',tail:T('shuck','#c9a940',42),body:{c:C.tan,w0:4,w1:6},wing:{t:'fan',c:'#bfae86',s:.8},v:'Comparadun-style fan wing PLUS a sparkly trailing shuck.'},
+ 'Cripple':{ctx:'film',tail:T('shuck','#c1a45a',34),body:{c:C.olive,w0:4,w1:6},wing:{t:'downwing',c:'#c9c9c0',len:200,rise:24},hackle:{t:'collar',c:C.dun,l:12},v:'Half-formed: short wing, collar hackle and a stuck shuck.'},
+ 'Partridge & Orange':{ctx:'sub',body:{c:'#d9742a',w0:3.5,w1:5},hackle:{t:'soft',c:'#8a7a5a',l:22},v:'Slim, wingless, swept-back soft hackle collar.'},
+ 'Hare’s Ear Soft Hackle':{ctx:'sub',body:{c:'#8a7a5a',w0:4,w1:7,fuzz:true},hackle:{t:'soft',c:'#7a6a52',l:22},v:'Fuzzy body + swept-back partridge collar.'},
+ 'Pheasant Tail':{ctx:'sub',bead:C.copper,tail:T('fibers','#7a4a1a',32,3),body:{c:'#7a4a1a',w0:4,w1:6,seg:10,rib:C.copper},thorax:{c:'#2f2f22',r:15,fuzz:true},wing:{t:'case',c:'#7a4a1a',len:140},legs:{t:'fibers',c:'#7a4a1a',n:3},v:'Slim brown-banded body, copper wire, dark thorax, wing case, 3 tails, bead.'},
+ 'Hare’s Ear':{ctx:'sub',bead:C.gold,tail:T('fibers','#8a7a5a',30,3),body:{c:'#8a7a5a',w0:5,w1:8,fuzz:true,rib:C.gold},thorax:{c:'#7a6a4a',r:16,fuzz:true},legs:{t:'fibers',c:'#8a7a5a',n:4},v:'Shaggy, buggy body with “picked-out” fuzz; gold rib.'},
+ 'Perdigon':{ctx:'sub',bead:C.silver,tail:T('fibers','#555',24,3),body:{c:'#4a4a4a',w0:3,w1:4,shine:true},v:'Super slim, glossy resin body with a shiny bead; nothing else.'},
+ 'Green Rock Worm':{ctx:'sub',body:{c:'#6aa82a',w0:7,w1:9,seg:12},head:{t:'ball',c:'#222'},legs:{t:'fibers',c:'#222',n:3},v:'Fat green grub with a black head and tiny legs: no tail.'},
+ 'Caddis pupa (Sparkle Pupa)':{ctx:'sub',body:{c:C.tan,w0:6,w1:8,seg:9},thorax:{c:'#3a2e22',r:15},sheath:22,hackle:{t:'soft',c:'#6a5a44',l:16},antenna:true,v:'Tan body inside a shiny “bubble” sheath, antennae, soft legs.'},
+ 'Cased caddis':{ctx:'sub',body:{t:'case',c:'#9a8a68'},v:'A rough tube of pebbles/sticks with a black head poking out.'},
+ 'Pat’s Rubber Legs':{ctx:'sub',hook:'long',bead:'#222',tail:T('rubber','#222',30),body:{c:'#4a3a2a',w0:7,w1:9,fuzz:true},legs:{t:'rubber',c:'#222',n:3,up:true},v:'Fat chenille body with long rubber legs and forked tail.'},
+ 'Kaufmann’s Stone':{ctx:'sub',hook:'long',bead:'#222',tail:T('biot','#222',32),body:{c:'#6a4a2a',w0:6,w1:8,seg:8},thorax:{c:'#3a2a1a',r:16,fuzz:true},wing:{t:'case',c:'#1a1a1a',len:170},legs:{t:'rubber',c:'#2a2a2a',n:3,up:true},v:'Segmented body, big dark wing case, forked tail, rubber legs.'},
+ 'Zebra Midge':{ctx:'sub',bead:C.silver,br:6,body:{c:'#1c1c1c',w0:3,w1:4,seg:14,rib:'#d8d8d8'},v:'Tiny black body with white-striped ribbing and a bead: no tail.'},
+ 'Bloodworm':{ctx:'sub',body:{c:'#b01e1e',w0:3,w1:3.5,seg:14,shine:true},head:{c:'#2b2b2b'},v:'Long thin red body, no bead, no tail.'},
+ 'Disco Midge':{ctx:'sub',bead:'#d6e0e8',br:6,body:{c:'#3a3a3a',w0:3,w1:4,rib:'#e8f0f6',ribn:7,shine:true},tail:T('fibers','#d9d9d9',16,2),v:'Shiny midge: pearly body flash and a glassy bead.'},
+ 'Sow bug':{ctx:'sub',body:{t:'oval',c:'#a9aaa6'},v:'Flat, wide and oval with ribbed segments like an armadillo.'},
+ 'Scud':{ctx:'sub',body:{t:'curl',c:'#c9a47a'},v:'Curled crescent body with segmented back and tiny legs.'},
+ 'Czech Nymph':{ctx:'sub',bead:C.gold,br:8,body:{t:'curl',c:'#7a8a40'},v:'Scud shape, but heavy: big gold/ tungsten bead and shell back.'},
+ 'San Juan Worm':{ctx:'sub',body:{t:'worm',c:'#c0392b',w:8},v:'A wavy red/pink rope. No insect parts.'},
+ 'Egg / Mop / pellet':{ctx:'sub',body:{t:'egg',c:'#f0a37a'},v:'A round blob—no tail, wing, legs.'},
+ 'Copper John':{ctx:'sub',bead:C.gold,tail:T('biot','#444',26),body:{c:C.copper,w0:4,w1:6,seg:7,shine:true},thorax:{c:'#2f3a24',r:15,fuzz:true},wing:{t:'case',c:'#e6e6e6',len:148,shine:true},legs:{t:'rubber',c:'#222',n:2},v:'Metallic copper wire body + shiny epoxy back, gold bead.'},
+ 'Prince Nymph':{ctx:'sub',bead:C.gold,tail:T('biot','#5a3a22',26),body:{c:'#2e3a2a',w0:5,w1:7,fuzz:true,rib:C.gold},hackle:{t:'soft',c:'#6a4a2e',l:14},wing:{t:'v',c:C.white},v:'White V-shaped biot wings laid back + peacock body.'},
+ 'Flashback Pheasant Tail':{ctx:'sub',bead:C.copper,tail:T('fibers','#7a4a1a',32,3),body:{c:'#7a4a1a',w0:4,w1:6,seg:10,rib:C.copper},thorax:{c:'#2f2f22',r:15,fuzz:true},wing:{t:'case',c:'#cfd8dc',len:140,shine:true},legs:{t:'fibers',c:'#7a4a1a',n:3},v:'Pheasant Tail with a shiny silver wing case.'},
+ 'Woolly Bugger':{ctx:'sub',hook:'long',bead:C.gold,tail:T('marabou','#3a4a22',64),body:{c:'#3d4a24',w0:7,w1:8,fuzz:true},hackle:{t:'palmer',c:'#1c1c1c',l:20,n:14},flash:'#7fd8ff',v:'Marabou tail + fuzzy chenille body + palmered hackle all the way up.'},
+ 'Zonker':{ctx:'sub',hook:'long',tail:null,body:{c:'#cfd8dc',w0:5,w1:7,rib:'#9aa5ac',shine:true},wing:{t:'sw',c:'#efe9dc',c2:'#efe9dc',len:62},head:{c:'#2b2118'},v:'Slim silver body topped with a long rabbit-strip wing that trails far past the hook.'},
+ 'Clouser Minnow':{ctx:'sub',hook:'long',eyes:C.red,body:{c:'#d8dde0',w0:3,w1:3,x1:110},wing:{t:'sw',c:'#40608a',c2:C.white,len:60},flash:'#9ee8ff',v:'Dumbbell eyes at the head + bucktail wing (dark on top, white beneath).'},
+ 'Slumpbuster':{ctx:'sub',hook:'long',cone:C.gold,tail:T('strip','#8a7040',82,9),body:{c:'#6a5a30',w0:6,w1:8},hackle:{t:'soft',c:'#7a6030',l:20},v:'Cone head with a fat rabbit-fur collar and long zonker tail.'},
+ 'Muddler Minnow':{ctx:'sub',hook:'long',tail:T('fibers','#8a6a3a',20,2),body:{c:'#d6b44a',w0:4,w1:5,shine:true},wing:{t:'downwing',c:'#8a6a3a',len:272,rise:24},head:{t:'deer',c:'#6a4a2a'},v:'Spun deer-hair head (a bristly ball) + mottled wing.'},
+ 'Mohair Leech':{ctx:'sub',hook:'long',bead:'#222',tail:T('marabou','#2b2b2b',78),body:{c:'#2b2b2b',w0:5,w1:6,fuzz:true},v:'One long marabou tail, fuzzy body, NO hackle.'},
+ 'Balanced Leech':{ctx:'sub',hook:'long',eyes:'#d8a63a',tail:T('marabou','#4a2a20',72),body:{c:'#4a2a20',w0:5,w1:6,fuzz:true},v:'Leech with a heavy dumbbell “balance” eye at the head.'},
+ 'Sex Dungeon / Dungeon':{ctx:'sub',hook:'xlong',artic:true,cone:C.gold,tail:T('strip','#e9e4d8',54,9),body:{c:'#cfd8dc',w0:6,w1:9,shine:true},head:{t:'deer',c:'#3a2a1a'},wing:{t:'sw',c:'#6a5030',c2:'#e9e4d8',len:30},v:'Two-hook articulated (jointed) body, big deer-hair head.'}
+};
+
+/* ---------------- recognise-it cues, by branch name ---------------- */
+const VIS={
+ 'Dry flies':['Sit ON the surface: stiff hackle or hair, upright wing or foam.','Light, sparse bodies; stiff tails prop the back end up.','Thin-wire standard-length hook; the bend hangs in the water.','Pick the dry by wing shape: post, fan, upright, tent, spent, foam.'],
+ 'Emergers & wets':['Half in, half out of the film: short wing/ post, trailing shuck.','Dull, drab bodies; soft (not stiff) hackle.','Often curved or sagging back end.','Soft hackles have NO wing and NO tail: just a swept-back collar.'],
+ 'Nymphs & larvae':['Almost always a bead and extra weight.','Segmented, tapered body + thorax + wing case + legs + tails.','Heavier or curved hook; muted natural colors.','Silhouette: slim (mayfly/midge), fat grub (caddis), chunky (stonefly), curled (scud).'],
+ 'Streamers':['Long, slim profile with a long-shank hook.','Marabou, rabbit, hair or flash trailing past the hook.','Head is heavy (bead, cone, eyes) or bulky (deer hair).','Fish-shaped; sizes #2–#10, bigger than anything else in the box.'],
+ 'Mayfly adults':['Upright or post wing; slim body; 2–3 split tails.','Spinners: wings spread flat.','Rides on tail tips and hackle.'],
+ 'Caddis adults':['Wing lies BACK over the body like a tent/roof.','No tail; antenna-like hackle; fatter body than a mayfly.'],
+ 'Stonefly adults':['Large and flat-winged; long wing past the hook.','Heavily hackled, bushy; orange/yellow/olive bodies.'],
+ 'Midge adults':['Tiny hook, thin body, no tail, no wing, tiny hackle.'],
+ 'Terrestrials':['Land bugs: foam, rubber legs, bold single-color bodies.','Ant = two blobs; beetle = shell; hopper = long wing + legs.'],
+ 'Attractor dries':['Bright, bushy, buoyant, no specific insect.','Many hackle turns, white wings or colored foam.'],
+ 'Emergers':['Short wing stub + shuck trailing behind.'],
+ 'Cripples':['Bent/stuck: partial wing, collar, shuck.'],
+ 'Soft hackles & wets':['Slim body, swept-back collar, no wing.'],
+ 'Mayfly nymphs':['3 tails, slim body, dark wing case, legs, usually bead.'],
+ 'Caddis larvae & pupae':['Fat grub or case; no tails; pupa has antennae and bubble sheath.'],
+ 'Stonefly nymphs':['Forked (2) tails, thick segmented body, rubber legs.'],
+ 'Midge larvae & pupae':['Tiny, slim, bead, tiny/no tail. White “gills” on pupa.'],
+ 'Crustaceans':['No wings, no tails: flat oval (sow bug) or curled crescent (scud/Czech).'],
+ 'Worms & eggs':['No insect parts at all: a rope or a round ball.'],
+ 'Attractor nymphs':['Flash: metal wire bodies, epoxy backs, white biot wings.'],
+ 'Generalists':['Marabou tail + fuzzy chenille + palmered hackle.'],
+ 'Baitfish':['Slim, flashy; wing of bucktail/rabbit trailing past the bend.'],
+ 'Sculpin':['Wide heavy head (cone or deer hair), mottled brown/olive, short stubby body.'],
+ 'Leeches':['Single marabou tail, fuzzy body, no hackle.'],
+ 'Articulated & big':['Jointed two-hook body; big head; long.']
+};
+
+/* ---------------- Fly Deal-style shop category names → tree nodes (cross-reference) ---------------- */
+const INSECT_VIEW=[
+ ['Mayfly',[['Nymph','Pheasant Tail'],['Emerger','Sparkle Dun'],['Dun (adult)','Comparadun'],['Spinner','Rusty Spinner']]],
+ ['Caddis',[['Larva','Green Rock Worm'],['Pupa','Caddis pupa (Sparkle Pupa)'],['Adult','Elk Hair Caddis']]],
+ ['Stonefly',[['Nymph','Pat’s Rubber Legs'],['Adult','Stimulator']]],
+ ['Midge',[['Larva','Bloodworm'],['Pupa','Zebra Midge'],['Adult cluster','Griffith’s Gnat']]]
+];
+const LOOKALIKES=[
+ ['Parachute Adams','Comparadun','Parachute: hackle wound FLAT around a white post. Comparadun: NO hackle, deer-hair fan wing.'],
+ ['Elk Hair Caddis','Stimulator','Caddis: slim, wing hugging the body, no tail. Stimulator: big, bushy, tail + wing past the bend.'],
+ ['Pheasant Tail','Hare’s Ear','PT: slim, banded, tidy. Hare’s Ear: shaggy, buggy, fuzzy.'],
+ ['Copper John','Prince Nymph','CJ: shiny wire body + epoxy back. Prince: peacock body + white V wings.'],
+ ['Zebra Midge','Bloodworm','Zebra: black + silver stripes + bead. Bloodworm: red, no bead.'],
+ ['Woolly Bugger','Mohair Leech','Bugger: palmered hackle up the body. Leech: no hackle, fuzzy body.'],
+ ['Scud','Sow bug','Scud: curled crescent. Sow bug: flat oval, many segments.'],
+ ['Slumpbuster','Muddler Minnow','Slump: cone head + fur collar. Muddler: spun deer-hair ball head + wing.']
+];
+
+</script>
+<script>
+/* Picture-based learning layer: panel figures, gallery, by-insect view, look-alikes, quiz.
+   Depends on fly-art.js (fly, ART, VIS, INSECT_VIEW, LOOKALIKES) and on TREE/ALLN/select/show/FLIES from the main script. */
+document.head.insertAdjacentHTML('beforeend',`<style>
+.mont{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0}
+.mont figure,.gcard figure{margin:0}.mont figcaption{font-size:12px;text-align:center;color:#5d6b73}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.gcard{background:#fff;border:1px solid #d9d5c8;border-radius:10px;padding:8px;cursor:pointer}
+.gcard:hover{border-color:#c4622d}.gcard b{font-size:14px}.gcard div{font-size:12px;color:#5d6b73}
+.famh{display:flex;gap:10px;align-items:baseline;margin:20px 0 6px;padding-left:10px;border-left:6px solid}
+.famh h2{margin:0}.traits{margin:0 0 10px 0;padding-left:18px;font-size:14px}
+.colrow{display:grid;grid-template-columns:110px 1fr;gap:10px;align-items:center;border-bottom:1px solid #d9d5c8;padding:8px 0}
+.colrow .imgs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.life{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 14px}
+.life .st{width:230px}.life .ar{font-size:26px;color:#c4622d}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qopt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px;border:1.5px solid #d9d5c8;background:#fff;border-radius:10px;cursor:pointer;font:inherit}
+.qopt:hover{border-color:#1f2a30}.qopt.ok{background:#e0f3e6;border-color:#3c8d5a}.qopt.bad{background:#fbe4e1;border-color:#b8443a}
+.score{font-weight:700}
+</style>`);
+
+const FAMC=n=>{while(n.d>1)n=n.p0;return n};
+const leavesOf=n=>n.k.length?n.k.flatMap(leavesOf):[n];
+const fig=(n,w)=>ART[n.n]?`<figure>${fly(ART[n.n],{label:n.n})}<figcaption>${n.n}</figcaption></figure>`:'';
+
+function figure(n){
+  if(!n.k.length&&ART[n.n])return {img:fly(ART[n.n],{label:n.n}),txt:`<div class="dl"><b class="lab">Spot it</b>${ART[n.n].v}</div>`};
+  let ls=leavesOf(n).filter(x=>ART[x.n]);
+  if(n.d===0)ls=TREE.k.map(f=>leavesOf(f).find(x=>ART[x.n])).filter(Boolean);
+  ls=ls.slice(0,6);
+  const vis=VIS[n.n];
+  return {img:`<div class="mont">${ls.map(x=>fig(x)).join('')}</div>`,txt:vis?`<div class="dl"><b class="lab">How to recognise this group by sight</b><ul style="margin:4px 0;padding-left:18px">${vis.map(v=>`<li>${v}</li>`).join('')}</ul></div>`:''};
+}
+
+function goTo(n){open.clear();for(let p=n.p0;p;p=p.p0)open.add(p.id);if(n.k.length)open.add(n.id);show('tree');select(n,false)}
+const byName=nm=>ALLN.find(n=>n.n===nm);
+
+function buildGallery(){
+  const rows=[
+   ['Surface','Dry flies','Parachute Adams','Elk Hair Caddis','Hopper'],
+   ['Surface film','Emergers','RS2','Sparkle Dun','Cripple'],
+   ['Mid-water','Soft hackles & pupae','Partridge & Orange','Caddis pupa (Sparkle Pupa)','Pheasant Tail'],
+   ['Near bottom','Heavy nymphs','Pat’s Rubber Legs','Czech Nymph','Zebra Midge'],
+   ['Any depth','Streamers','Woolly Bugger','Clouser Minnow','Slumpbuster']];
+  let h=`<div class="card"><h2 style="margin-top:0">Where each family rides in the water</h2><div class="small mute">Same fly shown in the water: the picture tells you the family.</div>${rows.map(r=>`<div class="colrow"><div><b>${r[0]}</b><div class="small mute">${r[1]}</div></div><div class="imgs">${r.slice(2).map(nm=>`<figure style="margin:0">${fly(ART[nm],{label:nm})}<figcaption class="small" style="text-align:center">${nm}</figcaption></figure>`).join('')}</div></div>`).join('')}</div>`;
+  TREE.k.forEach(f=>{
+    const ls=leavesOf(f).filter(x=>ART[x.n]);
+    h+=`<div class="famh" style="border-color:${f.c}"><h2 style="color:${f.c}">${f.n}</h2><span class="small mute">${ls.length} patterns</span></div>`;
+    h+=`<div class="card"><b>Shared traits</b><ul class="traits">${(VIS[f.n]||[]).map(v=>`<li>${v}</li>`).join('')}</ul>`;
+    f.k.forEach(g=>{const gl=leavesOf(g).filter(x=>ART[x.n]);h+=`<h3 style="margin:14px 0 4px;color:${g.c}">${g.n}</h3><div class="small mute" style="margin-bottom:6px">${(VIS[g.n]||[]).join(' ')}</div><div class="gal">${gl.map(x=>`<div class="gcard" data-go="${x.id}">${fly(ART[x.n],{label:x.n})}<b>${x.n}</b><div>${x.z||''} · ${ART[x.n].v}</div></div>`).join('')}</div>`});
+    h+='</div>';
+  });
+  h+=`<div class="famh" style="border-color:#c4622d"><h2>Look-alike pairs (exam favourites)</h2></div>`+LOOKALIKES.map(([a,b,t])=>`<div class="card"><div class="pair"><figure style="margin:0">${fly(ART[a],{label:a})}<b>${a}</b></figure><figure style="margin:0">${fly(ART[b],{label:b})}<b>${b}</b></figure></div><div class="small" style="margin-top:6px">${t}</div></div>`).join('');
+  $('#galleryBody').innerHTML=h;
+  $('#galleryBody').onclick=e=>{const g=e.target.closest('[data-go]');if(g)goTo(ALLN[+g.dataset.go])};
+}
+
+function buildInsects(){
+  $('#insectBody').innerHTML=INSECT_VIEW.map(([ins,st])=>`<div class="card"><h2 style="margin-top:0">${ins}</h2><div class="small mute">One insect, several flies: one fly per life stage.</div><div class="life">${st.map(([lab,nm],i)=>`${i?'<span class="ar">➜</span>':''}<div class="st"><b>${lab}</b>${fly(ART[nm],{label:nm})}<div class="small">${nm}</div></div>`).join('')}</div></div>`).join('');
+}
+
+/* ---------------- quiz ---------------- */
+const Q={mode:'family',score:0,total:0,streak:0,hint:false,cur:null};
+const shuf=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+function newQ(){
+  const L=ALLN.filter(n=>!n.k.length&&ART[n.n]);
+  let q={};
+  if(Q.mode==='part'){
+    const fk=rnd(Object.keys(FLIES)),F=FLIES[fk],pk=rnd(Object.keys(F.parts));
+    const lab=k=>F.parts[k][0].split(' (')[0];
+    q={kind:'part',fk,pk,answer:lab(pk),opts:shuf([lab(pk),...shuf(Object.keys(F.parts).filter(k=>lab(k)!==lab(pk)).map(lab)).slice(0,3)]),why:F.parts[pk][1]};
+  }else{
+    const n=rnd(L),f=FAMC(n),g=n.p0;
+    let ans,opts;
+    if(Q.mode==='family'){ans=f.n;opts=TREE.k.map(x=>x.n)}
+    else if(Q.mode==='group'){ans=g.n;const gs=f.k.map(x=>x.n);const other=shuf(ALLN.filter(x=>x.d===2&&x!==g&&!gs.includes(x.n)).map(x=>x.n));opts=shuf([...new Set([...gs,...other])].filter(x=>x!==ans)).slice(0,3).concat(ans)}
+    else{ans=n.n;const sib=shuf(leavesOf(f).filter(x=>x!==n&&ART[x.n]).map(x=>x.n)).slice(0,3);opts=[ans,...sib]}
+    q={kind:'fly',n,answer:ans,opts:shuf(opts),why:`${ART[n.n].v} (${f.n} › ${g.n} › ${n.n})`};
+  }
+  Q.cur=q;renderQ();
+}
+function partSVG(fk,pk){
+  const F=FLIES[fk];
+  let s=HOOK;
+  Object.entries(F.parts).forEach(([k,[,,pt,shape]])=>{s+=`<g opacity="${k===pk?1:.35}">${shape}</g>`});
+  const pt=F.parts[pk][2];
+  s+=`<circle cx="${pt[0]}" cy="${pt[1]}" r="17" fill="none" stroke="#c4622d" stroke-width="3.5"/><circle cx="${pt[0]}" cy="${pt[1]}" r="3" fill="#c4622d"/>`;
+  return `<svg viewBox="30 40 560 250" width="100%">${s}</svg>`;
+}
+function renderQ(){
+  const q=Q.cur,pic=q.kind==='part'?partSVG(q.fk,q.pk):fly(ART[q.n.n],{noctx:!Q.hint,label:'mystery fly'});
+  const prompt={family:'Which FAMILY is this fly?',group:'Which GROUP (branch) is this fly in?',pattern:'Which PATTERN is this?',part:'Name the circled part.'}[Q.mode];
+  $('#quizBody').innerHTML=`<div class="card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap"><b>${prompt}</b><span class="score">Score ${Q.score}/${Q.total} · Streak ${Q.streak}</span></div>
+  <div style="max-width:560px;margin:10px 0">${pic}</div><div style="max-width:560px" id="opts">${q.opts.map(o=>`<button class="qopt">${o}</button>`).join('')}</div><div id="fb"></div></div>`;
+  $('#opts').onclick=e=>{
+    if(!e.target.classList.contains('qopt')||$('#fb').innerHTML)return;
+    const ok=e.target.textContent===q.answer;Q.total++;Q.score+=ok;Q.streak=ok?Q.streak+1:0;
+    document.querySelectorAll('.qopt').forEach(b=>{if(b.textContent===q.answer)b.classList.add('ok');else if(b===e.target)b.classList.add('bad')});
+    $('#fb').innerHTML=`<div class="warn" style="background:${ok?'#e0f3e6':'#fff4e5'}"><b>${ok?'Correct':'It is '+q.answer}.</b> ${q.why}</div><button class="qopt" id="nx" style="text-align:center;font-weight:700">Next question ➜</button>`;
+    $('#nx').onclick=newQ;
+    document.querySelector('.score').textContent=`Score ${Q.score}/${Q.total} · Streak ${Q.streak}`;
+  };
+}
+function buildQuiz(){
+  $('#quizTabs').innerHTML=[['family','Name the family'],['group','Name the group'],['pattern','Name the pattern'],['part','Label the part']].map(([k,t])=>`<button data-m="${k}" class="${k===Q.mode?'on':''}">${t}</button>`).join('')+`<label style="display:inline-flex;gap:6px;align-items:center;margin-left:10px;text-transform:none;font-size:14px"><input type="checkbox" id="hint"> show water level hint</label>`;
+  $('#quizTabs').onclick=e=>{if(e.target.dataset.m){Q.mode=e.target.dataset.m;Q.score=Q.total=Q.streak=0;document.querySelectorAll('#quizTabs button').forEach(b=>b.classList.toggle('on',b.dataset.m===Q.mode));newQ()}};
+  $('#quizTabs').onchange=e=>{if(e.target.id==='hint'){Q.hint=e.target.checked;renderQ()}};
+  newQ();
+}
+function initLearn(){buildGallery();buildInsects();buildQuiz()}
+
+</script>
+<script>
+const $=s=>document.querySelector(s);
+/* ---------- DATA: N(name,{fields},[children]); fields: s summary, i imitates, p parts/recipe, h how to fish, w when/where, z sizes ---------- */
+const N=(n,f,k)=>({n,...f,k:k||[]});
+const TREE=N('Flies',{s:'Every fly is an imitation (or attractor) of something a fish eats. The main question is: where in the water does it ride, and what does it copy?'},[
+ N('Dry flies',{s:'Float on the surface and imitate adult insects. You watch the fly; the fish rises to take it. Needs floatant and a drag-free (“dead”) drift.',h:'Cast upstream/across, let it drift at current speed, mend to prevent drag. Strike by lifting (not jerking) when the fish rises.',w:'Hatches, calm seams, evenings. Utah: PMD June–Sept, caddis May–Oct, terrestrials Jun–Oct.'},[
+  N('Mayfly adults',{s:'Duns (just-hatched, upright wings) and spinners (spent adults laying eggs). Selective trout key on the wing shape and silhouette.',i:'Mayfly duns & spinners'},[
+   N('Parachute Adams',{z:'#12–20',i:'Generic mayfly dun (BWO/PMD/midge cluster by size)',p:'Post (white/ calf-body wing) • hackle wound <i>horizontally</i> around post • grizzly/brown tail • gray dubbed body',h:'Sits low in the film with a visible white post. Dead-drift; a great “search” dry and indicator-for-dropper.',w:'Utah: year-round gap-filler; best Apr–Oct.'}),
+   N('Comparadun',{z:'#14–22',i:'Mayfly dun (PMD, BWO) — no hackle',p:'Deer-hair fan wing • split tails • dubbed body • <b>no hackle</b> so the body sits <i>in</i> the film',h:'Best for picky fish on flat, slow water; fish after the fish refuses a hackled dry.',w:'Provo: PMD (June–mid Sept), BWO (spring/fall).'}),
+   N('Catskill dry (Light Cahill)',{z:'#10–16',i:'Mayfly dun, classic style',p:'Upright divided wings • stiff tails • <i>vertical</i> hackle collar that floats it on the tail and hackle tips',h:'High-floating, visible; good in broken water and pocket water.',w:'Faster runs and pocket water on the Forks.'}),
+   N('Rusty Spinner',{z:'#14–20',i:'Mayfly spinner (dead/dying adult, wings flat)',p:'Poly or hackle-fiber wings laid flat • rusty-brown dubbed body',h:'Fish at dusk on slow water; the fly lies flat in the film.',w:'Evening after PMD/ drake spinner falls.'}),
+   N('Trico Spinner',{z:'#20–24',i:'Trico mayfly spinner (tiny, black)',p:'Slim black body • two very long split tails • clear/white poly spent wings',h:'Fish at the head of slow runs on summer mornings; trout sip the spent “spinner fall”. Use 6X–7X tippet.',w:'Mid-summer to fall, early morning (verify local Provo timing).'}),
+   N('Paradrake',{z:'#10–12',i:'Western Green Drake dun',p:'Large parachute with olive body and elk/ calf wing post',h:'Fish at the start of the hatch (afternoon, overcast days); a large target for big trout.',w:'Provo: mid-June–July.'})]),
+  N('Caddis adults',{s:'Moth-like adults with tent-shaped wings; skitter across the surface when egg-laying.',i:'Caddisfly (sedge) adults'},[
+   N('Elk Hair Caddis',{z:'#12–16',i:'Adult caddis',p:'Palmered hackle • dubbed body • elk-hair wing laid back over body',h:'Dead-drift, or “skitter” by twitching at the end of the drift. Great evening fly.',w:'Utah: May–Oct, esp. around dusk.'}),
+   N('X-Caddis',{z:'#14–18',i:'Emerging/ adult caddis',p:'Trailing shuck of Zelon • sparse hair wing • dubbed body',h:'Rides low; good when fish take emergers just in the film.',w:'Provo, caddis hatches.'})]),
+  N('Stonefly adults',{s:'Large, flat-winged adults; stone- and sally-flies crawl out and flutter back to lay eggs.',i:'Stoneflies (golden, olive, yellow sally)'},[
+   N('Stimulator',{z:'#6–12',i:'Golden stonefly, big caddis, hopper — all-purpose big dry',p:'Hair wing • palmered hackle • colored (orange/yellow) body',h:'High-floating dry; classic dry-dropper “top fly” in fast water.',w:'Provo May–July; freestones like the Forks in summer.'}),
+   N('Yellow Sally',{z:'#12–14',i:'Little yellow stonefly',p:'Slim yellow body • hair wing • light hackle',h:'Fish at midday and morning; a good dry and nymph pair.',w:'Provo May 15–June 30.'})]),
+  N('Midge adults',{s:'Tiny; fish often take clusters of several mating midges as one bite.',i:'Adult midges'},[
+   N('Griffith’s Gnat',{z:'#18–24',i:'Cluster of midges',p:'Peacock herl body • grizzly hackle palmered • no tail/wings',h:'Dead drift on slow, flat water. Fish it behind a larger dry when possible.',w:'Utah winter and early spring; year-round on the Provo.'})]),
+  N('Terrestrials',{s:'Land insects that fall in the water; fish eat them heavily in summer and fall.',i:'Hoppers, ants, beetles, crickets'},[
+   N('Hopper',{z:'#6–10',i:'Grasshopper',p:'Foam or dubbed body • elk-hair wing • rubber legs',h:'Slap it near grassy banks; wind helps. Often fished as a hopper-dropper.',w:'July–Oct, windy afternoons.'}),
+   N('Ant',{z:'#12–16',i:'Flying/black ant',p:'Two-segment foam or dubbed body, narrow waist',h:'Fish tight to the bank; subtle taps.',w:'Summer; good when nothing hatches.'}),
+   N('Beetle',{z:'#12–16',i:'Beetle',p:'Foam or peacock body with a foam shell',h:'Plop under overhanging bushes.',w:'June–Oct.'}),
+   N('Cricket',{z:'#8–12',i:'Cricket',p:'Black foam and rubber legs',h:'Fall bank fishing.',w:'Aug–Oct.'})]),
+  N('Attractor dries',{s:'Imitate nothing specific; they look buggy, big and buoyant. Used to search or to carry weight.',i:'“General food”'},[
+   N('Royal Wulff',{z:'#10–16',i:'Generic food; stoneflies/ mayflies',p:'White hair wings • red floss band • peacock herl • brown hackle',h:'Visible high-floater for fast water.',w:'Forks and Provo pocket water.'}),
+   N('Chubby Chernobyl',{z:'#8–10',i:'Big stonefly/ hopper/ beetle',p:'Foam body, rubber legs, bright wing post',h:'Very visible and buoyant; carries 1–2 nymph droppers.',w:'Summer, esp. the Forks.'}),
+   N('Humpy',{z:'#10–16',i:'Bushy generic dry',p:'Hump of deer hair, tail and hackle',h:'Bounces through riffles without sinking.',w:'Mountain freestones.'})])
+ ]),
+ N('Emergers & wets',{s:'Flies in or just under the surface film, imitating insects that are hatching, stuck, or drifting. Often the secret for fish that “refuse” dries.',h:'Dead drift in the film; in slow water, grease only the wing/post so the body hangs below.',w:'Hatches, grey days; Utah: BWO & midge on the Provo.'},[
+  N('Emergers',{s:'Insects struggling out of their shuck — the most vulnerable and easiest meal.',i:'Emerging mayflies, midges, caddis'},[
+   N('RS2',{z:'#18–24',i:'Midge / small mayfly emerger',p:'Slim body • tiny tail • short Z-wing post (CDC/ poly)',h:'Greased tip, slim body in the film.',w:'Provo year-round (BWO/midge).'}),
+   N('CDC Emerger',{z:'#14–20',i:'Mayfly emerger',p:'CDC wing • dubbed body • trailing shuck',h:'Float it in slow water; tiny, buoyant.',w:'PMD, BWO times.'}),
+   N('Sparkle Dun',{z:'#14–20',i:'Mayfly dun stuck in shuck',p:'Deer-hair wing • Zelon trailing shuck • dubbed body',h:'Sits in the film like a struggling dun.',w:'PMD hatch.'})]),
+  N('Cripples',{s:'Insects that failed to hatch: dead or deformed in the film. Trout love them.',i:'Stillborn/crippled mayflies'},[
+   N('Cripple',{z:'#14–20',i:'Mayfly stuck half-out of the shuck',p:'Hackle or hair wing • bent or hanging body',h:'Fish it in flat water during heavy hatches.',w:'Heavy PMD/BWO hatches.'})]),
+  N('Soft hackles & wets',{s:'Old-school flies with a soft, pulsing collar. Dead-drift, swing or fish in the film.',i:'Emerging caddis/ mayflies, drowned insects'},[
+   N('Partridge & Orange',{z:'#12–18',i:'Emerging caddis/ mayfly',p:'Orange thread body • partridge feather collar',h:'Swing across current or dead-drift under a dry.',w:'Spring–summer.'}),
+   N('Hare’s Ear Soft Hackle',{z:'#12–16',i:'Emerger/ drowned adult',p:'Dubbed hare’s ear • soft partridge collar',h:'Add as the dropper under an indicator or dry.',w:'Provo, Forks.'})])
+ ]),
+ N('Nymphs & larvae',{s:'Imitate the immature, underwater stage of insects (and other bottom food). Trout get most of their calories here, so nymphing is the most consistent way to catch fish.',h:'Get the fly to the fish’s depth with weight (bead/ shot). Use an indicator or tight-line; add a second nymph as a dropper.',w:'Any time; Provo nymphing works year-round.'},[
+  N('Mayfly nymphs',{s:'Four body types: clingers (flat), crawlers, swimmers (slim, streamlined), burrowers.',i:'Mayfly nymphs'},[
+   N('Pheasant Tail',{z:'#12–20',i:'Swimmer mayfly (BWO, PMD)',p:'Pheasant tail fibers for tail, body, and legs • copper wire rib • peacock thorax • bead optional',h:'Dead-drift near the bottom; rise it at the end of the drift as a hatching nymph.',w:'Year-round; spring–fall.'}),
+   N('Hare’s Ear',{z:'#12–18',i:'Crawler/clinger mayflies; caddis; general food',p:'Hare’s-mask dubbing picked out for “legs” • gold wire rib • bead optional',h:'Heavy searching nymph.',w:'All year.'}),
+   N('Perdigon',{z:'#14–18',i:'Slim mayfly/ caddis',p:'Thin tungsten bead • slim body coated in UV resin • quick sinking',h:'Gets down fast on short leaders; good as the point fly.',w:'Faster water; Provo and Forks.'})]),
+  N('Caddis larvae & pupae',{s:'Larvae live in cases or free-living (green rock worm); pupae rise to the surface to hatch.',i:'Caddis stages'},[
+   N('Green Rock Worm',{z:'#12–16',i:'Free-living caddis larva',p:'Bright green body • black head • tiny wire rib',h:'Drift near bottom; most in riffle water.',w:'Spring–fall.'}),
+   N('Caddis pupa (Sparkle Pupa)',{z:'#14–16',i:'Caddis pupa swimming up',p:'Antron/ Zelon bubble-like sheath • dubbed body • soft hackle legs',h:'Swing at the end of the drift or lift to the surface.',w:'Before and during caddis hatches.'}),
+   N('Cased caddis',{z:'#10–14',i:'Larva in its stick/ pebble case',p:'Peacock herl body w/ bead',h:'Bottom-dwelling; roll along the bottom.',w:'Slower water, any time.'})]),
+  N('Stonefly nymphs',{s:'Large, rubber-legged nymphs; high-calorie meals. Often used as a weight at the top of a dropper rig.',i:'Golden, olive & salmon-fly nymphs'},[
+   N('Pat’s Rubber Legs',{z:'#6–10',i:'Stonefly nymph',p:'Chenille body • rubber legs • bead or lead',h:'Top fly (heavy) on a two-fly rig, tight-lined along the bottom.',w:'Provo May–July; runoff.'}),
+   N('Kaufmann’s Stone',{z:'#6–10',i:'Golden stonefly',p:'Dubbed body • rubber legs • black wing case',h:'Same style; slimmer profile than rubber legs.',w:'Runoff, spring.'})]),
+  N('Midge larvae & pupae',{s:'Tiny; critical on tailwaters in winter.',i:'Midge larvae/ pupae'},[
+   N('Zebra Midge',{z:'#18–22',i:'Midge pupa/ larva',p:'Black thread body with silver wire • bead • sparse hackle/ thorax',h:'Tail fly under a bigger nymph; fish deep in runs.',w:'Provo, all year.'}),
+   N('Bloodworm',{z:'#12–16',i:'Midge larva (bloodworm)',p:'Red thread or Ultra Wire body; slim',h:'Under an indicator in still water; small, slim.',w:'Ponds; slow water.'}),
+   N('Disco Midge',{z:'#18–22',i:'Midge pupa w/ gas bubbles',p:'Flashy body with a glass/ pearl bead',h:'Fish on a tight line; shiny attractor midge.',w:'Winter, clear water.'})]),
+  N('Crustaceans',{s:'Sow bugs (flat) and scuds (curved) live in weed beds; not insects but trout love them.',i:'Sow bugs and scuds'},[
+   N('Sow bug',{z:'#14–18',i:'Aquatic sowbug (Provo staple)',p:'Gray/tan dubbing • shell-back (scud back) • rib',h:'Dead drift on the bottom; good after high flows.',w:'Provo year-round.'}),
+   N('Czech Nymph',{z:'#10–14',i:'Scud / caddis larva, in a heavy, fast-sinking style',p:'Curved hook • heavy tungsten bead • lead wraps • shellback • olive/ tan dubbing',h:'Tight-line (Euro) nymphing in fast, deep runs: the heavy fly gets down immediately.',w:'High, cold, fast water; Provo runs and Forks.'}),
+   N('Scud',{z:'#12–18',i:'Freshwater shrimp',p:'Curved hook • tan/pink/olive dubbing • shell back',h:'Fish slow in ponds; drift near weeds on rivers.',w:'Ponds and spring creeks, all year.'})]),
+  N('Worms & eggs',{s:'Simple food-based flies: worms wash in with rain; eggs matter in spawning season or after stocking.',i:'Worms, trout/ whitefish/ hatchery pellets'},[
+   N('San Juan Worm',{z:'#10–14',i:'Aquatic worm',p:'Single strand of chenille or vinyl-rib, red/pink/tan',h:'Fish after rain or runoff, dead drift.',w:'High, stained water.'}),
+   N('Egg / Mop / pellet',{z:'#10–16',i:'Eggs; hatchery pellets',p:'Round yarn/ glass bead; often colored peach/ orange/ tan',h:'Drop a fly right after stocking or during spawning periods; one egg + a nymph rig.',w:'Bartholomew Pond after stocking; Fall browns.'})]),
+  N('Attractor nymphs',{s:'Flashy generalists that “look like food” without matching one species.',i:'Mixed insects'},[
+   N('Copper John',{z:'#12–18',i:'Generic stonefly/ mayfly',p:'Copper wire body • epoxy back • gold bead • flash legs',h:'Quick-sinking first fly.',w:'Any time; strong in off-colored water.'}),
+   N('Prince Nymph',{z:'#12–16',i:'Stonefly/ caddis/ drowned insects',p:'Peacock body • white biot “wings” • brown hackle',h:'Classic searching nymph.',w:'Any time; fast water.'}),
+   N('Flashback Pheasant Tail',{z:'#14–18',i:'Mayfly nymph w/ sparkle',p:'PT fibers • flashy wing case',h:'Attractor take on a mayfly nymph.',w:'Spring–fall.'})])
+ ]),
+ N('Streamers',{s:'Larger flies that imitate baitfish, sculpins, leeches and crayfish. They trigger predatory strikes and often catch the biggest fish.',h:'Cast across, strip or swing; vary the speed and add pauses. Sink-tip lines help get them deeper.',w:'Low light, high water; browns in fall.'},[
+  N('Generalists',{s:'One fly that looks like a leech, baitfish or crayfish depending on how you fish it.',i:'Mixed food'},[
+   N('Woolly Bugger',{z:'#6–10',i:'Leech, baitfish, crayfish',p:'Marabou tail • chenille body • palmered hackle • bead/ cone optional',h:'Strip, swing or dead-drift; the easiest all-round streamer.',w:'River and pond, year-round.'})]),
+  N('Baitfish',{s:'Slim minnow imitations with a flashy profile.',i:'Minnows/ small trout'},[
+   N('Zonker',{z:'#4–8',i:'Baitfish',p:'Rabbit-strip wing • flashy body • stripped hackle',h:'Swing or strip; the rabbit strip pulses.',w:'Fall brown trout, early spring.'}),
+   N('Clouser Minnow',{z:'#2–8',i:'Baitfish',p:'Dumbbell eyes at head (flips hook point up) • bucktail + flash wing',h:'Jigs up and down along drop-offs and deep runs.',w:'Ponds and deeper runs, May–Oct.'})]),
+  N('Sculpin',{s:'Bottom-dwelling fish with a wide head; a major brown-trout food.',i:'Sculpins'},[
+   N('Slumpbuster',{z:'#4–8',i:'Sculpin/ small fish',p:'Zonker strip wrapped behind a cone head • flashy underwing',h:'Short strips along bottom; keep the fly moving but low.',w:'Provo, Forks; fall and spring.'}),
+   N('Muddler Minnow',{z:'#4–10',i:'Sculpin, grasshopper',p:'Deer-hair head • turkey wing • tinsel body',h:'Swing or dead-drift; floats at first then dives.',w:'Rivers, evening.'})]),
+  N('Leeches',{s:'Slim, undulating leech imitations favored by stillwater trout.',i:'Leeches'},[
+   N('Mohair Leech',{z:'#6–10',i:'Leech',p:'Marabou tail • mohair body • bead',h:'Slow strip or hang below an indicator.',w:'Ponds, any month.'}),
+   N('Balanced Leech',{z:'#8–12',i:'Leech',p:'Hook sits horizontal under the indicator (thanks to heavy dumbbell)',h:'Dead-hang under an indicator in still water.',w:'Ponds.'})]),
+  N('Articulated & big',{s:'Multi-hook “meat” flies that stand out in dirty water or for large trout.',i:'Big baitfish/ small trout'},[
+   N('Sex Dungeon / Dungeon',{z:'#2–6',i:'Large baitfish',p:'Two-hook articulated body • rabbit-strip tail • deer-hair head',h:'Heavy tippet (0X–2X), strip aggressively.',w:'Fall browns and runoff.'})])
+ ])
+]);
+
+/* ---------- assign ids, parents, family colors ---------- */
+const FC=['#2c3e50','#d9a21c','#8e6bbf','#3c8d5a','#b8443a','#2a8a6a','#6b7a85'];
+let id=0;
+(function f(n,p,d,c){n.id=id++;n.p0=p;n.d=d;n.c=c;n.k.forEach((k,i)=>f(k,n,d+1,d===0?FC[i+1]:c))})(TREE,null,0,FC[0]);
+const ALLN=[];(function g(n){ALLN.push(n);n.k.forEach(g)})(TREE);
+
+const GEN={
+ 'Flies':{h:'Start with what the fish are eating and where: surface, film, mid-water, bottom, or chasing baitfish.'},
+ 'Dry flies':{p:'Stiff tail fibers • slim body • wing (post, fan, upright, hair tent or foam) • stiff rooster hackle • thin-wire hook'},
+ 'Emergers & wets':{p:'Short wing or post • trailing shuck • soft (not stiff) collar • dull body that hangs in the film'},
+ 'Nymphs & larvae':{p:'Bead head • tails • segmented tapered body with rib • thorax • wing case • legs • lead/ tungsten weight'},
+ 'Streamers':{p:'Long-shank hook • tail (marabou/ rabbit/ hackle) • chenille or tinsel body • wing/ flash • weighted head (bead, cone, eyes)'},
+ 'Mayfly adults':{p:'2–3 split tails • slim segmented body • upright, post, fan or spent wings • hackle for float',h:'Match the stage: duns during the hatch, spinners at dusk. Dead-drift upstream on 5X–6X; wait for the take.',w:'Provo: PMD Jun–Sep, BWO spring & fall, Green Drake Jun–Jul, Tricos summer mornings.'},
+ 'Caddis adults':{p:'Wing swept back over body like a roof • no tails • palmered hackle • antennae-like fibers',h:'Dead-drift, or skate/ twitch a bit at the end of the drift. Fish water near the bank at dusk.',w:'Provo/Forks: May–Oct, best late afternoon–dusk.'},
+ 'Stonefly adults':{p:'Long flat wings • bulky body • palmered hackle • elk/ deer hair; orange/ yellow/ olive',h:'Cast tight to the bank and into fast broken water; let it float high and bounce through the riffle.',w:'Provo May–July; freestones in summer.'},
+ 'Midge adults':{p:'Tiny hook • thin body • no tail or wing • tiny hackle',h:'Dead-drift on flat water on 6X; use clusters and fish a bigger dry above to see it.',w:'Year-round; winter and early spring on the Provo.'},
+ 'Terrestrials':{p:'Foam or dubbed bulky body • rubber/ fiber legs • dark or bold colour',h:'Slap or plop them near the bank; wind and overhanging grass are your friends.',w:'Late June–October, windy afternoons.'},
+ 'Attractor dries':{p:'Bushy hackle • bright wings or foam • high-floating',h:'Search fast water; use as a dry that carries a nymph dropper.',w:'Summer on the Forks and Provo pocket water.'},
+ 'Emergers':{p:'Short wing post • trailing shuck • slim body',h:'Present in the film with a greased tip; use a longer, finer leader on flat water.',w:'During BWO, midge and PMD hatches, esp. gray days.'},
+ 'Cripples':{p:'Bent body • partial wing • collar • stuck shuck',h:'Fish on flat water in heavy hatches when trout refuse perfect duns.',w:'Heavy PMD/ BWO hatches.'},
+ 'Soft hackles & wets':{p:'Slim body • no wing/ no tail • swept-back soft collar',h:'Dead-drift, swing across current, or lift at the end of the drift.',w:'Spring–fall, caddis and mayfly hatches.'},
+ 'Mayfly nymphs':{p:'3 tails • slim body • thorax • dark wing case • legs • bead',h:'Dead-drift near the bottom, lift at the end for the “emerging” look. Use indicator or tight line.',w:'Year-round; peaks before hatches.'},
+ 'Caddis larvae & pupae':{p:'Fat grub body • black head • no tail (larva) • bubble sheath and antennae (pupa)',h:'Larvae along the bottom; pupae swung or lifted at the end of the drift.',w:'Spring–fall; pupae right before hatches.'},
+ 'Stonefly nymphs':{p:'Forked tails • thick segmented body • rubber legs • wing case • heavy',h:'Heavy point fly: tight-line or indicator in runs, deep and slow.',w:'Provo May–July, runoff periods.'},
+ 'Midge larvae & pupae':{p:'Tiny slim body • bead • rib • tiny/ no tail • optional white “gills”',h:'Small, deep, dead-drift; use as a trailing fly under a bigger nymph.',w:'Year-round, critical in winter.'},
+ 'Crustaceans':{p:'No wings or tails • flat oval (sow bug) or curled crescent (scud) • shell back',h:'Dead-drift on the bottom, esp. over weed beds.',w:'Provo year-round; ponds and spring creeks.'},
+ 'Worms & eggs':{p:'A rope (worm) or a round bead/ yarn ball (egg)',h:'Dead-drift after rain or high water (worms), and during spawn or after stocking (eggs).',w:'Runoff, rain, fall, Bartholomew after stocking.'},
+ 'Attractor nymphs':{p:'Flashy wire or epoxy • bead • flash legs or white wings',h:'Fast-sinking first fly; great in off-color water.',w:'Any time; strongest when water is high or stained.'},
+ 'Generalists':{p:'Marabou tail • chenille body • palmered hackle • bead',h:'Strip, swing or dead-drift; vary speed until the fish tell you.',w:'Rivers and ponds, all year; best in low light.'},
+ 'Baitfish':{p:'Slim flashy body • bucktail/ rabbit wing • weighted eyes or cone',h:'Strip with pauses; jig it along drop-offs; swing across current.',w:'Fall, early spring, low light.'},
+ 'Sculpin':{p:'Wide heavy head • short stubby mottled body • fur collar',h:'Short strips along the bottom; or dead-drift as a heavy fly.',w:'Provo and Forks, spring & fall.'},
+ 'Leeches':{p:'One long marabou/ mohair tail • fuzzy body • no hackle • bead or eyes',h:'Slow strips and long pauses; or hang under an indicator in still water.',w:'Ponds any month; rivers in cold water.'},
+ 'Articulated & big':{p:'Two hooks joined by wire or mono • big head • long tail',h:'Heavy tippet; strip aggressively; fish dirty or high water.',w:'Fall browns, runoff.'}
+};
+ALLN.forEach(n=>{const g=GEN[n.n];if(g)for(const k in g)if(!n[k])n[k]=g[k]});
+const open=new Set();let sel=TREE;
+const reset=()=>{open.clear();ALLN.filter(n=>n.d<1&&n.k.length).forEach(n=>open.add(n.id))};
+reset();
+
+/* ---------- tree layout & draw ---------- */
+const TW=134,TH=54,TGX=142,TGY=86,LW=150,LHt=102,GAP=8;
+const wrap2=s=>{if(s.length<=17)return[s];const w=s.split(' ');let best=null;for(let i=1;i<w.length;i++){const a=w.slice(0,i).join(' '),b=w.slice(i).join(' '),m=Math.max(a.length,b.length);if(!best||m<best[0])best=[m,[a,b]]}return best?best[1]:[s]};
+const Yn=n=>n.d*TGY+6;
+const CH=2*TGY+6+TH+26+LHt+12+14;                       // tallest layout: root, family, group, picture tray
+const HALF=Math.max((TREE.k.length-1)/2*(TW+12)+TW/2,
+  ...TREE.k.map(f=>(f.k.length-1)/2*TGX+TW/2),
+  ...TREE.k.flatMap(f=>f.k.map(g=>(g.k.length*(LW+GAP)-GAP)/2+10)))+6;   // widest layout
+const flyAt=(a,x,y,w)=>fly(a,{w,label:''}).replace('<svg ',`<svg x="${x}" y="${y}" height="${w*112/312}" `);
+function draw(){
+  const FG=TW+12,rootOpen=open.has(TREE.id),fams=TREE.k;
+  const oF=rootOpen?fams.find(f=>open.has(f.id)):null;
+  const vis=[TREE];TREE.cx=0;
+  if(rootOpen){
+    fams.forEach((f,i)=>{f.cx=(i-(fams.length-1)/2)*FG;vis.push(f)});
+    if(oF)oF.k.forEach((g,j)=>{g.cx=(j-(oF.k.length-1)/2)*TGX;vis.push(g)});
+  }
+  const oG=oF?oF.k.find(g=>open.has(g.id)):null;
+  const tw=oG?oG.k.length*(LW+GAP)-GAP:0,trayY=2*TGY+6+TH+26;
+  const half=HALF;
+  let s='',tr='',lf='',bottom=oF?3*TGY:2*TGY;
+  if(oG){
+    const x0=-tw/2,gx=oG.cx,gy=Yn(oG)+TH,tx=x0+tw/2,m=(gy+trayY-6)/2;
+    tr+=`<rect x="${x0-6}" y="${trayY-6}" width="${tw+12}" height="${LHt+12}" rx="10" fill="${oG.c}" opacity=".09" stroke="${oG.c}" stroke-dasharray="4 4"/><path class="link" d="M${gx},${gy}C${gx},${m} ${tx},${m} ${tx},${trayY-6}"/>`;
+    oG.k.forEach((c,i)=>{
+      const x=x0+i*(LW+GAP),y=trayY,lines=wrap2(c.n);
+      lf+=`<g class="node leaf${c===sel?' sel':''}" data-id="${c.id}"><rect x="${x}" y="${y}" width="${LW}" height="${LHt}" rx="9" fill="#fff" stroke="${c.c}"/>${flyAt(ART[c.n],x+6,y+6,LW-12)}`;
+      lines.forEach((t,j)=>{lf+=`<text x="${x+LW/2}" y="${y+LHt-8-(lines.length-1-j)*13}" text-anchor="middle" fill="#1f2a30" font-weight="600">${t}</text>`});
+      lf+='</g>'});
+    bottom=trayY+LHt+12;
+  }
+  vis.forEach(n=>{if(n.k.length&&open.has(n.id)&&n.d<2)n.k.forEach(c=>{const x1=n.cx,y1=Yn(n)+TH,x2=c.cx,y2=Yn(c),m=(y1+y2)/2;s+=`<path class="link" d="M${x1},${y1}C${x1},${m} ${x2},${m} ${x2},${y2}"/>`})});
+  vis.forEach(n=>{
+    const x=n.cx-TW/2,y=Yn(n),lines=wrap2(n.n);
+    s+=`<g class="node${n===sel?' sel':''}" data-id="${n.id}"><rect x="${x}" y="${y}" width="${TW}" height="${TH}" rx="8" fill="${n.c}" stroke="${n.c}"/>`;
+    lines.forEach((t,i)=>{s+=`<text x="${x+TW/2}" y="${y+(lines.length>1?17:24)+i*13}" text-anchor="middle" fill="#fff" font-weight="600">${t}</text>`});
+    s+=`<text x="${x+TW/2}" y="${y+TH-7}" text-anchor="middle" fill="#fff" opacity=".85" font-size="10.5">${open.has(n.id)?'▲ collapse':'▼ '+n.k.length+' inside'}</text>`;
+    s+='</g>'});
+  const h=CH;
+  $('#treebox').innerHTML=`<svg viewBox="${-half} 0 ${2*half} ${h}" width="100%" style="display:block;margin:0 auto;max-width:${2*half}px">${tr}${s}${lf}</svg>`;
+}
+const MONTHS='JFMAMJJASOND';
+const parseM=s=>{const r=new Set();s.split(',').forEach(p=>{const[a,b]=p.split('-').map(Number);if(isNaN(b))r.add(a);else for(let m=a;m<=b;m++)r.add(m)});return r};
+const ALLY='1-12';
+// [months, water (r=river s=still), depth: surf|film|mid|bot|any]
+const META={
+ 'Parachute Adams':['4-10','rs','surf'],'Comparadun':['3-11','r','surf'],'Catskill dry (Light Cahill)':['5-9','r','surf'],'Rusty Spinner':['6-10','r','surf'],'Trico Spinner':['7-10','r','surf'],'Paradrake':['6-7','r','surf'],
+ 'Elk Hair Caddis':['5-10','r','surf'],'X-Caddis':['5-9','r','surf'],'Stimulator':['5-8','r','surf'],'Yellow Sally':['5-6','r','surf'],'Griffith’s Gnat':[ALLY,'rs','surf'],
+ 'Hopper':['7-10','r','surf'],'Ant':['6-10','rs','surf'],'Beetle':['6-10','rs','surf'],'Cricket':['8-10','r','surf'],'Royal Wulff':['6-9','r','surf'],'Chubby Chernobyl':['6-9','r','surf'],'Humpy':['6-9','r','surf'],
+ 'RS2':['9-12,1-5','r','film'],'CDC Emerger':['3-11','r','film'],'Sparkle Dun':['6-9','r','film'],'Cripple':['6-9','r','film'],
+ 'Partridge & Orange':['4-10','r','mid'],'Hare’s Ear Soft Hackle':['4-10','rs','mid'],
+ 'Pheasant Tail':['3-11','rs','mid'],'Hare’s Ear':['4-10','r','mid'],'Perdigon':[ALLY,'r','bot'],'Green Rock Worm':['4-10','r','bot'],'Caddis pupa (Sparkle Pupa)':['4-9','r','mid'],'Cased caddis':[ALLY,'r','bot'],
+ 'Pat’s Rubber Legs':['4-7','r','bot'],'Kaufmann’s Stone':['4-7','r','bot'],'Zebra Midge':[ALLY,'rs','bot'],'Bloodworm':[ALLY,'s','bot'],'Disco Midge':['11-12,1-3','r','bot'],
+ 'Sow bug':[ALLY,'r','bot'],'Scud':[ALLY,'rs','bot'],'Czech Nymph':[ALLY,'r','bot'],'San Juan Worm':['3-7','r','bot'],'Egg / Mop / pellet':['3-10','rs','mid'],
+ 'Copper John':['4-10','r','bot'],'Prince Nymph':['4-10','r','mid'],'Flashback Pheasant Tail':['3-11','r','mid'],
+ 'Woolly Bugger':[ALLY,'rs','any'],'Zonker':['9-11,3-4','r','any'],'Clouser Minnow':['5-10','rs','any'],'Slumpbuster':['3-11','r','any'],'Muddler Minnow':['5-10','r','any'],'Mohair Leech':[ALLY,'s','any'],'Balanced Leech':[ALLY,'s','any'],'Sex Dungeon / Dungeon':['9-11,3-4','r','any']
+};
+const DEPTHN={surf:'Surface',film:'Film',mid:'Mid-water',bot:'Bottom',any:'Any depth'};
+function metaOf(n){
+  if(!n.k.length){const m=META[n.n];return m?{m:parseM(m[0]),w:new Set(m[1]),d:new Set([m[2]])}:{m:new Set(),w:new Set(),d:new Set()}}
+  const r={m:new Set(),w:new Set(),d:new Set()};
+  n.k.forEach(c=>{const x=metaOf(c);x.m.forEach(v=>r.m.add(v));x.w.forEach(v=>r.w.add(v));x.d.forEach(v=>r.d.add(v))});return r;
+}
+const icoRiver=c=>`<svg width="22" height="18" viewBox="0 0 24 20"><path d="M1 5q3-3 6 0t6 0 6 0M1 11q3-3 6 0t6 0 6 0M1 17q3-3 6 0t6 0 6 0" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round"/></svg>`;
+const icoPond=c=>`<svg width="22" height="18" viewBox="0 0 24 20"><ellipse cx="12" cy="10" rx="10" ry="6" fill="none" stroke="${c}" stroke-width="2"/><ellipse cx="12" cy="10" rx="5" ry="3" fill="none" stroke="${c}" stroke-width="2"/></svg>`;
+const icoDepth=k=>{const y={surf:3,film:6,mid:11,bot:17,any:11}[k];return `<svg width="16" height="22" viewBox="0 0 16 22"><path d="M0 5q2-2 4 0t4 0 4 0 4 0" fill="none" stroke="#4d93bf" stroke-width="1.6"/><rect x="0" y="5" width="16" height="17" fill="#d6e9f5" opacity=".6"/><rect x="0" y="20" width="16" height="2" fill="#a89573"/>${k==='any'?'<path d="M8 3v17M5 7l3-4 3 4M5 16l3 4 3-4" stroke="#c4622d" stroke-width="1.6" fill="none"/>':`<circle cx="8" cy="${y}" r="3" fill="#c4622d"/>`}</svg>`};
+const fs=t=>{if(!t)return'';const m=t.match(/^.*?[.!?](?=\s+[A-Z“]|$)/);return m?m[0]:t};
+const strip=t=>t.replace(/<[^>]+>/g,'');
+function calHTML(set,c){
+  return `<div class="cal">${[1,4,7,10].map((m,i)=>`<div class="se" style="grid-column:${m}/span 3">${['❄️','🌱','☀️','🍂'][i]}</div>`).join('')}${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((l,i)=>`<div class="${set.has(i+1)?'on':''}" style="${set.has(i+1)?`background:${c}`:''}">${l}</div>`).join('')}</div>`;
+}
+function info(n){
+  const path=[];for(let p=n;p;p=p.p0)path.unshift(p);
+  const f=figure(n),m=metaOf(n),leaf=!n.k.length,a=ART[n.n];
+  let t=`<div class="crumb">${path.map(p=>p.n).join(' › ')}</div><h2 style="color:${n.c}">${n.n}</h2>`;
+  if(n.s)t+=`<div>${fs(n.s)}</div>`;
+  const wl={r:icoRiver('#1d6fa5')+' River',s:icoPond('#2a8a6a')+' Still water'};
+  let facts=[...m.w].sort().map(w=>`<span class="fact">${wl[w]}</span>`).join('');
+  facts+=[...m.d].map(d=>`<span class="fact">${icoDepth(d)} ${DEPTHN[d]}</span>`).join('');
+  if(n.z)facts+=`<span class="fact">📏 ${n.z}</span>`;
+  if(facts)t+=`<div class="facts">${facts}</div>`;
+  if(m.m.size)t+=calHTML(m.m,n.c);
+  if(leaf&&a)t+=`<div class="row"><span class="ic">🔍</span><span><b>Spot it:</b> ${a.v}</span></div>`;
+  else if(VIS[n.n])t+=`<div class="row"><span class="ic">🔍</span><ul>${VIS[n.n].slice(0,3).map(v=>`<li>${v}</li>`).join('')}</ul></div>`;
+  if(n.i)t+=`<div class="row"><span class="ic">🪲</span><span><b>Imitates:</b> ${strip(n.i)}</span></div>`;
+  if(n.h)t+=`<div class="row"><span class="ic">🎣</span><span>${fs(strip(n.h))}</span></div>`;
+  if(n.k.length)t+=`<div class="row"><span class="ic">📂</span><span>${n.k.map(k=>`<span class="chip" data-go="${k.id}">${k.n}</span>`).join('')}</span></div>`;
+  return `<div class="pgrid"><div>${t}</div><div>${f.img}</div></div>`;
+}
+const leavesFold=n=>{open.delete(n.id);n.k.forEach(leavesFold)};
+function select(n,toggle){
+  sel=n;
+  if(n.k.length&&toggle){
+    if(open.has(n.id))leavesFold(n);
+    else{(n.p0?n.p0.k:[]).forEach(sb=>{if(sb!==n)leavesFold(sb)});open.add(n.id)}}
+  $('#infobox').innerHTML=info(n);draw();
+}
+function fixInfoHeight(){
+  const box=$('#infobox'),keep=sel;let max=0;
+  box.style.height='auto';
+  ALLN.forEach(n=>{box.innerHTML=info(n);max=Math.max(max,box.scrollHeight)});
+  box.style.height=max+'px';box.innerHTML=info(keep);
+}
+let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(fixInfoHeight,150)});
+$('#infobox').onclick=e=>{const c=e.target.dataset.go;if(c!=null)goTo(ALLN[+c])};
+$('#treebox').onclick=e=>{const g=e.target.closest('.node');if(g)select(ALLN[+g.dataset.id],true)};
+$('#expAll').onclick=()=>{ALLN.filter(n=>n.k.length).forEach(n=>open.add(n.id));draw()};
+$('#colAll').onclick=()=>{open.clear();open.add(TREE.id);draw()};
+$('#reset').onclick=()=>{reset();select(TREE,false)};
+select(TREE,false);
+document.fonts&&document.fonts.ready.then(fixInfoHeight);
+
+/* ---------- anatomy SVGs ---------- */
+const HOOK=`<g fill="none" stroke="#555" stroke-width="3" stroke-linecap="round"><circle cx="88" cy="165" r="9"/><path d="M97 165H405C455 165 470 225 425 228C395 230 380 205 392 188"/><path d="M392 188l8 14" stroke-width="2"/></g>`;
+const FLIES={
+ dry:{name:'Dry fly (Parachute)',parts:{
+  eye:['Hook eye','Where the tippet ties on (use an improved clinch knot). Keep it clear of glue/thread.',[88,165],'<circle cx="88" cy="165" r="9" fill="none" stroke="#555" stroke-width="3"/>',[60,140]],
+  shank:['Hook shank','The straight section; the body and materials are tied here. Longer shank = longer fly (dry flies are standard length).',[260,165],'<path d="M97 165H405" stroke="#555" stroke-width="3"/>',[250,235]],
+  bend:['Hook bend','The curve at the back; sets how deep the hook can penetrate and how the fly rides.',[430,210],'<path d="M405 165C455 165 470 225 425 228" fill="none" stroke="#555" stroke-width="3"/>',[470,250]],
+  point:['Hook point (and barb)','The sharp end that holds the fish. The barb stops it backing out — pinch it flat for easier release.',[392,190],'<path d="M425 228C395 230 380 205 392 188" fill="none" stroke="#555" stroke-width="3"/>',[330,265]],
+  gap:['Hook gap','The opening between shank and point: the “mouth” of the hook. Wider gap = better hooking.',[395,205],'<path d="M395 168V200" stroke="#c4622d" stroke-dasharray="3 3" stroke-width="2"/>',[340,235]],
+  head:['Head (thread wraps)','Final thread wraps secured with a whip-finish and cement so nothing unravels. Keep small — don’t crowd the eye.',[112,165],'<ellipse cx="115" cy="165" rx="14" ry="9" fill="#3a2e22"/>',[100,205]],
+  post:['Wing post (parachute)','A post of white calf/ poly yarn the hackle wraps around. White so <i>you</i> can see the fly; sets the “wing” silhouette.',[170,95],'<rect x="165" y="95" width="10" height="60" fill="#f4f4f4" stroke="#888"/>',[150,60]],
+  hackle:['Hackle (parachute collar)','Rooster hackle wound horizontally around the post at the base. Lets the body sit flush in the film while the fibers hold it up.',[170,150],'<ellipse cx="170" cy="150" rx="36" ry="6" fill="none" stroke="#6a4a2e" stroke-width="3"/>',[85,100]],
+  thorax:['Thorax','Fat part just behind the head/ post: dubbing bulk to imitate the insect’s thorax and add buoyancy.',[190,165],'<ellipse cx="195" cy="165" rx="25" ry="12" fill="#7a5c3a"/>',[210,205]],
+  body:['Body (abdomen)','The tapered section toward the bend: dubbing, thread, quill or biots that imitates the insect’s abdomen. Color and slimness matter most here.',[300,165],'<path d="M230 158L390 162V168L230 172Z" fill="#9a8f5a"/>',[290,205]],
+  rib:['Rib','Wire or thread wrapped in an open spiral over the body: adds segmentation, flash and durability.',[300,165],'<path d="M245 158L255 172M270 158L280 172M295 158L305 172M320 158L330 172M345 158L355 172M370 158L380 172" stroke="#d4d4d4" stroke-width="1.6"/>',[310,120]],
+  tail:['Tail','Stiff fibers (e.g. microfibbets/ hackle fibers) that float the back of the fly and imitate tails or shuck. Sets the “sitting on its tail” balance.',[460,165],'<path d="M405 165L470 150M405 165L475 165M405 165L470 180" stroke="#6a4a2e" stroke-width="2"/>',[480,120]]
+ }},
+ nymph:{name:'Nymph (beadhead Pheasant Tail)',parts:{
+  eye:['Hook eye','Same as any fly. For nymphs, the hook is usually heavier wire and often slightly curved.',[88,165],'<circle cx="88" cy="165" r="9" fill="none" stroke="#555" stroke-width="3"/>',[60,140]],
+  bead:['Bead head','Brass or tungsten bead gives weight, a flashy hot-spot and imitates the insect’s head. Tungsten is ~1.7× heavier than brass.',[115,165],'<circle cx="118" cy="165" r="14" fill="#d3a64a" stroke="#8a6a1a"/>',[100,205]],
+  lead:['Underbody (weight)','Optional lead or non-lead wire wraps under the body for more sink. Bump up weight for deep, fast water.',[190,165],'<path d="M150 158H240V172H150Z" fill="#999" opacity=".4"/>',[160,235]],
+  thorax:['Thorax & wing case','Fat dubbing section (peacock herl) and a wing-case of pheasant tail/ flash tied over it. Imitates the nymph’s developing wings.',[180,165],'<ellipse cx="185" cy="165" rx="25" ry="13" fill="#2f3b2a"/><ellipse cx="185" cy="157" rx="22" ry="7" fill="#d7a96b"/>',[190,115]],
+  legs:['Legs','Pheasant tail fibers pulled back (or hackle fibers/ rubber legs on big stones). Movement triggers strikes.',[205,185],'<path d="M170 172L190 195M190 175L212 198M215 172L232 193" stroke="#7a4a1a" stroke-width="2"/>',[250,205]],
+  body:['Abdomen (body)','Slim body made of pheasant tail, thread, or dubbing. Slimmer bodies sink faster and look more like mayfly nymphs.',[300,165],'<path d="M225 158L395 163V168L225 172Z" fill="#6b4a2a"/>',[310,205]],
+  rib:['Rib','Copper/ gold wire wound through the body adds segmentation and durability.',[300,165],'<path d="M245 158L255 172M275 158L285 172M305 158L315 172M335 158L345 172M365 158L375 172" stroke="#d4893a" stroke-width="1.8"/>',[320,125]],
+  tail:['Tail','Pheasant tail fibers: short tail imitates the mayfly’s tails (cerci).',[430,165],'<path d="M405 165L440 150M405 165L445 165M405 165L440 180" stroke="#7a4a1a" stroke-width="2"/>',[430,125]],
+  bend:['Hook bend & point','As on any fly. Nymph hooks are often curved so the body can be sized and bent (e.g. scuds).',[420,200],'<path d="M405 165C455 165 470 225 425 228C395 230 380 205 392 188" fill="none" stroke="#555" stroke-width="3"/>',[470,250]]
+ }},
+ stream:{name:'Streamer (Woolly Bugger)',parts:{
+  eye:['Hook eye','Streamer hooks are 3XL–6XL long: the extra shank length lets a long body hang off a single hook.',[88,165],'<circle cx="88" cy="165" r="9" fill="none" stroke="#555" stroke-width="3"/>',[60,140]],
+  cone:['Cone / bead head','Adds weight, makes the fly “jig” and imitates a head. Heavy cones for deep runs, lighter ones for shallow.',[118,165],'<path d="M105 148L135 160V170L105 182Z" fill="#c9a038" stroke="#8a6a1a"/>',[100,205]],
+  collar:['Hackle collar / palmered hackle','Soft hackle wound over the body (palmered) adds motion and imitates legs/ gills. Soft hen hackle gives the best pulsing.',[200,165],'<path d="M150 135L168 195M180 135L198 195M215 135L230 195M250 135L265 195M285 135L300 195" stroke="#2a2a2a" stroke-width="2" fill="none"/>',[200,100]],
+  body:['Chenille body','Fuzzy chenille/ dubbing that’s long and slim; color matters (black, olive) and can be weighted with wire wraps.',[270,165],'<path d="M140 156L395 162V170L140 176Z" fill="#2c3a22"/>',[300,220]],
+  rib:['Wire rib','Spiral wire protects the palmered hackle and keeps it from tearing.',[270,165],'<path d="M160 160L175 175M200 160L215 175M240 160L255 175M280 160L295 175M320 160L335 175" stroke="#c4c4c4" stroke-width="1.6"/>',[300,115]],
+  flash:['Flash','A few strands of Krystal Flash along the tail or wing: a hint of sparkle triggers strikes.',[455,160],'<path d="M395 163L490 140M395 163L500 160" stroke="#8ee1ff" stroke-width="1.6"/>',[470,110]],
+  tail:['Marabou tail','Soft marabou that pulses with each strip: the “life” of a Woolly Bugger. Typically as long as the hook.',[450,165],'<path d="M395 163C440 140 475 140 520 165C480 195 440 195 395 168Z" fill="#2a2a2a" opacity=".85"/>',[470,205]],
+  bend:['Hook bend & point','Often fished with the point up on jig-style streamers (Clouser) to reduce snags.',[430,210],'<path d="M405 165C455 165 470 225 425 228C395 230 380 205 392 188" fill="none" stroke="#555" stroke-width="3"/>',[470,250]]
+ }}
+};
+let curFly='dry';
+function drawAnat(){
+  const F=FLIES[curFly];
+  let s=HOOK;
+  Object.entries(F.parts).forEach(([k,[lab,txt,pt,shape,lp]])=>{
+    s+=`<g class="part" data-k="${k}">${shape}<circle cx="${pt[0]}" cy="${pt[1]}" r="5" fill="#c4622d" stroke="none"/></g>`;
+    s+=`<line x1="${lp[0]+20}" y1="${lp[1]+3}" x2="${pt[0]}" y2="${pt[1]}" stroke="#c4622d" stroke-width="1" opacity=".5"/>`;
+    s+=`<text class="lbl" x="${lp[0]}" y="${lp[1]}">${lab.split(' (')[0]}</text>`;
+  });
+  $('#anatSvg').innerHTML=s;
+  showPart(Object.keys(F.parts)[0]);
+}
+function showPart(k){
+  const F=FLIES[curFly],[lab,txt]=F.parts[k];
+  $('#anatPanel').innerHTML=`<div class="crumb">${F.name}</div><h2>${lab}</h2><div>${txt}</div><div class="dl"><b class="lab">All parts</b>${Object.entries(F.parts).map(([kk,v])=>`<span class="chip" data-p="${kk}">${v[0].split(' (')[0]}</span>`).join('')}</div>`;
+  document.querySelectorAll('.part').forEach(p=>p.classList.toggle('sel',p.dataset.k===k));
+}
+$('#anatSvg').onclick=e=>{const p=e.target.closest('.part');if(p)showPart(p.dataset.k)};
+$('#anatPanel').onclick=e=>{if(e.target.dataset.p)showPart(e.target.dataset.p)};
+$('#anatTabs').innerHTML=Object.entries(FLIES).map(([k,v])=>`<button data-f="${k}" class="${k===curFly?'on':''}">${v.name}</button>`).join('');
+$('#anatTabs').onclick=e=>{if(e.target.dataset.f){curFly=e.target.dataset.f;document.querySelectorAll('#anatTabs button').forEach(b=>b.classList.toggle('on',b.dataset.f===curFly));drawAnat()}};
+drawAnat();
+
+const TABS=[['tree','Family tree'],['gallery','Picture gallery'],['insects','By insect'],['anat','Fly anatomy & materials'],['quiz','Quiz'],['how','How to read it']];
+$('#nav').innerHTML=TABS.map(([id,t])=>`<button data-id="${id}">${t}</button>`).join('');
+function show(id){if(id==='tree')setTimeout(fixInfoHeight,0);document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.id===id));history.replaceState(null,'','#'+id)}
+$('#nav').onclick=e=>e.target.dataset.id&&show(e.target.dataset.id);
+initLearn();
+show(location.hash.slice(1)||'tree');
+</script>
+</body>
+</html>
