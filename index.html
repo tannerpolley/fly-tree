@@ -496,7 +496,7 @@ function fly(a,o={}){
   const ctx=o.bare?'bare':o.studio?'studio':o.noctx?'plain':(a.ctx||'sub');
   RC={u:'g'+(FID++),n:0,defs:'',k:{},q,dq:[.3,.62,1.5][q],seed:[...(a.v||'x')].reduce((s,ch)=>s+ch.charCodeAt(0),0)%997};
   RC.defs+=filtersSVG(q);
-  const gy=a.hook==='grub'?16:0,top=a.flip?Y-D-gy-14:Math.min(topExtent(a),a.hook==='grub'?Y-52:99),xmax=rightExtent(a,hx,D),dBot=a.flip?32:D+gy,fr=ctx==='bare'?{vb:'44 40 312 150',cx:178,bottom:Y+D}:frameVB(top,xmax,dBot,ctx==='studio');
+  const gy=a.hook==='grub'?16:0,top=a.flip?Y-D-gy-14:Math.min(topExtent(a),a.hook==='grub'?Y-52:99),xmax=rightExtent(a,hx,D),dBot=a.flip?32:D+gy,fr=ctx==='bare'?{vb:'40 -20 360 220',cx:220,bottom:Y+D}:frameVB(top,xmax,dBot,ctx==='studio');
   let bg='',after='';
   if(ctx==='studio')bg=studioBG(fr.cx,Y+dBot+5,(xmax-56)*.56);
   else if(ctx==='surface'||ctx==='film'){const hk=a.hackle,wl=ctx==='film'?Y-1:(hk&&hk.t==='parachute'?Y-4:hk&&(hk.t==='collar'||hk.t==='bushy')?Y+Math.round((hk.l||16)*HKS*.82):a.collar?Y+Math.round((a.collar.l||18)*HKS*.8):Y+(a.body&&a.body.w1||6)+10);const w=waterBG(ctx,wl,hx,a);bg=w.s;after=w.after}
@@ -658,8 +658,19 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 const FAMC=n=>{while(n.d>1)n=n.p0;return n};
 const leavesOf=n=>n.k.length?n.k.flatMap(leavesOf):[n];
 let MEASURE=false;
-const zoomImg=n=>MEASURE?'<div style="aspect-ratio:332/186"></div>':`<div class="zoomable" data-zoom="${n.id}" title="Click to enlarge">${fly(A(n.n),{q:2,studio:true,label:n.n})}<span class="zoomhint">🔍 Click to enlarge</span></div>`;
-const fig=(n,w)=>ART[n.n]?`<figure>${fly(A(n.n),{label:n.n})}<figcaption>${n.n}</figcaption></figure>`:'';
+/* Each fly is rendered once at full detail and turned into an image; cards, gallery, rig and close-up all reuse it. */
+const IMGC={};
+function flyPic(name,o={}){
+  const key=[name,VAR[name]||0,o.q==null?2:o.q,o.studio?1:0,o.bare?1:0,o.noctx?1:0].join('|');
+  if(IMGC[key])return IMGC[key];
+  let svg=fly(A(name),{q:o.q==null?2:o.q,studio:o.studio,bare:o.bare,noctx:o.noctx,label:name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')});
+  const vb=svg.match(/viewBox="([^"]+)"/)[1].split(' ').map(Number);
+  svg=svg.replace('<svg ',`<svg xmlns="http://www.w3.org/2000/svg" `).replace('width="100%"',`width="${vb[2]}" height="${vb[3]}"`);
+  return IMGC[key]={url:URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'})),w:vb[2],h:vb[3],vb};
+}
+const flyImg=(name,o={})=>{const p=flyPic(name,o);return `<img src="${p.url}" alt="${name}" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;aspect-ratio:${p.w}/${p.h};border-radius:8px">`};
+const zoomImg=n=>MEASURE?'<div style="aspect-ratio:332/186"></div>':`<div class="zoomable" data-zoom="${n.id}" title="Click to enlarge">${flyImg(n.n,{studio:true})}<span class="zoomhint">🔍 Click to enlarge</span></div>`;
+const fig=(n,w)=>ART[n.n]?`<figure>${flyImg(n.n,{studio:true})}<figcaption>${n.n}</figcaption></figure>`:'';
 
 function figure(n){
   if(!n.k.length&&ART[n.n])return {img:zoomImg(n),txt:`<div class="dl"><b class="lab">Spot it</b>${ART[n.n].v}</div>`};
@@ -680,21 +691,21 @@ function buildGallery(){
    ['Mid-water','Soft hackles & pupae','Partridge & Orange','Caddis pupa (Sparkle Pupa)','Pheasant Tail'],
    ['Near bottom','Heavy nymphs','Pat’s Rubber Legs','Czech Nymph','Zebra Midge'],
    ['Any depth','Streamers','Woolly Bugger','Clouser Minnow','Slumpbuster']];
-  let h=`<div class="card"><h2 style="margin-top:0">Where each family rides in the water</h2><div class="small mute">Same fly shown in the water: the picture tells you the family.</div>${rows.map(r=>`<div class="colrow"><div><b>${r[0]}</b><div class="small mute">${r[1]}</div></div><div class="imgs">${r.slice(2).map(nm=>`<figure style="margin:0">${fly(A(nm),{label:nm})}<figcaption class="small" style="text-align:center">${nm}</figcaption></figure>`).join('')}</div></div>`).join('')}</div>`;
+  let h=`<div class="card"><h2 style="margin-top:0">Where each family rides in the water</h2><div class="small mute">Same fly shown in the water: the picture tells you the family.</div>${rows.map(r=>`<div class="colrow"><div><b>${r[0]}</b><div class="small mute">${r[1]}</div></div><div class="imgs">${r.slice(2).map(nm=>`<figure style="margin:0">${flyImg(nm)}<figcaption class="small" style="text-align:center">${nm}</figcaption></figure>`).join('')}</div></div>`).join('')}</div>`;
   TREE.k.forEach(f=>{
     const ls=leavesOf(f).filter(x=>ART[x.n]);
     h+=`<div class="famh" style="border-color:${f.c}"><h2 style="color:${f.c}">${f.n}</h2><span class="small mute">${ls.length} patterns</span></div>`;
     h+=`<div class="card"><b>Shared traits</b><ul class="traits">${(VIS[f.n]||[]).map(v=>`<li>${v}</li>`).join('')}</ul>`;
-    f.k.forEach(g=>{const gl=leavesOf(g).filter(x=>ART[x.n]);h+=`<h3 style="margin:14px 0 4px;color:${g.c}">${g.n}</h3><div class="small mute" style="margin-bottom:6px">${(VIS[g.n]||[]).join(' ')}</div><div class="gal">${gl.map(x=>`<div class="gcard" data-go="${x.id}">${fly(A(x.n),{label:x.n})}<b>${x.n}</b><div>${x.z||''} · ${ART[x.n].v}</div></div>`).join('')}</div>`});
+    f.k.forEach(g=>{const gl=leavesOf(g).filter(x=>ART[x.n]);h+=`<h3 style="margin:14px 0 4px;color:${g.c}">${g.n}</h3><div class="small mute" style="margin-bottom:6px">${(VIS[g.n]||[]).join(' ')}</div><div class="gal">${gl.map(x=>`<div class="gcard" data-go="${x.id}">${flyImg(x.n,{studio:true})}<b>${x.n}</b><div>${x.z||''} · ${ART[x.n].v}</div></div>`).join('')}</div>`});
     h+='</div>';
   });
-  h+=`<div class="famh" style="border-color:#c4622d"><h2>Look-alike pairs (exam favourites)</h2></div>`+LOOKALIKES.map(([a,b,t])=>`<div class="card"><div class="pair"><figure style="margin:0">${fly(A(a),{label:a})}<b>${a}</b></figure><figure style="margin:0">${fly(A(b),{label:b})}<b>${b}</b></figure></div><div class="small" style="margin-top:6px">${t}</div></div>`).join('');
+  h+=`<div class="famh" style="border-color:#c4622d"><h2>Look-alike pairs (exam favourites)</h2></div>`+LOOKALIKES.map(([a,b,t])=>`<div class="card"><div class="pair"><figure style="margin:0">${flyImg(a,{studio:true})}<b>${a}</b></figure><figure style="margin:0">${flyImg(b,{studio:true})}<b>${b}</b></figure></div><div class="small" style="margin-top:6px">${t}</div></div>`).join('');
   $('#galleryBody').innerHTML=h;
   $('#galleryBody').onclick=e=>{const g=e.target.closest('[data-go]');if(g)goTo(ALLN[+g.dataset.go])};
 }
 
 function buildInsects(){
-  $('#insectBody').innerHTML=INSECT_VIEW.map(([ins,st])=>`<div class="card"><h2 style="margin-top:0">${ins}</h2><div class="small mute">One insect, several flies: one fly per life stage.</div><div class="life">${st.map(([lab,nm],i)=>`${i?'<span class="ar">➜</span>':''}<div class="st"><b>${lab}</b>${fly(A(nm),{label:nm})}<div class="small">${nm}</div></div>`).join('')}</div></div>`).join('');
+  $('#insectBody').innerHTML=INSECT_VIEW.map(([ins,st])=>`<div class="card"><h2 style="margin-top:0">${ins}</h2><div class="small mute">One insect, several flies: one fly per life stage.</div><div class="life">${st.map(([lab,nm],i)=>`${i?'<span class="ar">➜</span>':''}<div class="st"><b>${lab}</b>${flyImg(nm,{studio:true})}<div class="small">${nm}</div></div>`).join('')}</div></div>`).join('');
 }
 
 /* ---------------- quiz ---------------- */
@@ -727,7 +738,7 @@ function partSVG(fk,pk){
   return `<svg viewBox="30 40 560 250" width="100%">${s}</svg>`;
 }
 function renderQ(){
-  const q=Q.cur,pic=q.kind==='part'?partSVG(q.fk,q.pk):fly(A(q.n.n),{q:1,noctx:!Q.hint,label:'mystery fly'});
+  const q=Q.cur,pic=q.kind==='part'?partSVG(q.fk,q.pk):flyImg(q.n.n,Q.hint?{}:{studio:true}).replace(/alt="[^"]*"/,'alt="mystery fly"');
   const prompt={family:'Which FAMILY is this fly?',group:'Which GROUP (branch) is this fly in?',pattern:'Which PATTERN is this?',part:'Name the circled part.'}[Q.mode];
   $('#quizBody').innerHTML=`<div class="card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap"><b>${prompt}</b><span class="score">Score ${Q.score}/${Q.total} · Streak ${Q.streak}</span></div>
   <div style="max-width:560px;margin:10px 0">${pic}</div><div style="max-width:560px" id="opts">${q.opts.map(o=>`<button class="qopt">${o}</button>`).join('')}</div><div id="fb"></div></div>`;
@@ -1303,7 +1314,7 @@ const CH=2*TGY+6+TH+26+(MAXROWS*(LHt+GAP)-GAP)+12+14;                       // t
 const HALF=Math.max((TREE.k.length-1)/2*(TW+12)+TW/2,
   ...TREE.k.map(f=>(f.k.length-1)/2*TGX+TW/2),
   ...TREE.k.flatMap(f=>f.k.map(g=>{const r=Math.ceil(g.k.length/6),p=Math.ceil(g.k.length/r);return (p*(LW+GAP)-GAP)/2+10})))+6;   // widest layout
-const flyAt=(a,x,y,w)=>fly(a,{w,label:''}).replace('<svg ',`<svg x="${x}" y="${y}" height="${w*150/312}" `);
+const flyAt=(name,x,y,w)=>{const p=flyPic(name,{studio:true});return `<image href="${p.url}" x="${x}" y="${y}" width="${w}" height="${r1(w*p.h/p.w)}" preserveAspectRatio="xMidYMid meet" style="clip-path:inset(0 round 6px)"/>`};
 const isMobile=()=>innerWidth<760;
 let lastMode=isMobile();
 function curNode(){const oF=TREE.k.find(f=>open.has(f.id)),oG=oF?oF.k.find(g=>open.has(g.id)):null;return oG||oF||TREE}
@@ -1311,7 +1322,7 @@ function drawMobile(){
   const cur=curNode(),path=[];for(let p=cur;p;p=p.p0)path.unshift(p);
   let s=`<div class="mnav">${cur!==TREE?'<button class="mback" data-back="1">◀ Back</button>':''}<span class="mcrumb">${path.map(p=>p.n).join(' › ')}</span></div>`;
   if(cur.k.length&&!cur.k[0].k.length)
-    s+=`<div class="mgrid">${cur.k.map(c=>`<div class="node mleaf${c===sel?' sel':''}" data-id="${c.id}" style="border-color:${c.c}">${fly(A(c.n),{w:'100%',label:c.n})}<b>${c.n}</b></div>`).join('')}</div>`;
+    s+=`<div class="mgrid">${cur.k.map(c=>`<div class="node mleaf${c===sel?' sel':''}" data-id="${c.id}" style="border-color:${c.c}">${flyImg(c.n,{studio:true})}<b>${c.n}</b></div>`).join('')}</div>`;
   else s+=cur.k.map(c=>`<div class="node mcard" data-id="${c.id}" style="background:${c.c}">${c.n}<span>${c.k.length} inside ▸</span></div>`).join('');
   $('#treebox').innerHTML=s;
 }
@@ -1333,7 +1344,7 @@ function draw(){
     tr+=`<rect x="${x0-6}" y="${trayY-6}" width="${tw+12}" height="${th+12}" rx="10" fill="${oG.c}" opacity=".09" stroke="${oG.c}" stroke-dasharray="4 4"/><path class="link" d="M${gx},${gy}C${gx},${m} ${tx},${m} ${tx},${trayY-6}"/>`;
     oG.k.forEach((c,i)=>{
       const r=Math.floor(i/per),cnt=Math.min(per,nL-r*per),x=-(cnt*(LW+GAP)-GAP)/2+(i%per)*(LW+GAP),y=trayY+r*(LHt+GAP),lines=wrap2(c.n);
-      lf+=`<g class="node leaf${c===sel?' sel':''}" data-id="${c.id}"><rect x="${x}" y="${y}" width="${LW}" height="${LHt}" rx="9" fill="#fff" stroke="${c.c}"/>${flyAt(A(c.n),x+6,y+6,LW-12)}`;
+      lf+=`<g class="node leaf${c===sel?' sel':''}" data-id="${c.id}"><rect x="${x}" y="${y}" width="${LW}" height="${LHt}" rx="9" fill="#fff" stroke="${c.c}"/>${flyAt(c.n,x+6,y+6,LW-12)}`;
       lines.forEach((t,j)=>{lf+=`<text x="${x+LW/2}" y="${y+LHt-8-(lines.length-1-j)*13}" text-anchor="middle" fill="#1f2a30" font-weight="600">${t}</text>`});
       lf+='</g>'});
     bottom=trayY+th+12;
@@ -1459,15 +1470,15 @@ function rigParts(c){
   return p;
 }
 const sizeNum=z=>{const m=(z||'').match(/\d+/g);return m?m.map(Number).reduce((x,y)=>x+y,0)/m.length:12};
-const flyW=sz=>Math.max(84,Math.min(300,332-sz*13));        // hook size #20 draws small, #2 draws big
+const flyW=sz=>Math.max(80,Math.min(160,214-sz*7));          // hook size #20 draws small, #2 draws big (width of 312 fly units)
 function rigSVG(n,r,K){
   const two=K.k==='indicator'&&K.f.length>1,W=780,H=two?344:K.k==='drydrop'?320:(K.k==='dry'||K.k==='film')?244:K.k==='streamer'?272:286,wl=118,leaf=!n.k.length,esc=t=>String(t).replace(/&/g,'&amp;');
   const P=rigParts(r.c),thisLeaf=leaf?n:firstLeaf(n),thisArt=thisLeaf.n,thisName=leaf?n.n:'this fly';
   const nodeOf=i=>K.f[i]==='this'?thisLeaf:ALLN.find(x=>x.n===GENERIC[K.f[i]]);
   const szTxt=i=>{const z=nodeOf(i)&&nodeOf(i).z;return z?' · '+z:''};
   const fwOf=i=>flyW(sizeNum(nodeOf(i)&&nodeOf(i).z));
-  const put=(name,ex,ey,w,al)=>{const s=w/312;return fly(A(name),{w,bare:true}).replace('<svg ',`<svg x="${ex-18*s}" y="${ey-60*s}" height="${w*150/312}" overflow="visible" opacity="${al}" `)};
-  const bend=(name,ex,ey,w)=>{const a=ART[name],hx=({std:228,long:266,xlong:290,grub:228})[a.hook||'std'],D=hookDepth(a.hook),s=w/312;return[ex+(hx+.1*D-62)*s,ey+D*s]};
+  const put=(name,ex,ey,w,al)=>{const s=w/312,p=flyPic(name,{bare:true});return `<image href="${p.url}" x="${r1(ex-22*s)}" y="${r1(ey-120*s)}" width="${r1(360*s)}" height="${r1(220*s)}" opacity="${al}"/>`};
+  const bend=(name,ex,ey,w)=>{const a=ART[name],hx=({std:228,long:266,xlong:290,grub:228})[a.hook||'std'],D=hookDepth(a.hook),s=w/312;return[ex+(hx+.02*D-62)*s,ey+.97*D*s]};
   const lab=(x,y,t,anc='start',col='#1f2a30',wt=500)=>`<text x="${x}" y="${y}" font-size="13" font-weight="${wt}" fill="${col}" stroke="#fff" stroke-width="3.4" paint-order="stroke" text-anchor="${anc}" font-family="system-ui,sans-serif">${esc(t)}</text>`;
   const flyNames=K.f.map((f,i)=>f==='this'?thisArt:GENERIC[f]);
   const isThis=i=>K.f[i]==='this';
@@ -1670,7 +1681,7 @@ function showTip(e){
 }
 document.addEventListener('click',e=>{
   const z=e.target.closest&&e.target.closest('.zoomable');
-  if(z){const n=ALLN[+z.dataset.zoom];$('#lbimg').innerHTML=fly(A(n.n),{q:2,studio:true,w:'100%',label:n.n});$('#lbcap').textContent=n.n+' — close-up';$('#lightbox').style.display='flex';return}
+  if(z){const n=ALLN[+z.dataset.zoom];$('#lbimg').innerHTML=flyImg(n.n,{studio:true});$('#lbcap').textContent=n.n+' — close-up';$('#lightbox').style.display='flex';return}
   if(e.target.id==='lightbox'||e.target.id==='lbclose')$('#lightbox').style.display='none';
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#lightbox').style.display='none'});
