@@ -45,6 +45,7 @@ table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid var(--li
 .g2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
 
 .glh{margin:22px 0 8px}.glgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}.glcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px}.glcard b{display:block;margin-bottom:2px}
+.rigsvg{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:6px 0 4px;max-width:820px}.rigsvg svg{display:block;width:100%;height:auto}.rigblock{margin-top:2px}
 .chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:5px 0 2px}.chain span{background:#eef3f6;border:1px solid #c9d7df;border-radius:8px;padding:3px 9px;font-size:13px}.chain .fl{background:#fff3e8;border-color:#e6b98d;font-weight:700}.chain i{color:#c4622d;font-style:normal}
 .facts b,.sw b{margin-right:6px;min-width:0}.sw{gap:0}.sw .swb{margin-left:0}.row>div,.row>span:last-child{min-width:0}.row .facts{margin:0;align-items:center}.row .cal{width:100%}
 .swb{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #9aa5ac;cursor:pointer;margin-right:7px;padding:0;vertical-align:middle}.swb.on{box-shadow:0 0 0 3px #1f2a30}.sw{display:flex;align-items:center;flex-wrap:wrap;gap:2px}
@@ -251,7 +252,7 @@ let FID=0;
 function fly(a,o={}){
   const u='g'+(FID++);
   const hx=({std:228,long:266,xlong:290})[a.hook||'std'];
-  const ctx=o.noctx?'plain':(a.ctx||'sub');
+  const ctx=o.bare?'bare':o.noctx?'plain':(a.ctx||'sub');
   let s=DEFS.replace(/id="(\w+)"/g,'id="'+u+'$1"'),after='';
   const wl=ctx==='surface'?Y+16:Y-1;
   if(ctx==='surface'||ctx==='film'){
@@ -261,7 +262,8 @@ function fly(a,o={}){
     // meniscus dimples where the fly touches the surface
     if(a.hackle||a.wing)after+=`<ellipse cx="112" cy="${wl}" rx="26" ry="2.6" fill="none" stroke="#4d93bf" stroke-width="1" opacity=".55"/><ellipse cx="112" cy="${wl}" rx="38" ry="3.6" fill="none" stroke="#4d93bf" stroke-width=".7" opacity=".35"/>`;
     after+=`<ellipse cx="${hx-4}" cy="${wl}" rx="16" ry="2.2" fill="none" stroke="#4d93bf" stroke-width=".8" opacity=".45"/>`;
-  }else if(ctx==='plain')s+=`<rect width="${VW}" height="${VH}" fill="url(#bgsky)"/>`;
+  }else if(ctx==='bare'){}
+  else if(ctx==='plain')s+=`<rect width="${VW}" height="${VH}" fill="url(#bgsky)"/>`;
   else{
     s+=`<rect width="${VW}" height="${VH}" fill="url(#bgsub)"/>`;
     for(let i=0;i<4;i++)s+=`<path d="M${60+i*80} 40l30 120l22 0l-30 -120z" fill="#fff" opacity=".12"/>`;
@@ -1142,10 +1144,108 @@ const RIGO={
  'Madam X':{t:'Hopper-dropper',c:['Floating line','9′ 3X leader','★','24–30″ of 4X','nymph (dropper)']}
 };
 const rigFor=n=>RIGO[n.n]||RIGG[n.p0&&n.p0.n]||RIGG[n.n]||RIGG[n.p0&&n.p0.p0&&n.p0.p0.n]||null;
+/* ---------------- rig diagrams: kind + which flies are on the line ('this' = the selected fly) ---------------- */
+const RIGK={
+ 'Dry flies':{k:'dry',f:['this']},'Mayfly adults':{k:'dry',f:['this']},'Caddis adults':{k:'dry',f:['this']},'Midge adults':{k:'dry',f:['this']},
+ 'Griffith’s Gnat':{k:'dry',f:['this']},
+ 'Stonefly adults':{k:'drydrop',f:['this','nymph']},'Terrestrials':{k:'drydrop',f:['this','nymph']},'Attractor dries':{k:'drydrop',f:['this','nymph']},
+ 'Chubby Chernobyl':{k:'drydrop',f:['this','nymph']},'Hopper':{k:'drydrop',f:['this','nymph']},'Madam X':{k:'drydrop',f:['this','nymph']},
+ 'Emergers':{k:'film',f:['this']},'Cripples':{k:'film',f:['this']},
+ 'Soft hackles & wets':{k:'drydrop',f:['dry fly','this']},
+ 'Mayfly nymphs':{k:'indicator',f:['this']},'Caddis larvae & pupae':{k:'indicator',f:['this']},'Crustaceans':{k:'indicator',f:['this']},
+ 'Stonefly nymphs':{k:'indicator',f:['this','small nymph']},'Pat’s Rubber Legs':{k:'indicator',f:['this','small nymph']},
+ 'Midge larvae & pupae':{k:'indicator',f:['larger nymph','this']},
+ 'Worms & eggs':{k:'indicator',f:['this','nymph']},'Egg / Mop / pellet':{k:'indicator',f:['this','nymph']},
+ 'Attractor nymphs':{k:'indicator',f:['this','small nymph']},
+ 'Czech Nymph':{k:'tight',f:['this']},'Perdigon':{k:'tight',f:['this']},
+ 'Streamers':{k:'streamer',f:['this']},'Generalists':{k:'streamer',f:['this']},'Woolly Bugger':{k:'streamer',f:['this']},'Baitfish':{k:'streamer',f:['this']},
+ 'Leeches':{k:'streamer',f:['this']},'Classic streamers':{k:'streamer',f:['this']},
+ 'Sculpin':{k:'streamer',sink:true,f:['this']},'Articulated & big':{k:'streamer',sink:true,f:['this']},'Crayfish':{k:'streamer',sink:true,f:['this']},
+ 'Balanced Leech':{k:'pond',f:['this']}
+};
+const rigKFor=n=>RIGK[n.n]||RIGK[n.p0&&n.p0.n]||RIGK[n.p0&&n.p0.p0&&n.p0.p0.n]||null;
+const GENERIC={'dry fly':'Parachute Adams','nymph':'Pheasant Tail','small nymph':'Zebra Midge','larger nymph':'Hare’s Ear'};
+const firstLeaf=n=>n.k.length?firstLeaf(n.k[0]):n;
+function rigParts(c){
+  const p={tip:[]};
+  c.forEach(x=>{
+    if(x[0]==='★'||x.includes('→'))return;
+    if(/rod/i.test(x))p.rod=x;
+    else if(/sighter/i.test(x))p.sighter=x;
+    else if(/split shot/i.test(x))p.shot=x;
+    else if(/^indicator$/i.test(x))p.ind=x;
+    else if(/leader/i.test(x))p.leader=x;
+    else if(/\bline\b/i.test(x))p.line=x;
+    else if(/tippet|″|\dX/.test(x)&&!/nymph|dry fly/.test(x))p.tip.push(x);
+  });
+  return p;
+}
+function rigSVG(n,r,K){
+  const two=K.k==='indicator'&&K.f.length>1,W=780,H=two?314:K.k==='drydrop'?294:268,wl=118,leaf=!n.k.length,esc=t=>String(t).replace(/&/g,'&amp;');
+  const P=rigParts(r.c),thisArt=leaf?n.n:firstLeaf(n).n,thisName=leaf?n.n:'this fly';
+  const put=(name,ex,ey,w,al)=>{const s=w/312;return fly(A(name),{w,bare:true}).replace('<svg ',`<svg x="${ex-18*s}" y="${ey-60*s}" height="${w*118/312}" overflow="visible" opacity="${al}" `)};
+  const bend=(name,ex,ey,w)=>{const a=ART[name],hx=({std:228,long:266,xlong:290})[a.hook||'std'],s=w/312;return[ex+(hx+10-62)*s,ey+(Y+46-100)*s]};
+  const lab=(x,y,t,anc='start',col='#1f2a30',wt=500)=>`<text x="${x}" y="${y}" font-size="13" font-weight="${wt}" fill="${col}" stroke="#fff" stroke-width="3.4" paint-order="stroke" text-anchor="${anc}" font-family="system-ui,sans-serif">${esc(t)}</text>`;
+  const path=(d,col,w,extra='')=>`<path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" ${extra}/>`;
+  const flyNames=K.f.map(f=>f==='this'?thisArt:GENERIC[f]);
+  const isThis=i=>K.f[i]==='this';
+  const flyLabel=(i,x,y,an='start')=>isThis(i)?lab(x,y,'★ '+thisName,an,'#c4622d',700):lab(x,y,K.f[i]+' (example)',an,'#6b7a85',500);
+  const under=(ey,w)=>ey+50*(w/312)+19;                      // y just below a fly of width w whose eye is at ey
+  let s=`<defs><linearGradient id="rgS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf7"/><stop offset="1" stop-color="#f1eee2"/></linearGradient><linearGradient id="rgW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9ebf6"/><stop offset="1" stop-color="#a9cbe0"/></linearGradient></defs>`;
+  s+=`<rect width="${W}" height="${H}" fill="url(#rgS)"/><rect y="${wl}" width="${W}" height="${H-wl}" fill="url(#rgW)"/><path d="M0 ${wl}H${W}" stroke="#4d93bf" stroke-width="2"/>`;
+  for(let i=0;i<14;i++)s+=`<path d="M${30+i*55+rn(i)*20} ${wl+14+rn(i+4)*(H-wl-30)}h${14+rn(i+2)*26}" stroke="#fff" stroke-width="1" opacity=".4"/>`;
+  s+=path('M10 100L42 82','#c9a06a',10)+path('M40 83L152 26','#2b2b2b',4.2)+path('M40 83L152 26','#555',1.2,'transform="translate(0,-1)"');
+  [[84,60.5],[117,43.5],[141,31.5]].forEach(([x,y])=>s+=`<circle cx="${x}" cy="${y}" r="3.2" fill="none" stroke="#444" stroke-width="1.3"/>`);
+  s+=lab(14,20,'Rod','start','#5d6b73',600)+(P.rod?lab(14,36,P.rod.replace(/\s*rod/i,''),'start','#1f2a30',600):'');
+  const LINE='#e0a22e',LEAD='#7d8e99',TIP='#9db3c0';
+  const fl=(name,ex,ey,w,al=1)=>put(name,ex,ey,w,al);
+  const lineIn=(x2)=>path(`M152 26C200 34 250 84 300 ${wl-3}L${x2} ${wl-3}`,LINE,5);
+  if(K.k==='dry'||K.k==='film'){
+    const w=280,sc=w/312,ex=470,ey=K.k==='film'?wl+1:wl-16*sc;
+    s+=lineIn(350)+path(`M350 ${wl-3}L${ex-135} ${wl-8}`,LEAD,2.6)+path(`M${ex-135} ${wl-8}Q${ex-60} ${wl-4} ${ex} ${ey}`,TIP,1.5);
+    s+=fl(flyNames[0],ex,ey,w)+lab(214,66,P.line||'Fly line')+lab(352,wl-17,P.leader||'Leader')+lab(ex-140,wl+22,P.tip[0]||'tippet','start','#37566b');
+    s+=flyLabel(0,ex+8,under(ey,w)+(K.k==='film'?0:2))+lab(ex+8,under(ey,w)+17,K.k==='film'?'rides in the surface film':'floats on the surface','start','#5d6b73',400);
+  }else if(K.k==='drydrop'){
+    const w=230,sc=w/312,ex=400,ey=wl-16*sc,dw=200,dx=520,dy=wl+104,b=bend(flyNames[0],ex,ey,w);
+    s+=lineIn(330)+path(`M330 ${wl-3}L${ex-120} ${wl-8}`,LEAD,2.6)+path(`M${ex-120} ${wl-8}Q${ex-60} ${wl-4} ${ex} ${ey}`,TIP,1.5);
+    s+=path(`M${b[0]} ${b[1]}C${b[0]} ${b[1]+40} ${dx-34} ${dy-36} ${dx} ${dy}`,TIP,1.4);
+    s+=fl(flyNames[0],ex,ey,w,isThis(0)?1:.6)+fl(flyNames[1],dx,dy,dw,isThis(1)?1:.6);
+    s+=lab(214,66,P.line||'Fly line')+lab(332,wl-17,P.leader||'Leader')+lab(b[0]-60,b[1]+46,P.tip[P.tip.length-1]||'dropper tippet','start','#37566b')+flyLabel(0,ex+4,wl+36)+flyLabel(1,dx+4,under(dy,dw));
+  }else if(K.k==='indicator'){
+    const ix=372,sx=412,sy=wl+34,fw=two?200:250,ex=two?400:430,ey=two?wl+58:wl+64;
+    s+=lineIn(330)+path(`M330 ${wl-3}L${ix-9} ${wl-6}`,LEAD,2.6)+path(`M${ix+9} ${wl-2}Q${ix+28} ${wl+12} ${sx} ${sy-2}`,LEAD,2.2);
+    s+=`<circle cx="${ix}" cy="${wl-7}" r="10" fill="#e8742a" stroke="#a84c12"/><circle cx="${ix-3}" cy="${wl-10}" r="3.2" fill="#fff" opacity=".6"/>`;
+    s+=`<circle cx="${sx}" cy="${sy}" r="4.6" fill="#6a6f74" stroke="#3d4247"/><circle cx="${sx+7}" cy="${sy+4}" r="4.2" fill="#7c8186" stroke="#3d4247"/>`;
+    s+=path(`M${sx+7} ${sy+7}Q${sx+12} ${ey-22} ${ex} ${ey}`,TIP,1.5);
+    s+=fl(flyNames[0],ex,ey,fw,isThis(0)?1:.6);
+    if(two){const b=bend(flyNames[0],ex,ey,fw),dx=ex+112,dy=wl+132,dw=170;s+=path(`M${b[0]} ${b[1]}C${b[0]} ${b[1]+30} ${dx-26} ${dy-32} ${dx} ${dy}`,TIP,1.4)+fl(flyNames[1],dx,dy,dw,isThis(1)?1:.6)+flyLabel(1,dx+4,under(dy,dw))+lab(b[0]-70,b[1]+44,P.tip[P.tip.length-1]||'dropper tippet','start','#37566b');}
+    s+=lab(214,66,P.line||'Fly line')+lab(ix,wl-26,'Indicator','middle')+lab(sx+16,sy-6,'Split shot')+lab(150,wl+30,P.leader||'Leader')+(two?flyLabel(0,ex-12,ey+30,'end'):flyLabel(0,ex+4,under(ey,fw)));
+    if(!two&&P.tip[0])s+=lab(ex-100,sy+46,P.tip[0],'start','#37566b');
+  }else if(K.k==='tight'){
+    const fw=250,ex=470,ey=wl+64;
+    s+=path('M152 26C230 40 290 52 336 62','#e0a22e',5)+path('M336 62L398 88','#ff7a2a',4.2)+path(`M398 88Q440 ${wl+14} ${ex} ${ey}`,TIP,1.5);
+    s+=fl(flyNames[0],ex,ey,fw)+lab(206,36,'Fly line held off the water')+lab(350,52,'Sighter (coloured leader section)')+lab(414,wl+16,P.tip[0]||'tippet','start','#37566b')+flyLabel(0,ex+4,under(ey,fw));
+    s+=lab(14,H-14,'No indicator: you feel the take','start','#5d6b73',400);
+  }else if(K.k==='streamer'){
+    const fw=300,ex=400,ey=wl+54;
+    if(K.sink)s+=path(`M152 26C190 34 250 70 300 ${wl-3}`,LINE,5)+path(`M300 ${wl-3}L336 ${wl+14}`,LINE,5)+path(`M336 ${wl+14}L372 ${wl+36}`,'#555',6.5)+path(`M372 ${wl+36}L${ex} ${ey}`,LEAD,2.4);
+    else s+=lineIn(336)+path(`M336 ${wl-3}Q380 ${wl+6} ${ex} ${ey}`,LEAD,2.4);
+    s+=fl(flyNames[0],ex,ey,fw)+lab(214,66,P.line||'Fly line')+lab(K.sink?392:350,K.sink?wl+24:wl-14,P.leader||'Leader')+flyLabel(0,ex+4,under(ey,fw));
+    s+=lab(14,H-14,'Strip or swing; vary speed and pauses','start','#5d6b73',400);
+  }else if(K.k==='pond'){
+    const ix=402,ex=424,ey=wl+72,fw=250;
+    s+=lineIn(330)+path(`M330 ${wl-3}L${ix-9} ${wl-6}`,LEAD,2.6)+path(`M${ix} ${wl+3}L${ex} ${ey}`,LEAD,2);
+    s+=`<circle cx="${ix}" cy="${wl-7}" r="10" fill="#e8742a" stroke="#a84c12"/><circle cx="${ix-3}" cy="${wl-10}" r="3.2" fill="#fff" opacity=".6"/>`;
+    s+=fl(flyNames[0],ex,ey,fw)+lab(214,66,P.line||'Fly line')+lab(ix,wl-26,'Indicator','middle')+lab(ix-210,wl+34,P.leader||'Leader')+flyLabel(0,ex+4,under(ey,fw));
+    s+=lab(14,H-14,'Fly hangs level under the indicator','start','#5d6b73',400);
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Rig diagram">${s}</svg>`;
+}
 function rigHTML(n){
   const r=rigFor(n);if(!r)return'';
-  const leaf=!n.k.length,name=leaf?n.n:'this fly';
-  return `<div class="row"><span class="ic">🪢</span><div><b>Rig:</b> ${r.t}<div class="chain">${r.c.map((c,i)=>(i?'<i>→</i>':'')+(c.startsWith('★')?`<span class="fl">${name}${c.slice(1)}</span>`:`<span>${c}</span>`)).join('')}</div>${r.n?`<div class="small mute">${r.n}</div>`:''}</div></div>`;
+  const leaf=!n.k.length,name=leaf?n.n:'this fly',K=rigKFor(n);
+  const chips=`<div class="chain">${r.c.map((c,i)=>(i?'<i>→</i>':'')+(c.startsWith('★')?`<span class="fl">${name}${c.slice(1)}</span>`:`<span>${c}</span>`)).join('')}</div>`;
+  return `<div class="rigblock"><div class="row"><span class="ic">🪢</span><div><b>Rig:</b> ${r.t}</div></div>${K?`<div class="rigsvg">${rigSVG(n,r,K)}</div>`:''}${(!K||isMobile())?chips:''}${r.n?`<div class="small mute" style="margin-left:34px">${r.n}</div>`:''}</div>`;
 }
 const fs=t=>{if(!t)return'';const m=t.match(/^.*?[.!?](?=\s+[A-Z“]|$)/);return m?m[0]:t};
 const strip=t=>t.replace(/<[^>]+>/g,'');
@@ -1165,14 +1265,13 @@ function info(n){
   t+=chipRow('📏','Size',n.z?`<span class="fact">${n.z}</span>`:'');
   const vs=VARIANTS[n.n];
   if(leaf&&vs){const cur=VAR[n.n]||0;t+=`<div class="row"><span class="ic tall">🎨</span><span class="sw"><b>Colour:</b>${vs.map((v,i)=>`<button class="swb${i===cur?' on':''}" data-var="${n.id}" data-i="${i}" title="${v[0]}" aria-label="${v[0]}" style="background:${v[1]}"></button>`).join('')}<span class="small mute"> ${vs[cur][0]}</span></span></div>`}
-  t+='<hr class="rowsep">';
-  t+=rigHTML(n);
-  if(leaf&&a)t+=`<div class="row"><span class="ic">🔍</span><span><b>Spot it:</b> ${a.v}</span></div>`;
-  else if(VIS[n.n])t+=`<div class="row"><span class="ic">🔍</span><ul>${VIS[n.n].slice(0,3).map(v=>`<li>${v}</li>`).join('')}</ul></div>`;
-  if(n.i)t+=`<div class="row"><span class="ic">🪲</span><span><b>Imitates:</b> ${strip(n.i)}</span></div>`;
-  if(n.h)t+=`<div class="row"><span class="ic">🎣</span><span>${fs(strip(n.h))}</span></div>`;
-  if(n.k.length)t+=`<div class="row"><span class="ic">📂</span><span>${n.k.map(k=>`<span class="chip" data-go="${k.id}">${k.n}</span>`).join('')}</span></div>`;
-  return `<div class="pgrid"><div>${t}</div><div>${f.img}</div></div>`;
+  let u='';
+  if(leaf&&a)u+=`<div class="row"><span class="ic">🔍</span><span><b>Spot it:</b> ${a.v}</span></div>`;
+  else if(VIS[n.n])u+=`<div class="row"><span class="ic">🔍</span><ul>${VIS[n.n].slice(0,3).map(v=>`<li>${v}</li>`).join('')}</ul></div>`;
+  if(n.i)u+=`<div class="row"><span class="ic">🪲</span><span><b>Imitates:</b> ${strip(n.i)}</span></div>`;
+  if(n.h)u+=`<div class="row"><span class="ic">🎣</span><span>${fs(strip(n.h))}</span></div>`;
+  if(n.k.length)u+=`<div class="row"><span class="ic">📂</span><span>${n.k.map(k=>`<span class="chip" data-go="${k.id}">${k.n}</span>`).join('')}</span></div>`;
+  return `<div class="pgrid"><div>${t}</div><div>${f.img}</div></div><hr class="rowsep">${rigHTML(n)}<hr class="rowsep">${u}`;
 }
 const leavesFold=n=>{open.delete(n.id);n.k.forEach(leavesFold)};
 function select(n,toggle){
