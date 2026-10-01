@@ -43,6 +43,7 @@ table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid var(--li
 .lbl{font-size:12.5px;fill:#1f2a30;pointer-events:none}
 .g2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
 
+.glh{margin:22px 0 8px}.glgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}.glcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px}.glcard b{display:block;margin-bottom:2px}
 .mnav{display:flex;gap:10px;align-items:center;margin:4px 0 10px;flex-wrap:wrap}
 .mback{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;cursor:pointer}
 .mcrumb{font-size:13px;color:var(--mute)}
@@ -111,6 +112,7 @@ table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid var(--li
 <section id="gallery"><div id="galleryBody"></div></section>
 <section id="insects"><div class="card"><h2 style="margin-top:0">By insect (how shops like Fly Deal sort them)</h2><div class="small mute">Same insect, different life stage = different fly family.</div></div><div id="insectBody"></div></section>
 <section id="quiz"><div class="tb" id="quizTabs"></div><div id="quizBody"></div></section>
+<section id="glossary"><div class="card"><h2 style="margin-top:0">Glossary</h2><div class="small mute">Plain-language meanings of fly-fishing words, parts and abbreviations. No experience needed.</div><input id="glSearch" type="search" placeholder="Search a word, e.g. tippet, hatch, BWO…" style="width:100%;margin:10px 0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit"><div class="tb" id="glChips"></div></div><div id="glBody"></div></section>
 <section id="how">
   <div class="card"><h2 style="margin-top:0">How the tree is organised (read this once)</h2>
     <ol>
@@ -330,6 +332,8 @@ const VIS={
 /* ---------------- Fly Deal-style shop category names → tree nodes (cross-reference) ---------------- */
 const INSECT_VIEW=[
  ['Mayfly',[['Nymph','Pheasant Tail'],['Emerger','Sparkle Dun'],['Dun (adult)','Comparadun'],['Spinner','Rusty Spinner']]],
+ ['Pale morning dun (PMD)',[['Nymph','Frenchie'],['Emerger','Sparkle Dun'],['Dun (adult)','PMD Dun'],['Spinner','Rusty Spinner']]],
+ ['Blue-winged olive (BWO)',[['Nymph','Perdigon'],['Emerger','Barr Emerger'],['Dun (adult)','BWO Thorax Dun'],['Cripple','Cripple']]],
  ['Caddis',[['Larva','Green Rock Worm'],['Pupa','Caddis pupa (Sparkle Pupa)'],['Adult','Elk Hair Caddis']]],
  ['Stonefly',[['Nymph','Pat’s Rubber Legs'],['Adult','Stimulator']]],
  ['Midge',[['Larva','Bloodworm'],['Pupa','Zebra Midge'],['Adult cluster','Griffith’s Gnat']]]
@@ -456,7 +460,242 @@ function buildQuiz(){
   $('#quizTabs').onchange=e=>{if(e.target.id==='hint'){Q.hint=e.target.checked;renderQ()}};
   newQ();
 }
-function initLearn(){buildGallery();buildInsects();buildQuiz()}
+/* ---------------- glossary (plain language) ---------------- */
+const GCATS={fly:['🪰','Kinds of flies'],part:['🧵','Parts of a fly & materials'],bug:['🦋','Insects & fish food'],water:['🌊','Water, fish & places'],gear:['🎣','Gear'],tech:['🎯','Techniques'],rules:['📋','Rules & safety'],abbr:['🔤','Abbreviations']};
+const GLOSS=[
+// ---- kinds of flies
+['Fly','fly','A tiny, lightweight hook dressed with feathers, fur, thread or foam so it looks like something a fish eats. It is cast using the weight of the line, not the weight of the fly.'],
+['Pattern','fly','The recipe or design of one particular fly. “Pheasant Tail” is a pattern; it can be tied in many sizes and colours.'],
+['Imitation','fly','A fly built to copy a real insect or food item as closely as needed. The opposite of an attractor.'],
+['Attractor','fly','A fly that looks like “general food” (bright, bushy or flashy) instead of one specific insect. Used to get a fish’s attention.'],
+['Dry fly','fly','A fly that floats on top of the water and imitates an adult insect. You watch it, and the fish visibly rises to eat it.'],
+['Nymph (fly)','fly','A fly fished underwater that imitates the young, underwater stage of an insect. Most of a trout’s diet is underwater, so nymphs catch the most fish.'],
+['Emerger','fly','A fly imitating an insect while it hatches, stuck in or just under the surface. Trout often prefer these to dry flies during a hatch.'],
+['Cripple','fly','An insect that failed to hatch properly and is stuck half out of its shuck. It is easy prey, so cripple flies catch picky trout.'],
+['Streamer','fly','A big fly that imitates a small fish, leech or crayfish. It is pulled through the water and often catches the biggest fish.'],
+['Wet fly','fly','An old-style fly fished under the surface, usually swung across the current. It imitates a drowned or hatching insect.'],
+['Soft hackle','fly','A simple wet fly with a soft, moving feather collar and no wing. It can be dead-drifted or swung.'],
+['Terrestrial','fly','A fly imitating a land insect (ant, beetle, grasshopper, cricket) that fell in the water. Trout eat these heavily in summer and fall.'],
+['Egg pattern','fly','A fly that looks like a fish egg or a hatchery pellet. It works during spawning or right after a pond is stocked.'],
+['Articulated fly','fly','A big fly built on two hooks (or a hook and a wire) joined by a flexible link so it wiggles like a live fish.'],
+['Hot spot','fly','A small, bright-coloured spot on a fly (often a bead or thread). It gives fish a visual target.'],
+['Jig fly','fly','A fly tied so the hook rides point-up. That snags less and gives an up-and-down action when pulled.'],
+['Parachute (style)','fly','A dry-fly style where the hackle is wound flat around a post, so the fly sits low in the surface with the post sticking up.'],
+['Catskill (style)','fly','A traditional dry-fly style with upright wings and a vertical hackle collar. It rides high on its tail and hackle tips.'],
+['Comparadun (style)','fly','A dry fly with a fan-shaped hair wing and no hackle. The body sits right in the surface film. Good for picky fish.'],
+// ---- parts
+['Hook','part','The metal part that holds the fish. Everything else is tied onto it.'],
+['Hook eye','part','The loop at the front of the hook. You tie your line (tippet) to it.'],
+['Shank','part','The straight section of the hook between the eye and the bend. Most of the fly is tied here.'],
+['Bend','part','The curve at the back of the hook. It shapes the hook and where the point sits.'],
+['Point','part','The sharp tip that pierces the fish.'],
+['Barb','part','A small backward-facing ridge near the point that keeps a fish from slipping off. Pinching it flat makes a barbless hook.'],
+['Barbless hook','part','A hook with the barb flattened or absent. It’s easier on fish and on you, and is required on some waters.'],
+['Gap','part','The opening between the point and the shank. A wider gap holds fish better.'],
+['Hook size','part','A number on the hook. A bigger number means a smaller hook (a #20 is tiny, a #6 is big). Dry flies are often #12–22; streamers #2–10.'],
+['Long-shank hook (2XL, 3XL…)','part','A hook with a longer-than-normal shank. “2XL” means 2 sizes longer. Used for streamers and big nymphs.'],
+['Thread','part','The thin string that holds the materials to the hook. Its colour can show through the body.'],
+['Head','part','The front end of the fly, finished with thread wraps and glue so nothing unravels.'],
+['Whip finish','part','A knot made with the tying thread that locks the fly closed at the head.'],
+['Tail','part','Fibres sticking out the back. On dry flies they help balance and float; on nymphs they copy the insect’s tail.'],
+['Body (abdomen)','part','The main long section of the fly behind the thorax. It copies the insect’s abdomen.'],
+['Rib','part','Wire or thread spiralled over the body for segments, flash and strength.'],
+['Thorax','part','The chunky front part of an insect’s body, just behind the head. Flies often have a fatter section there.'],
+['Wing','part','Feather, hair or foam on top of the fly that copies an insect’s wing.'],
+['Wing case','part','A shell-like layer over the thorax of a nymph. It copies the case holding the developing wings.'],
+['Wing post','part','A tuft of bright yarn or hair standing up on a dry fly. It helps you see the fly and makes a wing silhouette.'],
+['Hackle','part','A feather wound around the hook. On dry flies, stiff fibres float the fly; on soft hackles, floppy fibres look like legs or wings.'],
+['Collar','part','A ring of hackle fibres just behind the head.'],
+['Palmered','part','Hackle wound in a spiral along the whole body, like a bottle brush.'],
+['Legs','part','Fibres or rubber strands sticking out the sides. They give a fly motion and a buggy look.'],
+['Rubber legs','part','Stretchy rubber strands used as legs. They wiggle in the water.'],
+['Shuck','part','The old skin an insect leaves behind when it hatches. A trailing shuck on a fly means “hatching bug”.'],
+['Flash','part','A few sparkly strands (like Krystal Flash) that add a bit of shine.'],
+['Bead (head)','part','A small metal ball threaded on the hook. It adds weight, shine and a hot spot. Brass is lighter; tungsten is much heavier.'],
+['Cone head','part','A cone-shaped metal head on streamers. It sinks the fly and makes it swim with a jigging action.'],
+['Dumbbell eyes','part','A metal bar with two round ends, tied on top (or underneath) to weight the fly and look like eyes.'],
+['Lead wire','part','Soft wire wrapped on the hook shank to add weight under the body. Some tyers use non-lead wire instead.'],
+['Tungsten','part','A very dense metal used for beads. It sinks flies fast. About twice as heavy as a brass bead of the same size.'],
+['Dubbing','part','Fuzzy fur or synthetic fibres twisted onto the thread to make a body. It gives a “buggy” look.'],
+['CDC','part','Short for “cul de canard”: oily duck-rump feathers that trap air and float. Used on emergers and dry flies.'],
+['Deer hair / Elk hair','part','Hollow hair that floats well. Used for wings on dry flies and for heads on streamers.'],
+['Bucktail','part','Hair from a deer’s tail, used for streamer wings. It’s thin and flows well in water.'],
+['Marabou','part','A soft, fluffy feather that breathes and pulses in water. Used for streamer tails and wings.'],
+['Chenille','part','A fuzzy, rope-like material wrapped to make a thick body (e.g. on a Woolly Bugger).'],
+['Pheasant tail (material)','part','Reddish-brown banded fibres from a pheasant’s tail. Used for tails, bodies and legs on mayfly nymphs.'],
+['Peacock herl','part','Shiny green-bronze fibres from a peacock’s tail. Used for bodies and thoraxes.'],
+['Biot','part','A single stiff, segmented fibre from a goose wing. Used for tails, wings and bodies.'],
+['Tinsel','part','Thin metallic strip used for ribs or bodies; adds flash.'],
+['Foam','part','Closed-cell foam that never sinks. Used for bodies and shells of terrestrials and attractors.'],
+['Epoxy / UV resin','part','Clear glue brushed on and hardened. It makes a smooth, glossy shell (e.g. the back of a Copper John).'],
+['Rabbit strip (zonker strip)','part','A thin strip of rabbit fur and skin. It waves in the water and is used for tails and wings.'],
+['Mohair','part','Soft goat-hair yarn used for fuzzy bodies, like on leeches.'],
+['Zelon / Antron','part','Synthetic, slightly shiny yarn. Used for trailing shucks and wings; it traps air bubbles.'],
+['Partridge feather','part','A soft, mottled feather used for soft hackle collars.'],
+// ---- insects and food
+['Aquatic insect','bug','An insect that spends part of its life underwater (mayflies, caddisflies, stoneflies, midges). They are most of a trout’s diet.'],
+['Mayfly','bug','A delicate insect with upright wings and two or three thin tails. Its nymph lives underwater; adults hatch and live only a day or two.'],
+['Caddisfly (sedge)','bug','A moth-like insect with wings folded back like a roof. Its larva often builds a case; it has a pupa stage before hatching.'],
+['Stonefly','bug','A big, flat-winged insect. Its nymph crawls on rocks; adults crawl out of the water and later return to lay eggs.'],
+['Midge','bug','A tiny fly (like a gnat). Midges are present all year and are the main trout food in winter on rivers like the Provo.'],
+['Life cycle','bug','The stages an insect goes through: egg → larva or nymph → (pupa for caddis and midges) → emerger → adult. Fish eat every stage.'],
+['Nymph (insect)','bug','The young, underwater stage of mayflies and stoneflies. It looks like a small bug with legs and no wings.'],
+['Larva','bug','The worm-like young stage of caddisflies and midges. It lives underwater.'],
+['Pupa','bug','The resting/transforming stage of caddisflies and midges, just before they hatch. It swims up to the surface.'],
+['Hatch','bug','When lots of insects of one kind emerge at once, usually in the same place and time. Fish feed hard on it.'],
+['Hatch chart','bug','A calendar showing which insects hatch when, in a particular river. It tells you what flies to bring.'],
+['Dun','bug','A newly hatched adult mayfly with dull colours and upright wings.'],
+['Spinner','bug','A mated adult mayfly, shiny and with clear wings. It lays eggs, falls spent on the water and dies.'],
+['Spinner fall','bug','When many spent spinners drop on the water at once (often evening or morning). Fish gorge on them.'],
+['Surface film','bug','The thin “skin” on top of the water. Insects often get stuck in it as they hatch.'],
+['Blue-winged olive (BWO)','bug','A small olive-bodied mayfly with gray wings. It hatches in cool, cloudy weather in spring and fall. Sizes 16–24.'],
+['Pale morning dun (PMD)','bug','A mid-sized pale-yellow mayfly. It hatches mid-morning in summer (June–September on the Provo). Sizes 14–18.'],
+['Trico','bug','A tiny black-and-white mayfly (sizes 20–24) that hatches in mornings in summer to fall; trout take the spinners.'],
+['Green drake','bug','A large green-bodied mayfly (size 10–12). Its hatch brings up big trout; on the Provo in June–July.'],
+['March brown','bug','A medium brown mayfly. Western March Browns hatch early in the year (spring) on some Utah rivers.'],
+['Yellow sally','bug','A small yellow stonefly. It hatches in late spring and early summer.'],
+['Golden stone','bug','A big golden stonefly. Its nymphs and adults are a big meal in May–July.'],
+['Sow bug','bug','A small gray freshwater crustacean that lives in weed beds. It’s a staple trout food on the Provo.'],
+['Scud','bug','A small freshwater “shrimp” that curls when it swims. It lives in weeds in rivers and ponds.'],
+['Sculpin','bug','A small bottom-dwelling fish with a wide head. A favourite food of big brown trout.'],
+['Crayfish','bug','A small freshwater lobster-like animal. Big trout eat them.'],
+['Leech','bug','A soft, slim worm-like animal that swims with an up-and-down wiggle. Stillwater trout love them.'],
+['Baitfish','bug','Any small fish (minnows, young trout, sculpins) that bigger fish eat. Streamers imitate them.'],
+['Terrestrial (insect)','bug','An insect that normally lives on land: ants, beetles, hoppers, crickets. Wind and banks put them in the water.'],
+// ---- water and fish
+['Rainbow trout','water','A common trout with a pink stripe along its side. Often stocked and also wild.'],
+['Brown trout','water','A trout with brown/ gold sides and red-and-black spots. Often shy and tends to feed at dawn, dusk and in low light; big ones eat fish.'],
+['Cutthroat trout','water','A trout with a red slash under the jaw. The Bonneville cutthroat is native to northern Utah waters.'],
+['Tiger trout','water','A hybrid of brown and brook trout with a striped, worm-like pattern. Often stocked in Utah ponds.'],
+['Mountain whitefish','water','A silvery native fish with a small mouth. Common on the Provo; it eats nymphs and midges.'],
+['Tailwater','water','A river below a dam. Flow and temperature stay steady, so insects and trout do well. The Middle Provo (below Jordanelle) is one.'],
+['Freestone','water','A river fed by snowmelt and rain without a big dam controlling it. It runs high and muddy in spring runoff and low and clear in late summer.'],
+['Stillwater','water','Lakes and ponds (water that doesn’t flow). Fish cruise instead of holding in one spot.'],
+['Stocked fish','water','Fish raised in a hatchery and released into a lake or river by the state. Often easy to catch for a while.'],
+['Wild fish','water','Fish born and raised in the stream. Usually warier than stocked fish.'],
+['Riffle','water','A shallow, fast, bumpy stretch over gravel. Insects love it; good for nymphs.'],
+['Run','water','A moderately deep, smooth-flowing stretch. A classic place trout sit.'],
+['Pool','water','A deeper, slower section of river. Fish rest here.'],
+['Pocket water','water','Fast water with many boulders that create small calm spots (“pockets”) where trout hide.'],
+['Seam','water','The line where fast water meets slow water. Fish sit on the slow side and watch food drift by.'],
+['Eddy','water','A spot where the current swirls back on itself, often behind a rock or bend.'],
+['Tail-out','water','The shallow end of a pool where it speeds up again.'],
+['Undercut bank','water','A bank with the dirt eaten away below, making a shady hideout for big fish.'],
+['Drop-off','water','A sudden change from shallow to deep water, especially in a pond. Fish cruise along it.'],
+['Weed bed','water','A patch of underwater plants. Home to scuds, sow bugs and nymphs, so fish gather near it.'],
+['Runoff','water','Spring snowmelt that makes rivers high, cold and muddy. Fishing can be tougher; use big dark flies and slow edges.'],
+['Flow (CFS)','water','How much water is going down the river, measured in cubic feet per second (CFS). Check a river gauge before you go.'],
+['Gauge (river gauge)','water','A measuring station that reports flow and sometimes temperature online. Useful for planning a trip.'],
+['Water clarity','water','How clear or muddy the water is. Clear water: smaller, more natural flies. Stained or muddy: bigger, darker, flashier flies.'],
+['Water temperature','water','Trout feed best in cool water, roughly 50–65°F. In very warm water (above about 68°F) they get stressed; fish early or skip it.'],
+['Spawn','water','When fish lay eggs. Rainbows and cutthroat spawn in spring; browns spawn in fall. Avoid disturbing the nests.'],
+['Redd','water','A cleared patch of gravel where trout have laid eggs. Don’t wade through them.'],
+['Pre-spawn','water','The weeks before spawning when fish (especially browns in fall) get aggressive and eat streamers.'],
+['Rise','water','When a fish pokes its mouth or head up to eat something at the surface. The ring left behind shows where it fed.'],
+['Feeding lane','water','The narrow stripe of current where food drifts and fish line up to eat.'],
+['Structure','water','Anything that gives fish shelter: boulders, logs, weeds, banks, drop-offs.'],
+['Inlet / outlet','water','Where water enters or leaves a pond. Fish gather in the moving water.'],
+// ---- gear
+['Fly rod','gear','A long, thin, flexible rod made for casting fly line. Typically 8–10 feet for trout.'],
+['Rod weight (wt)','gear','A number (1–14) that tells you which line weight a rod is meant for. A 5wt is the all-round trout choice; lighter (3–4wt) for small streams.'],
+['Fly reel','gear','A simple spool that holds line. For trout it mainly stores line and gives a bit of drag.'],
+['Fly line','gear','A thick, coated line that carries the weight for casting. The thin leader and fly are tied to its end.'],
+['Weight-forward (WF)','gear','A fly line that is thicker near the front, making it easier to cast far. The common trout choice.'],
+['Floating line','gear','A line that sits on top of the water. Used for dry flies and most nymph fishing.'],
+['Sinking line','gear','A line that sinks. Used for deep streamer fishing in ponds and big rivers.'],
+['Sink-tip','gear','A floating line with a short sinking section at the end. Gets streamers down while keeping the rest on top.'],
+['Intermediate line','gear','A slow-sinking line. Good for ponds and shallow streamers.'],
+['Backing','gear','Thin strong line on the reel below the fly line. It’s a reserve for a fish that runs.'],
+['Leader','gear','The clear line between the thick fly line and the fly. Thinner and less visible to fish. Often 9 feet long.'],
+['Tippet','gear','A thin clear line tied onto the end of the leader. You replace it often and it sets the strength and thickness at the fly.'],
+['X rating (4X, 5X, 6X…)','gear','How thin tippet or leader is. A bigger number means thinner and weaker: 4X ≈ 0.007 in; 5X ≈ 0.006 in; 6X ≈ 0.005 in. Thinner is stealthier but breaks easier.'],
+['Fluorocarbon','gear','A leader/tippet material that sinks and is harder for fish to see. Often used for nymphs and streamers.'],
+['Monofilament (mono)','gear','Regular clear nylon leader/tippet. It floats a bit and stretches, which is good for dry flies.'],
+['Strike indicator','gear','A small float (foam, yarn or putty) on the leader. When it twitches or dips, a fish took your nymph.'],
+['Split shot','gear','Small lead-free weights pinched on the line to sink a nymph rig.'],
+['Sighter','gear','A bright section of leader you can see, used instead of an indicator in tight-line nymphing.'],
+['Waders','gear','Waterproof pants or chest-high overalls you wear to stand in cold water. Needed on the Provo and the Forks, not for fishing from the bank of a pond.'],
+['Wading boots','gear','Boots worn over waders for grip on slippery rocks. Studs or rubber soles help.'],
+['Wading belt','gear','A belt worn over waders to keep water out if you fall.'],
+['Wading staff','gear','A walking stick for balance in fast water.'],
+['Net (landing net)','gear','A small rubber-mesh net for scooping up a fish so you can unhook it quickly. Rubber is gentler on fish.'],
+['Nippers','gear','Small clippers used to cut tippet and trim knots.'],
+['Forceps / hemostats','gear','Small pliers-like clamps for removing hooks and pinching barbs flat.'],
+['Floatant','gear','Gel or paste you rub on a dry fly so it floats better.'],
+['Desiccant (drying powder)','gear','A powder that dries a soaked dry fly so it floats again.'],
+['Polarized sunglasses','gear','Glasses that cut glare so you can see into the water. Also protect your eyes from hooks.'],
+['Fly box','gear','A small box that holds your flies in organized rows.'],
+['Sling pack / vest','gear','A pack or vest to carry your gear while wading.'],
+['Improved clinch knot','gear','The standard knot to tie tippet to the fly’s eye.'],
+['Surgeon’s knot','gear','A simple strong knot to join two pieces of leader or tippet.'],
+// ---- techniques
+['Cast','tech','Sending the line and fly out over the water with the rod.'],
+['False cast','tech','Waving the rod back and forth in the air (without letting the line land) to lengthen or dry the line.'],
+['Roll cast','tech','A cast that doesn’t need room behind you; the line rolls across the water. Good in tight spots.'],
+['Presentation','tech','How the fly arrives and moves in the water. Often matters more than the exact fly.'],
+['Dead drift','tech','Letting the fly float at the exact speed of the current, with no pull from the line. The basic way to fish nymphs and dry flies.'],
+['Drag','tech','When the line pulls the fly in an unnatural way (faster or slower than the current). Fish refuse a dragging fly.'],
+['Mend','tech','Flipping a loop of line upstream or downstream after the cast to remove drag.'],
+['Strike','tech','A fish eating the fly. Also called a “take”.'],
+['Hook set (trout set)','tech','A quick lift of the rod tip when a fish takes. Not a hard jerk, or you’ll break the tippet.'],
+['Strip set','tech','Setting the hook on a streamer by pulling the line tight with your hand while keeping the rod low, instead of lifting.'],
+['Swing','tech','Letting the fly sweep across the current on a tight line. Used for soft hackles and streamers.'],
+['Strip / retrieve','tech','Pulling the line in by hand to move a streamer or still-water fly.'],
+['Twitch','tech','A small, short jiggle of the fly to look alive.'],
+['Skate','tech','Dragging a dry fly across the surface on purpose, like a caddis laying eggs.'],
+['Indicator nymphing','tech','Fishing nymphs below a strike indicator. Easy to learn and effective in most rivers.'],
+['Tight-line (Euro) nymphing','tech','Fishing nymphs on a short, tight line with a long rod and no indicator, feeling for the take. Great in pocket water.'],
+['Dry-dropper','tech','A rig with a floating dry fly on top and a nymph hanging below it. The dry fly doubles as the indicator.'],
+['Hopper-dropper','tech','A dry-dropper where the top fly is a hopper pattern; a summer favourite.'],
+['Streamer fishing','tech','Casting and stripping or swinging large flies to trigger aggressive fish.'],
+['Match the hatch','tech','Choosing a fly that matches what insects are hatching right now in size, shape and colour.'],
+['Searching','tech','Fishing likely spots with a general fly when no fish are visibly feeding.'],
+['Playing a fish','tech','Tiring the fish by keeping steady pressure and letting it run, then guiding it to the net.'],
+['Catch and release','tech','Letting the fish go. Use wet hands, keep it in the water as much as you can, and release quickly.'],
+// ---- rules
+['Bag / possession limit','rules','The number of fish you’re allowed to keep. Rules differ by water, so check the current regulations.'],
+['Artificial flies and lures only','rules','A rule saying you may not use bait; only flies or lures. Some Provo sections have this.'],
+['Catch-and-release only','rules','A rule that you must release every fish you catch.'],
+['Slot limit','rules','A rule that you must release fish within a size range (e.g., between 12 and 16 inches).'],
+['DWR','rules','Utah Division of Wildlife Resources. It sets fishing rules, stocks fish and sells licences.'],
+['Aquatic invasive species (AIS)','rules','Harmful hitchhikers like quagga mussels that can spread between lakes and rivers on gear. Clean, Drain and Dry your gear after each trip.'],
+['Clean–Drain–Dry','rules','A routine: clean off mud and plants, drain water, and dry gear completely before going to another water. Required in many places.'],
+['Fishing licence','rules','A permit you must buy before fishing in Utah (with some exceptions). Check the current rules.'],
+// ---- abbreviations
+['BWO','abbr','Blue-winged olive: a small mayfly. See that entry.'],
+['PMD','abbr','Pale morning dun: a mid-sized yellow mayfly.'],
+['EHC','abbr','Elk Hair Caddis: a very common dry fly.'],
+['PT','abbr','Pheasant Tail: a classic mayfly nymph.'],
+['HE','abbr','Hare’s Ear: a shaggy, general-purpose nymph.'],
+['CJ','abbr','Copper John: a heavy, shiny nymph.'],
+['RS2','abbr','A classic small emerger pattern for BWO and midge hatches.'],
+['CDC','abbr','Cul de canard: floaty duck feathers.'],
+['UV','abbr','Ultraviolet (as in “UV resin”): resin that hardens under a UV light.'],
+['AIS','abbr','Aquatic invasive species.'],
+['CFS','abbr','Cubic feet per second: how much water flows.'],
+['DWR','abbr','Utah Division of Wildlife Resources.'],
+['WF','abbr','Weight-forward: a fly-line taper.'],
+['#14, #18, #22…','abbr','Hook sizes. A bigger number means a smaller hook.'],
+['5wt','abbr','A 5-weight rod or line: the standard trout size.'],
+['4X / 5X / 6X','abbr','Tippet thickness. Bigger number = thinner.'],
+['2XL / 3XL','abbr','Extra-long hook shank (2 or 3 sizes longer than normal).'],
+['C&R','abbr','Catch and release.']
+];
+let glCat='all',glQ='';
+function buildGlossary(){
+  const chips=[['all','All']].concat(Object.entries(GCATS).map(([k,v])=>[k,v[0]+' '+v[1]]));
+  $('#glChips').innerHTML=chips.map(([k,t])=>`<button data-c="${k}" class="${k===glCat?'on':''}">${t}</button>`).join('');
+  const q=glQ.trim().toLowerCase();
+  const list=GLOSS.filter(g=>(glCat==='all'||g[1]===glCat)&&(!q||(g[0]+' '+g[2]).toLowerCase().includes(q)));
+  let html='';
+  Object.keys(GCATS).forEach(c=>{
+    const items=list.filter(g=>g[1]===c).sort((a,b)=>a[0].localeCompare(b[0]));
+    if(!items.length)return;
+    html+=`<h2 class="glh">${GCATS[c][0]} ${GCATS[c][1]} <span class="mute small">(${items.length})</span></h2><div class="glgrid">${items.map(g=>`<div class="glcard"><b>${g[0]}</b><div>${g[2]}</div></div>`).join('')}</div>`;
+  });
+  $('#glBody').innerHTML=html||'<div class="card">No matching terms. Try a shorter word.</div>';
+}
+function initLearn(){buildGallery();buildInsects();buildQuiz();buildGlossary()}
 
 </script>
 <script>
@@ -867,11 +1106,13 @@ $('#anatTabs').innerHTML=Object.entries(FLIES).map(([k,v])=>`<button data-f="${k
 $('#anatTabs').onclick=e=>{if(e.target.dataset.f){curFly=e.target.dataset.f;document.querySelectorAll('#anatTabs button').forEach(b=>b.classList.toggle('on',b.dataset.f===curFly));drawAnat()}};
 drawAnat();
 
-const TABS=[['tree','Family tree'],['gallery','Picture gallery'],['insects','By insect'],['anat','Fly anatomy & materials'],['quiz','Quiz'],['how','How to read it']];
+const TABS=[['tree','Family tree'],['gallery','Picture gallery'],['insects','By insect'],['anat','Fly anatomy & materials'],['glossary','Glossary'],['quiz','Quiz'],['how','How to read it']];
 $('#nav').innerHTML=TABS.map(([id,t])=>`<button data-id="${id}">${t}</button>`).join('');
 function show(id){if(id==='tree')setTimeout(fixInfoHeight,0);document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.id===id));history.replaceState(null,'','#'+id)}
 $('#nav').onclick=e=>e.target.dataset.id&&show(e.target.dataset.id);
 initLearn();
+$('#glSearch').oninput=e=>{glQ=e.target.value;buildGlossary()};
+$('#glChips').onclick=e=>{if(e.target.dataset.c){glCat=e.target.dataset.c;buildGlossary()}};
 show(location.hash.slice(1)||'tree');
 </script>
 </body>
