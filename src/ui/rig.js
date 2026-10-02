@@ -2,7 +2,8 @@
 import { ART } from '../data/art.js';
 import { GENERIC, firstLeaf, rigFor, rigKFor } from '../data/rigs.js';
 import { ALLN } from '../data/tree.js';
-import { hookDepth, r1, rn } from '../engine/core.js';
+import { hookBend, r1, rn } from '../engine/core.js';
+import { bareScale } from '../engine/fly.js';
 import { flyPic } from './images.js';
 import { isMobile } from './tree.js';
 
@@ -29,7 +30,7 @@ export function rigSVG(n,r,K){
   const szTxt=i=>{const z=nodeOf(i)&&nodeOf(i).z;return z?' · '+z:''};
   const fwOf=i=>flyW(sizeNum(nodeOf(i)&&nodeOf(i).z));
   const put=(name,ex,ey,w,al)=>{const s=w/312,p=flyPic(name,{bare:true});return `<image href="${p.url}" x="${r1(ex-22*s)}" y="${r1(ey-120*s)}" width="${r1(360*s)}" height="${r1(220*s)}" opacity="${al}"/>`};
-  const bend=(name,ex,ey,w)=>{const a=ART[name],hx=({std:228,long:266,xlong:290,grub:228})[a.hook||'std'],D=hookDepth(a.hook),s=w/312;return[ex+(hx+.02*D-62)*s,ey+.97*D*s]};
+  const bend=(name,ex,ey,w)=>{const a=ART[name],[x,y]=hookBend(a),s=w/312*bareScale(a);return[ex+(x-62)*s,ey+(y-100)*s]};
   const lab=(x,y,t,anc='start',col='#1f2a30',wt=500)=>`<text x="${x}" y="${y}" font-size="13" font-weight="${wt}" fill="${col}" stroke="#fff" stroke-width="3.4" paint-order="stroke" text-anchor="${anc}" font-family="system-ui,sans-serif">${esc(t)}</text>`;
   const flyNames=K.f.map((f,i)=>f==='this'?thisArt:GENERIC[f]);
   const isThis=i=>K.f[i]==='this';
