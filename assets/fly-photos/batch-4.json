@@ -1,0 +1,74 @@
+[
+ {
+  "name": "Hopper",
+  "slug": "hopper",
+  "family": "Dry flies",
+  "group": "Terrestrials",
+  "size": "#6–10",
+  "imitates": "Grasshopper",
+  "recipe": "Foam or dubbed body • elk-hair wing • rubber legs",
+  "looks": "Long yellow body, folded hair wing, rubber legs.",
+  "colour": "Yellow",
+  "hook": "long-shank streamer/nymph hook"
+ },
+ {
+  "name": "Ant",
+  "slug": "ant",
+  "family": "Dry flies",
+  "group": "Terrestrials",
+  "size": "#12–16",
+  "imitates": "Flying/black ant",
+  "recipe": "Two-segment foam or dubbed body, narrow waist",
+  "looks": "Two round blobs (head/thorax + abdomen) with a pinched “waist”.",
+  "colour": "Black",
+  "hook": "standard dry-fly hook"
+ },
+ {
+  "name": "Beetle",
+  "slug": "beetle",
+  "family": "Dry flies",
+  "group": "Terrestrials",
+  "size": "#12–16",
+  "imitates": "Beetle",
+  "recipe": "Foam or peacock body with a foam shell",
+  "looks": "Short, round and glossy: foam shell humped over the back.",
+  "colour": "Black",
+  "hook": "standard dry-fly hook"
+ },
+ {
+  "name": "Cricket",
+  "slug": "cricket",
+  "family": "Dry flies",
+  "group": "Terrestrials",
+  "size": "#8–12",
+  "imitates": "Cricket",
+  "recipe": "Black foam and rubber legs",
+  "looks": "All-black, bulky, with rubber legs.",
+  "colour": "standard",
+  "hook": "long-shank streamer/nymph hook"
+ },
+ {
+  "name": "Madam X",
+  "slug": "madam-x",
+  "family": "Dry flies",
+  "group": "Terrestrials",
+  "size": "#6–10",
+  "imitates": "Grasshopper / big stonefly",
+  "recipe": "",
+  "looks": "Hopper with a yellow body, hair wing, white rubber legs and a bushy collar.",
+  "colour": "standard",
+  "hook": "long-shank streamer/nymph hook"
+ },
+ {
+  "name": "Foam Inchworm",
+  "slug": "foam-inchworm",
+  "family": "Dry flies",
+  "group": "Terrestrials",
+  "size": "#12–16",
+  "imitates": "Green inchworm falling from trees",
+  "recipe": "",
+  "looks": "A long, bright green, ribbed foam rope: no wing, no tail.",
+  "colour": "Green",
+  "hook": "standard dry-fly hook"
+ }
+]

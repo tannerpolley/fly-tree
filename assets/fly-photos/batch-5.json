@@ -1,0 +1,86 @@
+[
+ {
+  "name": "Royal Wulff",
+  "slug": "royal-wulff",
+  "family": "Dry flies",
+  "group": "Attractor dries",
+  "size": "#10–16",
+  "imitates": "Generic food; stoneflies/ mayflies",
+  "recipe": "White hair wings • red floss band • peacock herl • brown hackle",
+  "looks": "White upright hair wings + red band on the body + bushy brown hackle.",
+  "colour": "standard",
+  "hook": "standard dry-fly hook"
+ },
+ {
+  "name": "Chubby Chernobyl",
+  "slug": "chubby-chernobyl",
+  "family": "Dry flies",
+  "group": "Attractor dries",
+  "size": "#8–10",
+  "imitates": "Big stonefly/ hopper/ beetle",
+  "recipe": "Foam body, rubber legs, bright wing post",
+  "looks": "Two-layer foam body with a bright wing post and rubber legs.",
+  "colour": "Orange-red",
+  "hook": "long-shank streamer/nymph hook"
+ },
+ {
+  "name": "Humpy",
+  "slug": "humpy",
+  "family": "Dry flies",
+  "group": "Attractor dries",
+  "size": "#10–16",
+  "imitates": "Bushy generic dry",
+  "recipe": "Hump of deer hair, tail and hackle",
+  "looks": "Humped deer-hair back with upright hair wings; bushy and bouncy.",
+  "colour": "standard",
+  "hook": "standard dry-fly hook"
+ },
+ {
+  "name": "Hare’s Ear",
+  "slug": "hares-ear",
+  "family": "Nymphs & larvae",
+  "group": "Mayfly nymphs",
+  "size": "#12–18",
+  "imitates": "Crawler/clinger mayflies; caddis; general food",
+  "recipe": "Hare’s-mask dubbing picked out for “legs” • gold wire rib • bead optional",
+  "looks": "Shaggy, buggy body with “picked-out” fuzz; gold rib.",
+  "colour": "Natural",
+  "hook": "standard nymph hook"
+ },
+ {
+  "name": "Perdigon",
+  "slug": "perdigon",
+  "family": "Nymphs & larvae",
+  "group": "Mayfly nymphs",
+  "size": "#14–18",
+  "imitates": "Slim mayfly/ caddis",
+  "recipe": "Thin tungsten bead • slim body coated in UV resin • quick sinking",
+  "looks": "Super slim, glossy resin body with a shiny bead; nothing else.",
+  "colour": "Black",
+  "hook": "standard nymph hook"
+ },
+ {
+  "name": "Frenchie",
+  "slug": "frenchie",
+  "family": "Nymphs & larvae",
+  "group": "Mayfly nymphs",
+  "size": "#14–18",
+  "imitates": "Mayfly nymph (tungsten jig style)",
+  "recipe": "",
+  "looks": "Slim pheasant-tail body with a bright pink bead and a hot orange collar.",
+  "colour": "Pink collar",
+  "hook": "standard nymph hook"
+ },
+ {
+  "name": "Rainbow Warrior",
+  "slug": "rainbow-warrior",
+  "family": "Nymphs & larvae",
+  "group": "Mayfly nymphs",
+  "size": "#16–20",
+  "imitates": "Mayfly/ midge nymph",
+  "recipe": "",
+  "looks": "Slim body with a shiny rainbow-flash back, pink thorax and a bead.",
+  "colour": "Natural",
+  "hook": "standard nymph hook"
+ }
+]

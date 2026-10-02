@@ -1,0 +1,74 @@
+[
+ {
+  "name": "Green Rock Worm",
+  "slug": "green-rock-worm",
+  "family": "Nymphs & larvae",
+  "group": "Caddis larvae & pupae",
+  "size": "#12–16",
+  "imitates": "Free-living caddis larva",
+  "recipe": "Bright green body • black head • tiny wire rib",
+  "looks": "Fat green grub with a black head and tiny legs: no tail.",
+  "colour": "Green",
+  "hook": "curved scud/grub hook"
+ },
+ {
+  "name": "Caddis pupa (Sparkle Pupa)",
+  "slug": "caddis-pupa-sparkle-pupa",
+  "family": "Nymphs & larvae",
+  "group": "Caddis larvae & pupae",
+  "size": "#14–16",
+  "imitates": "Caddis pupa swimming up",
+  "recipe": "Antron/ Zelon bubble-like sheath • dubbed body • soft hackle legs",
+  "looks": "Tan body inside a shiny “bubble” sheath, antennae, soft legs.",
+  "colour": "Tan",
+  "hook": "standard nymph hook"
+ },
+ {
+  "name": "Cased caddis",
+  "slug": "cased-caddis",
+  "family": "Nymphs & larvae",
+  "group": "Caddis larvae & pupae",
+  "size": "#10–14",
+  "imitates": "Larva in its stick/ pebble case",
+  "recipe": "Peacock herl body w/ bead",
+  "looks": "A rough tube of pebbles/sticks with a black head poking out.",
+  "colour": "standard",
+  "hook": "standard nymph hook"
+ },
+ {
+  "name": "Peeking Caddis",
+  "slug": "peeking-caddis",
+  "family": "Nymphs & larvae",
+  "group": "Caddis larvae & pupae",
+  "size": "#12–16",
+  "imitates": "Case-building caddis larva",
+  "recipe": "",
+  "looks": "A pebble case with a green grub poking out the front.",
+  "colour": "standard",
+  "hook": "standard nymph hook"
+ },
+ {
+  "name": "Pat’s Rubber Legs",
+  "slug": "pats-rubber-legs",
+  "family": "Nymphs & larvae",
+  "group": "Stonefly nymphs",
+  "size": "#6–10",
+  "imitates": "Stonefly nymph",
+  "recipe": "Chenille body • rubber legs • bead or lead",
+  "looks": "Fat chenille body with long rubber legs and forked tail.",
+  "colour": "Brown",
+  "hook": "long-shank streamer/nymph hook"
+ },
+ {
+  "name": "Kaufmann’s Stone",
+  "slug": "kaufmanns-stone",
+  "family": "Nymphs & larvae",
+  "group": "Stonefly nymphs",
+  "size": "#6–10",
+  "imitates": "Golden stonefly",
+  "recipe": "Dubbed body • rubber legs • black wing case",
+  "looks": "Segmented body, big dark wing case, forked tail, rubber legs.",
+  "colour": "Brown",
+  "hook": "long-shank streamer/nymph hook"
+ }
+]

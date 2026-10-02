@@ -5,14 +5,14 @@ import { GCATS, GLOSS } from '../data/glossary.js';
 import { ALLN, TREE } from '../data/tree.js';
 import { INSECT_VIEW, LOOKALIKES, VIS } from '../data/vis.js';
 import { $ } from './dom.js';
-import { MEASURE, flyImg } from './images.js';
+import { MEASURE, flyImg, picCredit } from './images.js';
 import { show } from './nav.js';
 import { select } from './tree.js';
 
 export const FAMC=n=>{while(n.d>1)n=n.p0;return n};
 export const leavesOf=n=>n.k.length?n.k.flatMap(leavesOf):[n];
 
-export const zoomImg=n=>MEASURE?'<div style="aspect-ratio:332/186"></div>':`<div class="zoomable" data-zoom="${n.id}" title="Click to enlarge">${flyImg(n.n,{studio:true})}<span class="zoomhint">🔍 Click to enlarge</span></div>`;
+export const zoomImg=n=>MEASURE?'<div style="aspect-ratio:332/186"></div><div class="credit">&nbsp;</div>':`<div class="zoomable" data-zoom="${n.id}" title="Click to enlarge">${flyImg(n.n,{studio:true})}<span class="zoomhint">🔍 Click to enlarge</span></div><div class="credit">${picCredit(n.n)}</div>`;
 export const fig=(n,w)=>ART[n.n]?`<figure>${flyImg(n.n,{studio:true})}<figcaption>${n.n}</figcaption></figure>`:'';
 
 export function figure(n){

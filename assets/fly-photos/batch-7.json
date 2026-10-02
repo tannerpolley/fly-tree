@@ -1,0 +1,86 @@
+[
+ {
+  "name": "Zebra Midge",
+  "slug": "zebra-midge",
+  "family": "Nymphs & larvae",
+  "group": "Midge larvae & pupae",
+  "size": "#18–22",
+  "imitates": "Midge pupa/ larva",
+  "recipe": "Black thread body with silver wire • bead • sparse hackle/ thorax",
+  "looks": "Tiny black body with white-striped ribbing and a bead: no tail.",
+  "colour": "Black",
+  "hook": "standard nymph hook"
+ },
+ {
+  "name": "Bloodworm",
+  "slug": "bloodworm",
+  "family": "Nymphs & larvae",
+  "group": "Midge larvae & pupae",
+  "size": "#12–16",
+  "imitates": "Midge larva (bloodworm)",
+  "recipe": "Red thread or Ultra Wire body; slim",
+  "looks": "Long thin red body, no bead, no tail.",
+  "colour": "Red",
+  "hook": "standard nymph hook"
+ },
+ {
+  "name": "Disco Midge",
+  "slug": "disco-midge",
+  "family": "Nymphs & larvae",
+  "group": "Midge larvae & pupae",
+  "size": "#18–22",
+  "imitates": "Midge pupa w/ gas bubbles",
+  "recipe": "Flashy body with a glass/ pearl bead",
+  "looks": "Shiny midge: pearly body flash and a glassy bead.",
+  "colour": "Black",
+  "hook": "standard nymph hook"
+ },
+ {
+  "name": "Brassie",
+  "slug": "brassie",
+  "family": "Nymphs & larvae",
+  "group": "Midge larvae & pupae",
+  "size": "#16–20",
+  "imitates": "Midge larva",
+  "recipe": "",
+  "looks": "A thin copper-wire body with a tiny dark head: a wire worm.",
+  "colour": "Copper",
+  "hook": "standard nymph hook"
+ },
+ {
+  "name": "Mohair Leech",
+  "slug": "mohair-leech",
+  "family": "Streamers",
+  "group": "Leeches",
+  "size": "#6–10",
+  "imitates": "Leech",
+  "recipe": "Marabou tail • mohair body • bead",
+  "looks": "One long marabou tail, fuzzy body, NO hackle.",
+  "colour": "Black",
+  "hook": "long-shank streamer/nymph hook"
+ },
+ {
+  "name": "Balanced Leech",
+  "slug": "balanced-leech",
+  "family": "Streamers",
+  "group": "Leeches",
+  "size": "#8–12",
+  "imitates": "Leech",
+  "recipe": "Hook sits horizontal under the indicator (thanks to heavy dumbbell)",
+  "looks": "Leech with a heavy dumbbell “balance” eye at the head.",
+  "colour": "Burgundy",
+  "hook": "long-shank streamer/nymph hook"
+ },
+ {
+  "name": "Rabbit Strip Leech",
+  "slug": "rabbit-strip-leech",
+  "family": "Streamers",
+  "group": "Leeches",
+  "size": "#4–8",
+  "imitates": "Leech / baitfish",
+  "recipe": "",
+  "looks": "Long wavy rabbit-strip tail, no hackle, usually black or olive.",
+  "colour": "Black",
+  "hook": "long-shank streamer/nymph hook"
+ }
+]
