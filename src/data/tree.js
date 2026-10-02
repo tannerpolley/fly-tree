@@ -16,17 +16,17 @@ export const TREE=N('Flies',{s:'Every fly is an imitation (or attractor) of some
    N('X-Caddis',{z:'#14–18',i:'Emerging/ adult caddis',p:'Trailing shuck of Zelon • sparse hair wing • dubbed body',h:'Rides low; good when fish take emergers just in the film.',w:'Provo, caddis hatches.'})]),
   N('Stonefly adults',{s:'Large, flat-winged adults; stone- and sally-flies crawl out and flutter back to lay eggs.',i:'Stoneflies (golden, olive, yellow sally)'},[
    N('Stimulator',{z:'#6–12',i:'Golden stonefly, big caddis, hopper — all-purpose big dry',p:'Hair wing • palmered hackle • colored (orange/yellow) body',h:'High-floating dry; classic dry-dropper “top fly” in fast water.',w:'Provo May–July; freestones like the Forks in summer.'}),
-   N('Yellow Sally',{z:'#12–14',i:'Little yellow stonefly',p:'Slim yellow body • hair wing • light hackle',h:'Fish at midday and morning; a good dry and nymph pair.',w:'Provo May 15–June 30.'})]),
+   N('Yellow Sally',{z:'#12–14',i:'Little yellow stonefly',p:'Slim yellow body • flat pale wing • light hackle',h:'Fish at midday and morning; a good dry and nymph pair.',w:'Provo May 15–June 30.'})]),
   N('Midge adults',{s:'Tiny; fish often take clusters of several mating midges as one bite.',i:'Adult midges'},[
    N('Griffith’s Gnat',{z:'#18–24',i:'Cluster of midges',p:'Peacock herl body • grizzly hackle palmered • no tail/wings',h:'Dead drift on slow, flat water. Fish it behind a larger dry when possible.',w:'Utah winter and early spring; year-round on the Provo.'})]),
   N('Terrestrials',{s:'Land insects that fall in the water; fish eat them heavily in summer and fall.',i:'Hoppers, ants, beetles, crickets'},[
    N('Hopper',{z:'#6–10',i:'Grasshopper',p:'Foam or dubbed body • elk-hair wing • rubber legs',h:'Slap it near grassy banks; wind helps. Often fished as a hopper-dropper.',w:'July–Oct, windy afternoons.'}),
    N('Ant',{z:'#12–16',i:'Flying/black ant',p:'Two-segment foam or dubbed body, narrow waist',h:'Fish tight to the bank; subtle taps.',w:'Summer; good when nothing hatches.'}),
    N('Beetle',{z:'#12–16',i:'Beetle',p:'Foam or peacock body with a foam shell',h:'Plop under overhanging bushes.',w:'June–Oct.'}),
-   N('Cricket',{z:'#8–12',i:'Cricket',p:'Black foam and rubber legs',h:'Fall bank fishing.',w:'Aug–Oct.'})]),
+   N('Cricket',{z:'#8–12',i:'Cricket',p:'Black foam body • dark hair wing • rubber legs',h:'Fall bank fishing.',w:'Aug–Oct.'})]),
   N('Attractor dries',{s:'Imitate nothing specific; they look buggy, big and buoyant. Used to search or to carry weight.',i:'“General food”'},[
    N('Royal Wulff',{z:'#10–16',i:'Generic food; stoneflies/ mayflies',p:'White hair wings • red floss band • peacock herl • brown hackle',h:'Visible high-floater for fast water.',w:'Forks and Provo pocket water.'}),
-   N('Chubby Chernobyl',{z:'#8–10',i:'Big stonefly/ hopper/ beetle',p:'Foam body, rubber legs, bright wing post',h:'Very visible and buoyant; carries 1–2 nymph droppers.',w:'Summer, esp. the Forks.'}),
+   N('Chubby Chernobyl',{z:'#8–10',i:'Big stonefly/ hopper/ beetle',p:'Two-layer foam body • white poly wings • rubber legs',h:'Very visible and buoyant; carries 1–2 nymph droppers.',w:'Summer, esp. the Forks.'}),
    N('Humpy',{z:'#10–16',i:'Bushy generic dry',p:'Hump of deer hair, tail and hackle',h:'Bounces through riffles without sinking.',w:'Mountain freestones.'})])
  ]),
  N('Emergers & wets',{s:'Flies in or just under the surface film, imitating insects that are hatching, stuck, or drifting. Often the secret for fish that “refuse” dries.',h:'Dead drift in the film; in slow water, grease only the wing/post so the body hangs below.',w:'Hatches, grey days; Utah: BWO & midge on the Provo.'},[
@@ -47,15 +47,15 @@ export const TREE=N('Flies',{s:'Every fly is an imitation (or attractor) of some
    N('Perdigon',{z:'#14–18',i:'Slim mayfly/ caddis',p:'Thin tungsten bead • slim body coated in UV resin • quick sinking',h:'Gets down fast on short leaders; good as the point fly.',w:'Faster water; Provo and Forks.'})]),
   N('Caddis larvae & pupae',{s:'Larvae live in cases or free-living (green rock worm); pupae rise to the surface to hatch.',i:'Caddis stages'},[
    N('Green Rock Worm',{z:'#12–16',i:'Free-living caddis larva',p:'Bright green body • black head • tiny wire rib',h:'Drift near bottom; most in riffle water.',w:'Spring–fall.'}),
-   N('Caddis pupa (Sparkle Pupa)',{z:'#14–16',i:'Caddis pupa swimming up',p:'Antron/ Zelon bubble-like sheath • dubbed body • soft hackle legs',h:'Swing at the end of the drift or lift to the surface.',w:'Before and during caddis hatches.'}),
-   N('Cased caddis',{z:'#10–14',i:'Larva in its stick/ pebble case',p:'Peacock herl body w/ bead',h:'Bottom-dwelling; roll along the bottom.',w:'Slower water, any time.'})]),
+   N('Caddis pupa (Sparkle Pupa)',{z:'#14–16',i:'Caddis pupa swimming up',p:'Antron bubble sheath • dubbed body • soft legs • dark head',h:'Swing at the end of the drift or lift to the surface.',w:'Before and during caddis hatches.'}),
+   N('Cased caddis',{z:'#10–14',i:'Larva in its stick/ pebble case',p:'Peacock-herl case • pale thorax • dark head',h:'Bottom-dwelling; roll along the bottom.',w:'Slower water, any time.'})]),
   N('Stonefly nymphs',{s:'Large, rubber-legged nymphs; high-calorie meals. Often used as a weight at the top of a dropper rig.',i:'Golden, olive & salmon-fly nymphs'},[
    N('Pat’s Rubber Legs',{z:'#6–10',i:'Stonefly nymph',p:'Chenille body • rubber legs • bead or lead',h:'Top fly (heavy) on a two-fly rig, tight-lined along the bottom.',w:'Provo May–July; runoff.'}),
-   N('Kaufmann’s Stone',{z:'#6–10',i:'Golden stonefly',p:'Dubbed body • rubber legs • black wing case',h:'Same style; slimmer profile than rubber legs.',w:'Runoff, spring.'})]),
+   N('Kaufmann’s Stone',{z:'#6–10',i:'Golden stonefly',p:'Dubbed body • mottled turkey wing cases • picked-out legs',h:'Same style; slimmer profile than rubber legs.',w:'Runoff, spring.'})]),
   N('Midge larvae & pupae',{s:'Tiny; critical on tailwaters in winter.',i:'Midge larvae/ pupae'},[
    N('Zebra Midge',{z:'#18–22',i:'Midge pupa/ larva',p:'Black thread body with silver wire • bead • sparse hackle/ thorax',h:'Tail fly under a bigger nymph; fish deep in runs.',w:'Provo, all year.'}),
    N('Bloodworm',{z:'#12–16',i:'Midge larva (bloodworm)',p:'Red thread or Ultra Wire body; slim',h:'Under an indicator in still water; small, slim.',w:'Ponds; slow water.'}),
-   N('Disco Midge',{z:'#18–22',i:'Midge pupa w/ gas bubbles',p:'Flashy body with a glass/ pearl bead',h:'Fish on a tight line; shiny attractor midge.',w:'Winter, clear water.'})]),
+   N('Disco Midge',{z:'#18–22',i:'Midge pupa w/ gas bubbles',p:'Flashabou body • glass bead • peacock collar',h:'Fish on a tight line; shiny attractor midge.',w:'Winter, clear water.'})]),
   N('Crustaceans',{s:'Sow bugs (flat) and scuds (curved) live in weed beds; not insects but trout love them.',i:'Sow bugs and scuds'},[
    N('Sow bug',{z:'#14–18',i:'Aquatic sowbug (Provo staple)',p:'Gray/tan dubbing • shell-back (scud back) • rib',h:'Dead drift on the bottom; good after high flows.',w:'Provo year-round.'}),
    N('Czech Nymph',{z:'#10–14',i:'Scud / caddis larva, in a heavy, fast-sinking style',p:'Curved hook • heavy tungsten bead • lead wraps • shellback • olive/ tan dubbing',h:'Tight-line (Euro) nymphing in fast, deep runs: the heavy fly gets down immediately.',w:'High, cold, fast water; Provo runs and Forks.'}),
@@ -72,16 +72,16 @@ export const TREE=N('Flies',{s:'Every fly is an imitation (or attractor) of some
   N('Generalists',{s:'One fly that looks like a leech, baitfish or crayfish depending on how you fish it.',i:'Mixed food'},[
    N('Woolly Bugger',{z:'#6–10',i:'Leech, baitfish, crayfish',p:'Marabou tail • chenille body • palmered hackle • bead/ cone optional',h:'Strip, swing or dead-drift; the easiest all-round streamer.',w:'River and pond, year-round.'})]),
   N('Baitfish',{s:'Slim minnow imitations with a flashy profile.',i:'Minnows/ small trout'},[
-   N('Zonker',{z:'#4–8',i:'Baitfish',p:'Rabbit-strip wing • flashy body • stripped hackle',h:'Swing or strip; the rabbit strip pulses.',w:'Fall brown trout, early spring.'}),
+   N('Zonker',{z:'#4–8',i:'Baitfish',p:'Rabbit-strip wing and tail • Mylar-tube body',h:'Swing or strip; the rabbit strip pulses.',w:'Fall brown trout, early spring.'}),
    N('Clouser Minnow',{z:'#2–8',i:'Baitfish',p:'Dumbbell eyes at head (flips hook point up) • bucktail + flash wing',h:'Jigs up and down along drop-offs and deep runs.',w:'Ponds and deeper runs, May–Oct.'})]),
   N('Sculpin',{s:'Bottom-dwelling fish with a wide head; a major brown-trout food.',i:'Sculpins'},[
-   N('Slumpbuster',{z:'#4–8',i:'Sculpin/ small fish',p:'Zonker strip wrapped behind a cone head • flashy underwing',h:'Short strips along bottom; keep the fly moving but low.',w:'Provo, Forks; fall and spring.'}),
+   N('Slumpbuster',{z:'#4–8',i:'Sculpin/ small fish',p:'Cone head • sparkle-braid body • pine-squirrel strip tail and collar',h:'Short strips along bottom; keep the fly moving but low.',w:'Provo, Forks; fall and spring.'}),
    N('Muddler Minnow',{z:'#4–10',i:'Sculpin, grasshopper',p:'Deer-hair head • turkey wing • tinsel body',h:'Swing or dead-drift; floats at first then dives.',w:'Rivers, evening.'})]),
   N('Leeches',{s:'Slim, undulating leech imitations favored by stillwater trout.',i:'Leeches'},[
    N('Mohair Leech',{z:'#6–10',i:'Leech',p:'Marabou tail • mohair body • bead',h:'Slow strip or hang below an indicator.',w:'Ponds, any month.'}),
-   N('Balanced Leech',{z:'#8–12',i:'Leech',p:'Hook sits horizontal under the indicator (thanks to heavy dumbbell)',h:'Dead-hang under an indicator in still water.',w:'Ponds.'})]),
+   N('Balanced Leech',{z:'#8–12',i:'Leech',p:'Jig hook • bead on a pin sticking forward, so the fly hangs level under an indicator',h:'Dead-hang under an indicator in still water.',w:'Ponds.'})]),
   N('Articulated & big',{s:'Multi-hook “meat” flies that stand out in dirty water or for large trout.',i:'Big baitfish/ small trout'},[
-   N('Sex Dungeon / Dungeon',{z:'#2–6',i:'Large baitfish',p:'Two-hook articulated body • rabbit-strip tail • deer-hair head',h:'Heavy tippet (0X–2X), strip aggressively.',w:'Fall browns and runoff.'})])
+   N('Sex Dungeon / Dungeon',{z:'#2–6',i:'Large baitfish',p:'Two-hook articulated body • marabou tail • schlappen • rubber legs • deer-hair head',h:'Heavy tippet (0X–2X), strip aggressively.',w:'Fall browns and runoff.'})])
  ])
 ]);
 
