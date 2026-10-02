@@ -1,5 +1,5 @@
 /* Side-view tied materials. Fine fibres are tapered ribbons, with separate far/near layers. */
-import { C, F, HKS, PSC, QN, RC, RR, S, THREAD, TS, UPH, Y, bead, coneHead, cyl, dk, dumbbell, fw, gid, hair, lg, ln, lt, qd, qpt, r1, rg, threadHead, tube, wraps } from './core.js';
+import { C, F, HKS, PSC, QN, RC, RR, S, THREAD, TS, UPH, Y, bead, coneHead, cyl, dk, dumbbell, fw, gid, grubShank, hair, lg, ln, lt, qd, qpt, qsub, r1, rg, threadHead, tube, wraps } from './core.js';
 
 function tone(c,i){
   const k='tones'+c,cs=RC.k[k]||(RC.k[k]=[dk(c,.48),dk(c,.25),c,lt(c,.22),lt(c,.42)]);
@@ -25,8 +25,8 @@ function plume(x,y,L,spread,c,seed=0){
 }
 function rabbit(x,y,L,w,c,flat=false){
   const p0=[x,y],p1=[x+L*.5,y+(flat?-1:7)],p2=[x+L,y+(flat?1:4)];
-  let s=S(qd(p0,p1,p2),dk(c,.48),w*.35)+S(qd(p0,p1,p2),lt(c,.18),w*.2);
-  for(let i=0;i<QN(190);i++){
+  let s=S(qd(p0,p1,p2),c,w*1.25,.55)+S(qd(p0,p1,p2),dk(c,.48),w*.35)+S(qd(p0,p1,p2),lt(c,.18),w*.2);
+  for(let i=0;i<QN(280);i++){
     const t=RR(i+610),p=qpt(p0,p1,p2,t),side=i%3===0?1:-1,l=9+RR(i+612)*21,col=tone(c,i+610);
     const start=[p[0],p[1]+(RR(i+615)-.5)*w*.5],end=[p[0]+l,p[1]+side*(w*.3+RR(i+614)*12)];
     s+=hair(start,[p[0]+l*.4,p[1]+side*(3+RR(i+613)*5)],end,col,.48+RR(i+616)*.6,{op:.76});
@@ -55,9 +55,9 @@ export function tailSVG(t,hx){
     }
     return s;
   }
-  const len=Math.min(120,L*TS),n=t.t==='split'?(t.n||2):QN(t.n===2?3:(t.n||3)*3);
+  const len=Math.min(t.limit||120,L*TS),n=t.t==='split'?(t.n||2):QN(t.n===2?3:(t.n||3)*3);
   for(let i=0;i<n;i++){
-    const u=t.t==='split'?(i%2?1:-1)*(.8+RR(i+9)*.2):(i/(n-1)-.5)*2,l=len*(.78+RR(i+3)*.22),spread=t.spread??(t.t==='split'?11:15);
+    const u=t.t==='split'?(n===3?i-1:i%2?1:-1)*(.8+RR(i+9)*.2):(i/(n-1)-.5)*2,l=len*(.78+RR(i+3)*.22),spread=t.spread??(t.t==='split'?11:15);
     const p0=[x,y+(RR(i+4)-.5)*2],p1=[x+l*.55,y+u*spread*.28],p2=[x+l,y+u*spread+(RR(i+5)-.5)*3];
     s+=hair(p0,p1,p2,tone(c,i),t.t==='split'?.6:.65+RR(i+6)*.5,{op:.82,bar:t.bar?dk(c,.65):null,period:3+RR(i+7)*3,offset:RR(i)*4});
   }
@@ -65,7 +65,7 @@ export function tailSVG(t,hx){
 }
 
 export function hackleFibre(p0,p1,p2,c,bar,i,w){
-  return hair(p0,p1,p2,tone(c,i),w,{op:.62+RR(i+33)*.27,bar:bar?'#28251e':null,period:2.6+RR(i+20)*3.6,offset:RR(i+21)*5});
+  return hair(p0,p1,p2,tone(c,i),w,{op:.8+RR(i+33)*.18,bar:bar?'#28251e':null,period:2.6+RR(i+20)*3.6,offset:RR(i+21)*5});
 }
 export function hackleSVG(h,x0,x1){
   if(!h)return{b:'',f:''};const c=h.c||C.brown,L=h.l||16;let b='',f='';
@@ -78,7 +78,7 @@ export function hackleSVG(h,x0,x1){
     for(let i=0;i<QN(330);i++){
       const a=RR(i+70)*Math.PI*2,cs=Math.cos(a),sn=Math.sin(a),l=rx*(.7+RR(i+73)*.3)*(cs<0?.72:1);
       const p0=[cx+cs*3,cy+sn*3+(RR(i+77)-.5)*3],p2=[cx+cs*l,cy+sn*l*.27+(RR(i+74)-.5)*7];
-      put(p0,[cx+cs*l*.48,cy+sn*l*.08+(RR(i+75)-.5)*5],p2,i,sn>0,.52+RR(i+76)*.55);
+      put(p0,[cx+cs*l*.48,cy+sn*l*.08+(RR(i+75)-.5)*8],p2,i,sn>0,.75+RR(i+76)*.7);
     }
     f+=S(`M${cx-3} ${cy+2}q3 2 7 0`,dk(c,.55),2);
   }else if(h.t==='palmer'){
@@ -108,12 +108,12 @@ export function hackleSVG(h,x0,x1){
 }
 
 export function legsSVG(l,xb=104){
-  if(!l)return{b:'',f:''};const c=l.c||C.brown;let b='',f='';
+  if(!l)return{b:'',f:''};const c=l.c||C.brown;xb=l.x||xb;let b='',f='';
   if(l.t==='rubber'){
     const n=l.n||3,L=l.len||49;
     for(let i=0;i<n;i++)for(const side of[-1,1]){
-      const x=xb+i*(l.spacing||19),sg=l.up?side:1,dx=side*(L*(.65+RR(i+8)*.4));
-      const d=`M${x} ${Y+sg*4}Q${r1(x+dx*.5)} ${r1(Y+sg*17)} ${r1(x+dx)} ${r1(Y+sg*(L*.65+RR(i+9)*8))}`;
+      const x=xb+i*(l.spacing||23),sg=l.up?side:1,dx=L*(-.9+i*1.6/Math.max(1,n-1))+(RR(i+side+8)-.5)*L*.22;
+      const dy=sg*L*(.4+RR(i+side+9)*.3),d=`M${x} ${Y+sg*4}Q${r1(x+dx*.6)} ${r1(Y+dy*.4)} ${r1(x+dx)} ${r1(Y+dy)}`;
       const s=S(d,dk(c,.6),1.65)+S(d,c,1.1)+S(d,lt(c,.4),.28,.6)+(l.bar?S(d,'#191712',1.15,.6,'stroke-dasharray="1.1 3.8"'):'');
       side<0?b+=s:f+=s;
     }
@@ -132,9 +132,10 @@ export function antennaeSVG(){return S(`M70 ${Y-3}q-8 -16 -21 -13M70 ${Y+2}q-9 -
 function surfaceFur(d,x0,x1,W,c,kind='dub',count=330){
   const id=clip(d);let s='';
   for(let i=0;i<QN(count);i++){
-    const t=RR(i+500),x=x0+(x1-x0)*t,w=W(t),y=Y+(RR(i+502)*2-1)*w,col=tone(c,i+510),l=kind==='herl'?1.4+RR(i+504)*3:1.2+RR(i+504)*4;
+    const t=RR(i+500),x=x0+(x1-x0)*t,w=W(t),y=Y+(RR(i+502)*2-1)*w,col=tone(kind==='variegated'&&Math.floor(x/12)%3===0?dk(c,.65):c,i+510),l=kind==='herl'?1.4+RR(i+504)*3:1.2+RR(i+504)*4;
     const angle=RR(i+505)*Math.PI*2,dx=Math.cos(angle)*l,dy=Math.sin(angle)*l*.7;
-    s+=S(qd([x,y],[x+dx*.2-dy*.5,y+dy*.2+dx*.35],[x+dx,y+dy]),col,kind==='herl'?.35:.18+RR(i+506)*.28,.5+RR(i+507)*.35);
+    if(kind==='deer')s+=`<ellipse cx="${r1(x)}" cy="${r1(y)}" rx="${fw(.3+RR(i+506)*.6)}" ry=".45" fill="${col}" stroke="${dk(c,.5)}" stroke-width=".16"/>`;
+    else s+=S(qd([x,y],[x+dx*.2-dy*.5,y+dy*.2+dx*.35],[x+dx,y+dy]),col,kind==='herl'?.35:.18+RR(i+506)*.28,.5+RR(i+507)*.35);
     if(kind==='herl'&&i%5===0)s+=S(`M${r1(x)} ${r1(y)}l${r1(dx*.25)} ${r1(dy*.25)}`,lt(c,.6),.3,.85);
   }
   return `<g clip-path="url(#${id})">${s}</g>`;
@@ -148,7 +149,7 @@ export function dubHalo(x0,x1,w0,w1,c,n,seed,back,sc=1){
   return s;
 }
 export function bodyTaper(b,x0,x1){
-  const c=b.c||C.gray,w0=b.w0||4,w1=b.w1||7,fur=b.fuzz||b.herl||b.mat==='pheasant'||b.mat==='chenille',W=t=>(w0+(w1-w0)*t)*(1+Math.sin(t*Math.PI)*.12),X=t=>x0+(x1-x0)*t;
+  const c=b.c||C.gray,w0=b.w0||4,w1=b.w1||7,fur=b.fuzz||b.herl||['pheasant','chenille','deer'].includes(b.mat),W=t=>(w0+(w1-w0)*t)*(1+Math.sin(t*Math.PI)*.12),X=t=>x0+(x1-x0)*t;
   let upper='',lower='';
   const steps=fur?80:12;
   for(let i=0;i<=steps;i++){
@@ -159,13 +160,17 @@ export function bodyTaper(b,x0,x1){
   if(fur)s+=dubHalo(x0,x1,w0,w1,c,QN(110),700,true,b.fuzz==='fine'?.55:.9);
   s+=`<path d="${d}" fill="${cyl(c)}"/>`;
   if(fur){
-    s+=surfaceFur(d,x0,x1,W,c,b.herl?'herl':'dub',b.mat==='chenille'?850:580);
+    s+=surfaceFur(d,x0,x1,W,c,b.herl?'herl':['variegated','deer'].includes(b.mat)?b.mat:'dub',['chenille','variegated'].includes(b.mat)?850:580);
     if(RC.q>=2)s+=`<path d="${d}" fill="#000" opacity=".2" filter="${F('fn')}"/>`;
-    if(b.mat==='pheasant')for(let i=0;i<QN(60);i++){
+    if(b.mat==='pheasant')for(let i=0;i<QN(85);i++){
       const t=RR(i+800),x=X(t),y=Y+(RR(i+801)-.5)*W(t)*1.8;
       s+=S(`M${r1(x)} ${r1(y)}q${r1(-2-RR(i+802)*4)} 1 -5 2`,tone(c,i),.3,.62);
+      s+=S(`M${r1(x)} ${r1(Y-W(t)*.9)}Q${r1(x+3)} ${Y} ${r1(x-2)} ${r1(Y+W(t)*.9)}`,tone(c,i+30),.35,.58);
     }
-    s+=dubHalo(x0,x1,w0,w1,c,QN(70),1000,false,b.fuzz==='fine'?.45:.85);
+    s+=dubHalo(x0,x1,w0,w1,c,QN(b.fuzz==='fine'?130:90),1000,false,b.fuzz==='fine'?.8:.85);
+  }else if(b.mat==='braid'){
+    const id=gid();RC.defs+=`<pattern id="${id}" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M-2 0L2 4M2 0L6 4M0 0L-4 4M4 0L0 4M8 0L4 4" fill="none" stroke="${lt(c,.65)}" stroke-width=".4" opacity=".65"/><path d="M0 1L3 4M4 1L1 4" fill="none" stroke="${dk(c,.6)}" stroke-width=".45" opacity=".65"/></pattern>`;
+    s+=`<path d="${d}" fill="url(#${id})"/>`;
   }else{
     const step=b.mat==='wire'?2.3:1.5,n=Math.ceil(Math.abs(x0-x1)/step);
     for(let i=0;i<n;i++){
@@ -193,27 +198,29 @@ export function bodyTaper(b,x0,x1){
   return s;
 }
 function curvedBody(b){
-  const c=b.c||C.tan,p0=[92,Y-5],p1=[163,Y-48],p2=[226,Y+16],w=b.w||10;let s='',upper='',lower='';
+  const smooth=['thread','vinyl','wire'].includes(b.mat),c=b.c||C.tan,[p0,p1,p2]=qsub(...grubShank(228),smooth?.075:.14,.985),w=b.w||b.w1||10;let s='',upper='',lower='';
   for(let i=0;i<=24;i++){
-    const t=i/24,p=qpt(p0,p1,p2,t),q=qpt(p0,p1,p2,Math.min(1,t+.01)),angle=Math.atan2(q[1]-p[1],q[0]-p[0]),nx=-Math.sin(angle),ny=Math.cos(angle),ww=w*(.72+Math.sin(t*Math.PI)*.28);
+    const t=i/24,p=qpt(p0,p1,p2,t),q=qpt(p0,p1,p2,Math.min(1,t+.01)),angle=Math.atan2(q[1]-p[1],q[0]-p[0]),nx=-Math.sin(angle),ny=Math.cos(angle),ww=smooth?(b.w1||w)+((b.w0||w*.5)-(b.w1||w))*t:w*(.72+Math.sin(t*Math.PI)*.28);
     upper+=`${i?'L':'M'}${r1(p[0]-nx*ww)} ${r1(p[1]-ny*ww)}`;lower=`L${r1(p[0]+nx*ww)} ${r1(p[1]+ny*ww)}`+lower;
   }
   const d=upper+lower+'Z',id=clip(d);s=`<path d="${d}" fill="${cyl(c)}"/>`;
-  let fuzz='';for(let i=0;i<QN(250);i++){
+  let fuzz='';for(let i=0;i<QN(smooth?40:250);i++){
     const t=RR(i+440),p=qpt(p0,p1,p2,t),y=p[1]+(RR(i+443)-.5)*w*2;
     fuzz+=S(`M${r1(p[0])} ${r1(y)}q${r1((RR(i+446)-.5)*8)} -2 ${r1((RR(i+447)-.5)*9)} 2`,tone(c,i),.35,.7);
   }
   s+=`<g clip-path="url(#${id})">${fuzz}</g>`;
-  for(let i=0;i<9;i++){
-    const t=(i+.5)/9,p=qpt(p0,p1,p2,t),dd=`M${r1(p[0]-2)} ${r1(p[1]-w*.94)}Q${r1(p[0]+4)} ${r1(p[1])} ${r1(p[0]+1)} ${r1(p[1]+w*.9)}`;
-    s+=S(dd,dk(c,.5),1,.7)+S(dd,lt(c,.6),.35,.7);
-    for(let j=0;j<3;j++)s+=hair([p[0]+j*2,p[1]+w*.6],[p[0]+4+j,p[1]+w+6],[p[0]+8+j*2,p[1]+w+10+RR(i+j)*5],tone(c,i+j),.6,{op:.7});
+  const n=b.ribn||9;
+  for(let i=0;i<n;i++){
+    const t=(i+.5)/n,p=qpt(p0,p1,p2,t),ww=smooth?(b.w1||w)+((b.w0||w*.5)-(b.w1||w))*t:w*.95,q=qpt(p0,p1,p2,Math.min(1,t+.02)),angle=Math.atan2(q[1]-p[1],q[0]-p[0]),nx=-Math.sin(angle),ny=Math.cos(angle),col=b.rib||dk(c,.3),rw=b.ribw||.9;
+    const dd=qd([p[0]-nx*ww,p[1]-ny*ww],[p[0]+3,p[1]],[p[0]+nx*ww+2,p[1]+ny*ww]);
+    s+=S(dd,dk(col,.55),rw+.35,.7)+S(dd,col,rw)+S(dd,lt(col,.65),rw*.28,.8);
+    if(!smooth)for(let j=0;j<3;j++)s+=hair([p[0]+j*2,p[1]+w*.6],[p[0]+4+j,p[1]+w+6],[p[0]+8+j*2,p[1]+w+10+RR(i+j)*5],tone(c,i+j),.6,{op:.7});
   }
-  return s+S(qd([92,Y-10],[163,Y-53],[224,Y+8]),lt(c,.7),1.8,.4);
+  return s+S(qd([p0[0],p0[1]-w*.75],[p1[0],p1[1]-w*.75],[p2[0],p2[1]-w*.6]),lt(c,.65),b.shell?3:.7,b.shell?.55:.25);
 }
 export function bodySVG(b,x0,x1,a){
   if(!b)return'';const c=b.c||C.gray;
-  if(b.t==='curl')return curvedBody(b);
+  if(b.t==='curl'||a.hook==='grub')return curvedBody(b);
   if(b.t==='worm'){
     const w=b.w||8,P=[[82,Y+8],[128,Y-21],[174,Y],[222,Y+24],[282,Y-7]],d=qd(...P.slice(0,3))+`Q${P[3].join(' ')} ${P[4].join(' ')}`;
     let s=b.mat==='chenille'?S(d,dk(c,.4),w)+S(d,c,w*.84):tube(d,c,w);
@@ -282,9 +289,10 @@ function flatFeather(x,y,L,W,c,bar=false){
     v+=S(`M${r1(px)} ${r1(y-w)}Q${r1(px-9)} ${y} ${r1(px)} ${r1(y+w*.8)}`,tone(c,i),.35,.7);
   }
   if(bar)for(let i=0;i<16;i++){
-    const px=x+i*L/16,w=2+RR(i+3)*5;
+    const px=x+i*L/16+(RR(i+9)-.5)*L/30,w=1+RR(i+3)*4;
     v+=S(`M${r1(px)} ${y-W*1.5}q${r1(4+RR(i)*6)} ${W} 0 ${W*3}`,dk(c,.68),w,.6);
   }
+  if(bar)for(let i=0;i<QN(130);i++)v+=`<ellipse cx="${r1(x+RR(i+401)*L)}" cy="${r1(y+(RR(i+404)-.5)*W*2)}" rx="${fw(.4+RR(i+406)*1.1)}" ry=".4" fill="${dk(c,.65)}" opacity=".55"/>`;
   return s+`<g clip-path="url(#${id})">${v}</g>`+S(`M${x} ${y}Q${r1(x+L*.55)} ${r1(y-W*.35)} ${r1(x+L)} ${r1(y-W*.2)}`,dk(c,.45),.45,.6);
 }
 export function featherWing(cx,by,H,Wd,rot,c,far,bar){
@@ -294,6 +302,7 @@ export function wingSVG(w,hx){
   if(!w)return{b:'',f:''};const c=w.c||C.white,cx=w.x||112;let b='',f='';
   if(w.t==='post'||w.t==='fan'||w.t==='upright'&&w.mat==='calf'){
     const fan=w.t==='fan',upright=w.t==='upright',h=fan?(w.h||82)*(w.s||1):upright?UPH:(w.h||40)*PSC,baseY=Y-(w.base||18),n=QN(180);
+    if(!fan&&!upright)f+=`<path d="M${cx-2} ${baseY}Q${cx-12} ${baseY-h*.55} ${cx-15} ${baseY-h*.88}Q${cx} ${baseY-h*1.02} ${cx+18} ${baseY-h*.85}Q${cx+9} ${baseY-h*.45} ${cx+2} ${baseY}Z" fill="${rg([[0,c,.75],[.5,c,.35],[1,c,0]])}"/>`;
     for(let i=0;i<n;i++){
       const u=RR(i+210)*2-1,l=h*(.65+RR(i+211)*.35),spread=fan?(w.mat==='cdc'?30:42):upright?27:25;
       const p0=[cx+(RR(i+212)-.5)*5,baseY+(RR(i+213)-.5)*3],p2=[cx+u*spread,baseY-l*(fan?Math.sqrt(1-u*u*.7):1)];
@@ -310,9 +319,9 @@ export function wingSVG(w,hx){
     b=featherWing(cx-4,Y-10,w.h||UPH,18,-100,c,true,w.bar);
     f=featherWing(cx+4,Y-10,w.h||UPH,17,-82,c,false,w.bar);
   }else if(w.t==='spent'){
-    for(let i=0;i<QN(90);i++){
+    for(let i=0;i<QN(120);i++){
       const side=i%2?1:-1,L=46+RR(i+270)*25,dy=side*(3+RR(i+273)*12);
-      const s=hair([cx,Y-3],[cx+L*.45,Y+dy*.6],[cx+L,Y+dy],tone(c,i),.35+RR(i+274)*.35,{op:.42});
+      const s=hair([cx,Y-3],[cx+side*L*.45,Y+dy*.6],[cx+side*L,Y+dy],tone(c,i),.45+RR(i+274)*.5,{op:.68});
       side<0?b+=s:f+=s;
     }
   }else if(w.t==='downwing'){
@@ -342,9 +351,11 @@ export function wingSVG(w,hx){
   }else if(w.t==='zstrip'){
     f=rabbit(w.x||98,Y-10,hx+(w.len||72)-(w.x||98),w.w||10,c,true);
   }else if(w.t==='case'){
-    const root=w.x||96,e=w.len||142,d=`M${root} ${Y-7}Q${root+12} ${Y-17} ${e} ${Y-8}L${e} ${Y-2}Q${root+12} ${Y-8} ${root} ${Y-7}Z`;
-    f=`<path d="${d}" fill="${cyl(c)}"/>`+surfaceFur(d,root,e,()=>12,c,'dub',90);
-    if(w.shine)f+=S(`M${root+2} ${Y-9}Q${root+18} ${Y-16} ${e-3} ${Y-8}`,lt(c,.9),1.5,.8);
+    for(let layer=(w.layers||1)-1;layer>=0;layer--){
+      const root=(w.x||96)+layer*18,e=(w.len||142)+layer*20,d=`M${root} ${Y-7}Q${root+12} ${Y-17} ${e} ${Y-8}L${e} ${Y-2}Q${root+12} ${Y-8} ${root} ${Y-7}Z`;
+      f+=`<path d="${d}" fill="${cyl(c)}"/>`+surfaceFur(d,root,e,()=>12,c,'dub',90);
+      if(w.shine)f+=S(`M${root+2} ${Y-9}Q${root+18} ${Y-16} ${e-3} ${Y-8}`,lt(c,.9),1.5,.8);
+    }
   }else if(w.t==='v'){
     for(const [dy,dx]of[[-13,80],[-5,85]])f+=hair([101,Y-5],[141,Y+dy-3],[101+dx,Y+dy],c,4.5,{op:.97,tip:dk(c,.25)});
   }else if(w.t==='foam'){
@@ -359,6 +370,7 @@ export function wingSVG(w,hx){
 
 export function headSVG(a){
   const h=a.head||{};
+  if(a.balance)return S(`M76 ${Y+4}H46`,'#6a716b',1.4)+threadHead(a.thread)+bead(46,Y+4,a.br||7,a.bead||C.gold);
   if(h.t==='deer'){
     const c=h.c||C.tan,d=`M72 ${Y-3}C84 ${Y-13} 100 ${Y-19} 116 ${Y-16}Q125 ${Y} 116 ${Y+16}C100 ${Y+19} 84 ${Y+13} 72 ${Y+3}Z`,id=clip(d);
     let s='';

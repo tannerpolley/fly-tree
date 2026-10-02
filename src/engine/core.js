@@ -18,6 +18,7 @@ export const THREAD='#3a2e22';
 export const HKS=2.7,UPH=88,FANH=82,PSC=1.7,TS=2.35;
 export const hookDepth=h=>({std:62,long:58,xlong:54,grub:54})[h||'std'];
 export const hookX=h=>({std:228,long:266,xlong:290,grub:228})[h||'std'];
+export const grubShank=hx=>[[67,Y],[150,Y-46],[hx,Y+16]];
 // A point on the actual bend, also used by the dropper tippet in the rig.
 export function hookBend(a){const D=hookDepth(a.hook),y=Y+(a.hook==='grub'?16:0)+.96*D;return[hookX(a.hook)+.3*D,a.flip?2*Y-y:y]}
 
@@ -40,6 +41,7 @@ export const qd=(a,b,c)=>`M${r1(a[0])} ${r1(a[1])}Q${r1(b[0])} ${r1(b[1])} ${r1(
 export function qsub(p0,p1,p2,a,b){const s0=qpt(p0,p1,p2,a),s2=qpt(p0,p1,p2,b),m=qpt(p0,p1,p2,(a+b)/2);return[s0,[2*m[0]-(s0[0]+s2[0])/2,2*m[1]-(s0[1]+s2[1])/2],s2]}
 /* A curved ribbon tapers to a true point. One filled path, no blunt line cap. */
 export function hair(p0,p1,p2,c,w,o={}){
+  if(RC.q===0)w*=1.6; // Keep fine fibres legible when the drawing is reduced to a phone card.
   const dx=p1[0]-p0[0],dy=p1[1]-p0[1],l=Math.hypot(dx,dy)||1,nx=-dy/l*w/2,ny=dx/l*w/2;
   const p=(x,y)=>`${r1(x)} ${r1(y)}`;
   let s=`<path d="M${p(p0[0]-nx,p0[1]-ny)}Q${p(p1[0]-nx*.55,p1[1]-ny*.55)} ${p(...p2)}Q${p(p1[0]+nx*.55,p1[1]+ny*.55)} ${p(p0[0]+nx,p0[1]+ny)}Z" fill="${o.base||c}" opacity="${fw(o.op??.82)}"/>`;
@@ -57,7 +59,7 @@ export function filtersSVG(q,vb){
   return s;
 }
 export function studioBG(cx,fy,sw){
-  const g=rg([[0,'#f6f5f2'],[.6,'#e9e8e5'],[1,'#d5d5d1']],.42,.35,.85);
+  const g=rg([[0,'#e9e8e4'],[.6,'#dedfd9'],[1,'#c8ccc8']],.42,.35,.85);
   const sh=`<ellipse cx="${r1(cx)}" cy="${r1(fy+12)}" rx="${r1(sw*.75)}" ry="5.8" fill="#37362f" opacity=".14" filter="${F('fh')}"/>`;
   return `<rect x="-300" y="-300" width="1000" height="900" fill="${g}"/>${sh}`;
 }
@@ -69,7 +71,7 @@ export function hookSVG(hx,fin,artic,D,grub){
   const P=(a,b)=>`${r1(hx+a*D)} ${r1(Y0+b*D)}`;
   const bend=`M${hx} ${Y0}C${P(.72,.05)} ${P(.76,.64)} ${P(.3,.96)}C${P(.1,1.09)} ${P(-.45,.93)} ${P(-.7,.84)}`;
   const wire=(d,w)=>S(d,Fh[2],w+.6)+S(d,Fh[0],w)+`<g transform="translate(-.15,${fw(w*.24)})">${S(d,Fh[2],w*.32,.7)}</g><g transform="translate(-.1,${fw(-w*.26)})">${S(d,Fh[1],w*.3,.9)}${S(d,'#fff',w*.08,.6)}</g>`;
-  let s=wire(grub?`M67 ${Y}Q150 ${Y-46} ${hx} ${Y0}`:`M67 ${Y}H${hx}`,3)+wire(bend,3);
+  let s=wire(grub?qd(...grubShank(hx)):`M67 ${Y}H${hx}`,3)+wire(bend,3);
   s+=`<g transform="translate(62 100) rotate(-18) scale(1 .64) translate(-62 -100)"><circle cx="62" cy="${Y}" r="5.3" fill="none" stroke="${Fh[2]}" stroke-width="3.9"/><circle cx="62" cy="${Y}" r="5.3" fill="none" stroke="${Fh[0]}" stroke-width="2.9"/><path d="M57.4 ${Y-1.6}A5.2 5.2 0 0 1 63.6 ${Y-5}" fill="none" stroke="${Fh[1]}" stroke-width="1.3" stroke-linecap="round"/><path d="M58.2 ${Y+2.4}A5 5 0 0 0 64 ${Y+5.1}" fill="none" stroke="${Fh[2]}" stroke-width="1.1" opacity=".6"/></g>`;
   const ex=hx-.65*D,ey=Y0+.86*D,tx=-.99,ty=-.13,nx=.13,ny=-.99,tip=[ex+tx*19,ey+ty*19];
   s+=`<polygon points="${r1(ex+nx*1.6)},${r1(ey+ny*1.6)} ${r1(tip[0])},${r1(tip[1])} ${r1(ex-nx*1.6)},${r1(ey-ny*1.6)}" fill="${Fh[0]}" stroke="${Fh[2]}" stroke-width=".5" stroke-linejoin="round"/><path d="M${r1(ex+nx*.8)} ${r1(ey+ny*.8)}L${r1(tip[0]+nx*.2)} ${r1(tip[1])}" stroke="${Fh[1]}" stroke-width=".7" opacity=".9"/>`;
