@@ -1,0 +1,67 @@
+[
+ {
+  "name": "Paradrake",
+  "slug": "paradrake",
+  "family": "Dry flies",
+  "group": "Mayfly adults",
+  "size": "#10–12",
+  "imitates": "Western Green Drake dun",
+  "recipe": "Large parachute with olive body and elk/ calf wing post",
+  "looks": "Big olive-banded body with a tall white post: a parachute scaled up.",
+  "colour": "standard",
+  "hook": "long-shank streamer/nymph hook",
+  "fix": "Paradrake is defined by an EXTENDED body: an olive elk/deer-hair body segmented with thread wraps that extends well past the hook bend, with moose-hair tails coming out of its tip; a deer-hair wing post with grizzly-olive hackle wound flat (parachute) around it. The current image is a plain parachute Green Drake whose body stops at the bend."
+ },
+ {
+  "name": "Trico Spinner",
+  "slug": "trico-spinner",
+  "family": "Dry flies",
+  "group": "Mayfly adults",
+  "size": "#20–24",
+  "imitates": "Trico mayfly spinner (tiny, black)",
+  "recipe": "Slim black body • two very long split tails • clear/white poly spent wings",
+  "looks": "Tiny; black slim body, clear spent wings, very long tails.",
+  "colour": "standard",
+  "hook": "standard dry-fly hook",
+  "fix": "Small all-black spinner: slim black thread abdomen, small black dubbed thorax, long split tails, and short white spent wings sticking straight out sideways from the thorax at right angles to the shank (seen from the side they read as a short white bar crossing the shank, like the approved rusty-spinner image). Nothing may extend forward past the hook eye; the current image has wings lying along the shank, one past the eye."
+ },
+ {
+  "name": "BWO Thorax Dun",
+  "slug": "bwo-thorax-dun",
+  "family": "Dry flies",
+  "group": "Mayfly adults",
+  "size": "#18–22",
+  "imitates": "Blue-winged olive dun",
+  "recipe": "",
+  "looks": "Small olive body, a pair of upright gray wings and a hackle at the thorax; slimmer than a Catskill.",
+  "colour": "standard",
+  "hook": "standard dry-fly hook",
+  "fix": "Thorax-style dun: ONE upright clump of dun wing (turkey flat, poly or CDC) set about a third of the way back from the eye; olive dubbed thorax visible around the wing; dun hackle wound in front of and behind the wing with a V clipped out of the bottom; split tails. The current image is a standard Catskill dun (two wings at the eye, full collar), which is wrong."
+ },
+ {
+  "name": "Chubby Chernobyl",
+  "slug": "chubby-chernobyl",
+  "family": "Dry flies",
+  "group": "Attractor dries",
+  "size": "#8–10",
+  "imitates": "Big stonefly/ hopper/ beetle",
+  "recipe": "Foam body, rubber legs, bright wing post",
+  "looks": "Two-layer foam body with a bright wing post and rubber legs.",
+  "colour": "Orange-red",
+  "hook": "long-shank streamer/nymph hook",
+  "fix": "Exactly ONE white poly/Widow's Web wing at the front tie-down about a third back from the eye; nothing at the rear tie-down except rubber legs. Keep the two-layer foam body over a dubbed underbody, the rubber legs and a short flash tail. The current image wrongly has two white wing tufts."
+ },
+ {
+  "name": "Barr Emerger",
+  "slug": "barr-emerger",
+  "family": "Emergers & wets",
+  "group": "Emergers",
+  "size": "#16–20",
+  "imitates": "BWO emerger",
+  "recipe": "",
+  "looks": "Slim olive body, swollen thorax and a tiny gray wing bud.",
+  "colour": "Olive",
+  "hook": "standard nymph hook",
+  "fix": "Barr Emerger on a curved hook: brown tail, olive-brown abdomen, a ball-shaped grey dubbed thorax, and dark dun hackle fibres pulled FORWARD tight over the thorax as a wing case and tied down at the head, with the leftover tips folded back along the sides as short legs. The current image has fibres swept back like a wet-fly wing."
+ }
+]

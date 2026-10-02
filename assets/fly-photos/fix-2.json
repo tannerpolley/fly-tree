@@ -1,0 +1,67 @@
+[
+ {
+  "name": "Mother Shucker",
+  "slug": "mother-shucker",
+  "family": "Emergers & wets",
+  "group": "Emergers",
+  "size": "#18–22",
+  "imitates": "Midge emerger",
+  "recipe": "",
+  "looks": "Midge emerger: dark slim body, round thorax, white wing nub and a trailing shuck.",
+  "colour": "Black",
+  "hook": "standard nymph hook",
+  "fix": "Mother Shucker: a grey or tan foam strip tied along the shank and extending about one hook length past the bend as the shuck; a short grizzly hackle splayed FLAT (parachute/hackle-stacker style) with white post material folded over it; straight dry-fly hook. The current image has an upright swept-back grizzly collar and a black blade-like body."
+ },
+ {
+  "name": "Frenchie",
+  "slug": "frenchie",
+  "family": "Nymphs & larvae",
+  "group": "Mayfly nymphs",
+  "size": "#14–18",
+  "imitates": "Mayfly nymph (tungsten jig style)",
+  "recipe": "",
+  "looks": "Slim pheasant-tail body with a bright pink bead and a hot orange collar.",
+  "colour": "Pink collar",
+  "hook": "standard nymph hook",
+  "fix": "Frenchie on a jig hook: reddish-brown PHEASANT-TAIL fibre abdomen with a copper wire rib, a coq de León tail (speckled rooster fibres), a pink ice-dub hot-spot collar behind a slotted tungsten bead (bronze/gold). The current image has a grey-taupe fur body, which is wrong."
+ },
+ {
+  "name": "Black Beauty",
+  "slug": "black-beauty",
+  "family": "Nymphs & larvae",
+  "group": "Midge larvae & pupae",
+  "size": "#18–22",
+  "imitates": "Midge pupa",
+  "recipe": "",
+  "looks": "Slim black body, silver rib, black bead and a small round thorax.",
+  "colour": "standard",
+  "hook": "standard nymph hook",
+  "fix": "Black Beauty (Pat Dorsey): slim black thread body with about seven open turns of fine COPPER wire, a small black dubbed head, NO bead, on a curved hook (TMC 2487 style). The current image uses silver wire and reads as a Zebra Midge."
+ },
+ {
+  "name": "Sow bug",
+  "slug": "sow-bug",
+  "family": "Nymphs & larvae",
+  "group": "Crustaceans",
+  "size": "#14–18",
+  "imitates": "Aquatic sowbug (Provo staple)",
+  "recipe": "Gray/tan dubbing • shell-back (scud back) • rib",
+  "looks": "Flat, wide and oval with ribbed segments like an armadillo.",
+  "colour": "Gray",
+  "hook": "standard nymph hook",
+  "fix": "Sow bug: a LOW, FLAT, OVAL body seen side-on, grey dubbing under a flat shell back, wire rib, short picked-out legs, on a straight or only slightly curved hook. The current image is tall, humped and curved like a scud."
+ },
+ {
+  "name": "Zonker",
+  "slug": "zonker",
+  "family": "Streamers",
+  "group": "Baitfish",
+  "size": "#4–8",
+  "imitates": "Baitfish",
+  "recipe": "Rabbit-strip wing • flashy body • stripped hackle",
+  "looks": "Slim silver body topped with a long rabbit-strip wing that trails far past the hook.",
+  "colour": "White",
+  "hook": "long-shank streamer/nymph hook",
+  "fix": "Zonker: silver Mylar tubing body with slightly frayed rear end; the white rabbit strip is tied in at the head AND tied down at the rear of the body with visible thread wraps, then flows back as the tail; a soft white or grizzly hackle collar behind the head. The current image's strip is only tied at the head and has no collar."
+ }
+]

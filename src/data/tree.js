@@ -10,7 +10,7 @@ export const TREE=N('Flies',{s:'Every fly is an imitation (or attractor) of some
    N('Catskill dry (Light Cahill)',{z:'#10–16',i:'Mayfly dun, classic style',p:'Upright divided wings • stiff tails • <i>vertical</i> hackle collar that floats it on the tail and hackle tips',h:'High-floating, visible; good in broken water and pocket water.',w:'Faster runs and pocket water on the Forks.'}),
    N('Rusty Spinner',{z:'#14–20',i:'Mayfly spinner (dead/dying adult, wings flat)',p:'Poly or hackle-fiber wings laid flat • rusty-brown dubbed body',h:'Fish at dusk on slow water; the fly lies flat in the film.',w:'Evening after PMD/ drake spinner falls.'}),
    N('Trico Spinner',{z:'#20–24',i:'Trico mayfly spinner (tiny, black)',p:'Slim black body • two very long split tails • clear/white poly spent wings',h:'Fish at the head of slow runs on summer mornings; trout sip the spent “spinner fall”. Use 6X–7X tippet.',w:'Mid-summer to fall, early morning (verify local Provo timing).'}),
-   N('Paradrake',{z:'#10–12',i:'Western Green Drake dun',p:'Large parachute with olive body and elk/ calf wing post',h:'Fish at the start of the hatch (afternoon, overcast days); a large target for big trout.',w:'Provo: mid-June–July.'})]),
+   N('Paradrake',{z:'#10–12',i:'Western Green Drake dun',p:'Extended olive elk-hair body past the bend • deer-hair post • parachute hackle',h:'Fish at the start of the hatch (afternoon, overcast days); a large target for big trout.',w:'Provo: mid-June–July.'})]),
   N('Caddis adults',{s:'Moth-like adults with tent-shaped wings; skitter across the surface when egg-laying.',i:'Caddisfly (sedge) adults'},[
    N('Elk Hair Caddis',{z:'#12–16',i:'Adult caddis',p:'Palmered hackle • dubbed body • elk-hair wing laid back over body',h:'Dead-drift, or “skitter” by twitching at the end of the drift. Great evening fly.',w:'Utah: May–Oct, esp. around dusk.'}),
    N('X-Caddis',{z:'#14–18',i:'Emerging/ adult caddis',p:'Trailing shuck of Zelon • sparse hair wing • dubbed body',h:'Rides low; good when fish take emergers just in the film.',w:'Provo, caddis hatches.'})]),
@@ -26,7 +26,7 @@ export const TREE=N('Flies',{s:'Every fly is an imitation (or attractor) of some
    N('Cricket',{z:'#8–12',i:'Cricket',p:'Black foam body • dark hair wing • rubber legs',h:'Fall bank fishing.',w:'Aug–Oct.'})]),
   N('Attractor dries',{s:'Imitate nothing specific; they look buggy, big and buoyant. Used to search or to carry weight.',i:'“General food”'},[
    N('Royal Wulff',{z:'#10–16',i:'Generic food; stoneflies/ mayflies',p:'White hair wings • red floss band • peacock herl • brown hackle',h:'Visible high-floater for fast water.',w:'Forks and Provo pocket water.'}),
-   N('Chubby Chernobyl',{z:'#8–10',i:'Big stonefly/ hopper/ beetle',p:'Two-layer foam body • white poly wings • rubber legs',h:'Very visible and buoyant; carries 1–2 nymph droppers.',w:'Summer, esp. the Forks.'}),
+   N('Chubby Chernobyl',{z:'#8–10',i:'Big stonefly/ hopper/ beetle',p:'Two-layer foam body • single white poly wing • rubber legs',h:'Very visible and buoyant; carries 1–2 nymph droppers.',w:'Summer, esp. the Forks.'}),
    N('Humpy',{z:'#10–16',i:'Bushy generic dry',p:'Hump of deer hair, tail and hackle',h:'Bounces through riffles without sinking.',w:'Mountain freestones.'})])
  ]),
  N('Emergers & wets',{s:'Flies in or just under the surface film, imitating insects that are hatching, stuck, or drifting. Often the secret for fish that “refuse” dries.',h:'Dead drift in the film; in slow water, grease only the wing/post so the body hangs below.',w:'Hatches, grey days; Utah: BWO & midge on the Provo.'},[
@@ -72,7 +72,7 @@ export const TREE=N('Flies',{s:'Every fly is an imitation (or attractor) of some
   N('Generalists',{s:'One fly that looks like a leech, baitfish or crayfish depending on how you fish it.',i:'Mixed food'},[
    N('Woolly Bugger',{z:'#6–10',i:'Leech, baitfish, crayfish',p:'Marabou tail • chenille body • palmered hackle • bead/ cone optional',h:'Strip, swing or dead-drift; the easiest all-round streamer.',w:'River and pond, year-round.'})]),
   N('Baitfish',{s:'Slim minnow imitations with a flashy profile.',i:'Minnows/ small trout'},[
-   N('Zonker',{z:'#4–8',i:'Baitfish',p:'Rabbit-strip wing and tail • Mylar-tube body',h:'Swing or strip; the rabbit strip pulses.',w:'Fall brown trout, early spring.'}),
+   N('Zonker',{z:'#4–8',i:'Baitfish',p:'Rabbit strip tied at head and rear • Mylar-tube body • soft collar',h:'Swing or strip; the rabbit strip pulses.',w:'Fall brown trout, early spring.'}),
    N('Clouser Minnow',{z:'#2–8',i:'Baitfish',p:'Dumbbell eyes at head (flips hook point up) • bucktail + flash wing',h:'Jigs up and down along drop-offs and deep runs.',w:'Ponds and deeper runs, May–Oct.'})]),
   N('Sculpin',{s:'Bottom-dwelling fish with a wide head; a major brown-trout food.',i:'Sculpins'},[
    N('Slumpbuster',{z:'#4–8',i:'Sculpin/ small fish',p:'Cone head • sparkle-braid body • pine-squirrel strip tail and collar',h:'Short strips along bottom; keep the fly moving but low.',w:'Provo, Forks; fall and spring.'}),
