@@ -22,6 +22,7 @@ assets/fly-photos/raw/pilot-studio/*.png (the same flies on the studio backdrop;
 
 ## Output
 - Save to `assets/fly-photos/raw/<slug>.png` (slug from the batch file). Do not edit, move or delete any other file.
+- Run `python3 scripts/check-photo.py <slug>` on every image (read-only: transparency and cut-off parts); regenerate on FAIL.
 - Check each image yourself against the published recipe before moving on: right pattern, materials, colours, proportions, eye left / tail right, real transparency (open it and confirm the alpha channel has fully transparent background pixels). Regenerate at most twice when it is clearly wrong.
 - Do NOT run scripts/prepare-photos.py (other batches run in parallel and it rewrites a shared file); the coordinator runs it once at the end. To judge an image, view the PNG (e.g. composite it onto a light grey background with Pillow in /tmp).
 - Final message: per pattern, one line: slug, OK or the remaining problem, and any place you followed the published recipe over the hint.
