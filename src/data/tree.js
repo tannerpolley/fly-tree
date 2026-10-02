@@ -166,3 +166,6 @@ export const GEN={
  'Articulated & big':{p:'Two hooks joined by wire or mono • big head • long tail',h:'Heavy tippet; strip aggressively; fish dirty or high water.',w:'Fall browns, runoff.'}
 };
 ALLN.forEach(n=>{const g=GEN[n.n];if(g)for(const k in g)if(!n[k])n[k]=g[k]});
+
+/* File-safe id for a pattern name, used for its photo files (e.g. "Hare’s Ear" → "hares-ear"). */
+export const slugOf=s=>s.toLowerCase().replace(/’/g,'').replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');

@@ -28,8 +28,14 @@ export function rigSVG(n,r,K){
   const nodeOf=i=>K.f[i]==='this'?thisLeaf:ALLN.find(x=>x.n===GENERIC[K.f[i]]);
   const szTxt=i=>{const z=nodeOf(i)&&nodeOf(i).z;return z?' · '+z:''};
   const fwOf=i=>flyW(sizeNum(nodeOf(i)&&nodeOf(i).z));
-  const put=(name,ex,ey,w,al)=>{const s=w/312,p=flyPic(name,{bare:true});return `<image href="${p.url}" x="${r1(ex-22*s)}" y="${r1(ey-120*s)}" width="${r1(360*s)}" height="${r1(220*s)}" opacity="${al}"/>`};
-  const bend=(name,ex,ey,w)=>{const a=ART[name],hx=({std:228,long:266,xlong:290,grub:228})[a.hook||'std'],D=hookDepth(a.hook),s=w/312;return[ex+(hx+.02*D-62)*s,ey+.97*D*s]};
+  // a drawn fly is 238 units from eye to tail inside its 312-unit frame; a photo cut-out is scaled to the same length
+  const photoScale=(g,w)=>w*238/312/(g.box[2]-g.box[0]);
+  const put=(name,ex,ey,w,al)=>{const p=flyPic(name,{bare:true});
+    if(p.geo){const s=photoScale(p.geo,w);return `<image href="${p.url}" x="${r1(ex-p.geo.eye[0]*s)}" y="${r1(ey-p.geo.eye[1]*s)}" width="${r1(p.w*s)}" height="${r1(p.h*s)}" opacity="${al}"/>`}
+    const s=w/312;return `<image href="${p.url}" x="${r1(ex-22*s)}" y="${r1(ey-120*s)}" width="${r1(360*s)}" height="${r1(220*s)}" opacity="${al}"/>`};
+  const bend=(name,ex,ey,w)=>{const p=flyPic(name,{bare:true});
+    if(p.geo){const s=photoScale(p.geo,w);return[ex+(p.geo.bend[0]-p.geo.eye[0])*s,ey+(p.geo.bend[1]-p.geo.eye[1])*s]}
+    const a=ART[name],hx=({std:228,long:266,xlong:290,grub:228})[a.hook||'std'],D=hookDepth(a.hook),s=w/312;return[ex+(hx+.02*D-62)*s,ey+.97*D*s]};
   const lab=(x,y,t,anc='start',col='#1f2a30',wt=500)=>`<text x="${x}" y="${y}" font-size="13" font-weight="${wt}" fill="${col}" stroke="#fff" stroke-width="3.4" paint-order="stroke" text-anchor="${anc}" font-family="system-ui,sans-serif">${esc(t)}</text>`;
   const flyNames=K.f.map((f,i)=>f==='this'?thisArt:GENERIC[f]);
   const isThis=i=>K.f[i]==='this';

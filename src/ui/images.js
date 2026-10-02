@@ -1,23 +1,20 @@
-/* Fly pictures: each fly look is rendered once to an image and reused everywhere
-   (tree cards, info close-up, gallery, quiz, rig diagram). */
-import { A, VAR } from '../data/variants.js';
-import { fly } from '../engine/fly.js';
+/* Fly pictures, rendered or loaded once and reused everywhere
+   (tree cards, info close-up, gallery, quiz, rig diagram). Photos win; drawings fill any gaps. */
+import { VAR } from '../data/variants.js';
+import { flySVGDocument } from '../engine/document.js';
+import { photoOf } from './photos.js';
 
 /* While measuring the tallest info panel, pictures are replaced by same-size placeholders. */
 export let MEASURE=false;
 export function setMeasure(v){MEASURE=v}
 
 const xml=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-
-/* A fly as a standalone SVG document (must be valid XML to load as an image). */
-export function flySVGDocument(name,o={}){
-  const svg=fly(A(name),{q:o.q==null?2:o.q,studio:o.studio,bare:o.bare,noctx:o.noctx,label:xml(name)});
-  const vb=svg.match(/viewBox="([^"]+)"/)[1].split(' ').map(Number);
-  return {svg:svg.replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ').replace('width="100%"',`width="${vb[2]}" height="${vb[3]}"`),vb};
-}
-
 const IMGC={};
+/* {url,w,h,photo} for a fly. o.studio: studio picture; o.bare: transparent (rig); neither: drawn in its water. */
 export function flyPic(name,o={}){
+  const ph=photoOf(name);
+  if(ph&&(o.studio||o.noctx))return {url:ph.studio,w:ph.w,h:ph.h,photo:true};
+  if(ph&&o.bare&&ph.cutout&&ph.eye)return {url:ph.cutout,w:ph.cw,h:ph.ch,photo:true,geo:ph};
   const key=[name,VAR[name]||0,o.q==null?2:o.q,o.studio?1:0,o.bare?1:0,o.noctx?1:0].join('|');
   if(IMGC[key])return IMGC[key];
   const {svg,vb}=flySVGDocument(name,o);

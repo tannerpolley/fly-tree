@@ -4,7 +4,7 @@ import { ALLN } from '../src/data/tree.js';
 import { ART } from '../src/data/art.js';
 import { META } from '../src/data/meta.js';
 import { rigFor } from '../src/data/rigs.js';
-import { flySVGDocument } from '../src/ui/images.js';
+import { flySVGDocument } from '../src/engine/document.js';
 
 const patterns = ALLN.filter(n => !n.k.length);
 
