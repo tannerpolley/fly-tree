@@ -1,0 +1,129 @@
+{
+ "parachute-adams": {
+  "pick": 0,
+  "flip": true
+ },
+ "catskill-dry-light-cahill": {
+  "pick": 3,
+  "flip": true
+ },
+ "elk-hair-caddis": {
+  "pick": 1,
+  "flip": true
+ },
+ "x-caddis": {
+  "pick": 0,
+  "flip": true
+ },
+ "goddard-caddis": {
+  "pick": 0
+ },
+ "stimulator": {
+  "pick": 0,
+  "flip": true
+ },
+ "sofa-pillow": {
+  "pick": 0,
+  "flip": true
+ },
+ "griffiths-gnat": {
+  "pick": 0,
+  "flip": true
+ },
+ "hopper": {
+  "pick": 0,
+  "flip": true
+ },
+ "royal-wulff": {
+  "pick": 2,
+  "flip": true,
+  "crop": [
+   0.12,
+   0.12,
+   0.88,
+   0.88
+  ]
+ },
+ "humpy": {
+  "pick": 5
+ },
+ "cdc-emerger": {
+  "pick": 0,
+  "flip": true
+ },
+ "sparkle-dun": {
+  "pick": 0,
+  "flip": true
+ },
+ "partridge-and-orange": {
+  "pick": 0,
+  "flip": true
+ },
+ "pheasant-tail-soft-hackle": {
+  "pick": 0,
+  "flip": true
+ },
+ "royal-coachman-wet": {
+  "pick": 1,
+  "flip": true
+ },
+ "hares-ear": {
+  "pick": 0
+ },
+ "caddis-pupa-sparkle-pupa": {
+  "pick": 4,
+  "flip": true
+ },
+ "bloodworm": {
+  "pick": 0
+ },
+ "scud": {
+  "pick": 0,
+  "flip": true
+ },
+ "san-juan-worm": {
+  "pick": 1,
+  "flip": true,
+  "crop": [
+   0.1,
+   0.1,
+   0.9,
+   0.85
+  ]
+ },
+ "egg-mop-pellet": {
+  "pick": 1
+ },
+ "copper-john": {
+  "pick": 0,
+  "flip": true
+ },
+ "prince-nymph": {
+  "pick": 0
+ },
+ "flashback-pheasant-tail": {
+  "pick": 1,
+  "flip": true
+ },
+ "woolly-bugger": {
+  "pick": 1,
+  "flip": true
+ },
+ "zonker": {
+  "pick": 0,
+  "flip": true
+ },
+ "slumpbuster": {
+  "pick": 0
+ },
+ "muddler-minnow": {
+  "pick": 0
+ },
+ "mohair-leech": {
+  "pick": 0,
+  "flip": true
+ },
+ "mickey-finn": {
+  "pick": 1
+ }
+}
