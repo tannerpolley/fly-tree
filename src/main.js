@@ -1,13 +1,13 @@
 import './styles.css';
 import { initTree } from './ui/tree.js';
-import { initTooltip } from './ui/tooltip.js';
+import { initRig } from './ui/rig.js';
 import { initLightbox } from './ui/lightbox.js';
 import { initAnatomy } from './ui/anatomy.js';
 import { initNav, show, TABS } from './ui/nav.js';
 import { initLearn, initLearnUI } from './ui/learn.js';
 
 initTree();
-initTooltip();
+initRig();
 initLightbox();
 initAnatomy();
 initNav();

@@ -1,4 +1,8 @@
 /* How each fly is normally rigged. */
+import { ART } from './art.js';
+import { META } from './meta.js';
+import { ALLN } from './tree.js';
+import { flyLengthFactor } from './gear.js';
 
 /* ---------- how each fly is normally rigged. ★ marks where this fly goes. ---------- */
 export const RIGG={
@@ -63,3 +67,10 @@ export const RIGK={
 export const rigKFor=n=>RIGK[n.n]||RIGK[n.p0&&n.p0.n]||RIGK[n.p0&&n.p0.p0&&n.p0.p0.n]||null;
 export const GENERIC={'dry fly':'Parachute Adams','nymph':'Pheasant Tail','small nymph':'Zebra Midge','larger nymph':'Hare’s Ear'};
 export const firstLeaf=n=>n.k.length?firstLeaf(n.k[0]):n;
+/* the flies on a node's rig, top fly first, as the to-scale scene needs them */
+export function rigFlies(n){
+  const K=rigKFor(n);if(!K)return null;
+  const leaf=!n.k.length,thisLeaf=leaf?n:firstLeaf(n);
+  return K.f.map(f=>{const name=f==='this'?thisLeaf.n:GENERIC[f],node=ALLN.find(x=>x.n===name);
+    return {name,z:node&&node.z,hook:(ART[name]||{}).hook,depthCode:(META[name]||[])[2],lenFactor:flyLengthFactor(name,node&&node.p0&&node.p0.n),isThis:f==='this',example:f!=='this'||!leaf}});
+}
