@@ -1,10 +1,8 @@
 /* Info area for the selected box: facts, season calendar, rig and notes. */
 import { ART } from '../data/art.js';
 import { DEPTHN, metaOf } from '../data/meta.js';
-import { VAR, VARIANTS } from '../data/variants.js';
 import { VIS } from '../data/vis.js';
 import { figure } from './learn.js';
-import { flyPic } from './images.js';
 import { rigHTML } from './rig.js';
 
 export const icoRiver=c=>`<svg width="22" height="18" viewBox="0 0 24 20"><path d="M1 5q3-3 6 0t6 0 6 0M1 11q3-3 6 0t6 0 6 0M1 17q3-3 6 0t6 0 6 0" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round"/></svg>`;
@@ -27,9 +25,6 @@ export function info(n){
   t+=chipRow('💧','Water',[...m.w].sort().map(w=>`<span class="fact">${wl[w]}</span>`).join(''));
   t+=chipRow('⬇️','Depth',[...m.d].map(d=>`<span class="fact">${icoDepth(d)} ${DEPTHN[d]}</span>`).join(''));
   t+=chipRow('📏','Size',n.z?`<span class="fact">${n.z}</span>`:'');
-  const vs=VARIANTS[n.n];
-  /* colour choices only change the drawings; photos show the standard colour */
-  if(leaf&&vs&&flyPic(n.n,{studio:true}).kind==='drawn'){const cur=VAR[n.n]||0;t+=`<div class="row"><span class="ic tall">🎨</span><span class="sw"><b>Colour:</b>${vs.map((v,i)=>`<button class="swb${i===cur?' on':''}" data-var="${n.id}" data-i="${i}" title="${v[0]}" aria-label="${v[0]}" style="background:${v[1]}"></button>`).join('')}<span class="small mute"> ${vs[cur][0]}</span></span></div>`}
   let u='';
   if(leaf&&a)u+=`<div class="row"><span class="ic">🔍</span><span><b>Spot it:</b> ${a.v}</span></div>`;
   else if(VIS[n.n])u+=`<div class="row"><span class="ic">🔍</span><ul>${VIS[n.n].slice(0,3).map(v=>`<li>${v}</li>`).join('')}</ul></div>`;

@@ -1,6 +1,5 @@
 /* Family tree chart: layout, drawing, selection and the info area. */
 import { ALLN, TREE } from '../data/tree.js';
-import { VAR } from '../data/variants.js';
 import { r1 } from '../engine/core.js';
 import { $ } from './dom.js';
 import { flyImg, flyPic, setMeasure } from './images.js';
@@ -91,8 +90,6 @@ export function initTree(){
   reset();
   addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(fixInfoHeight,150)});
   $('#infobox').onclick=e=>{
-  const sv=e.target.closest('[data-var]');
-  if(sv){VAR[ALLN[+sv.dataset.var].n]=+sv.dataset.i;$('#infobox').innerHTML=info(sel);draw();return}
   const c=e.target.dataset.go;if(c!=null)goTo(ALLN[+c])};
   $('#treebox').onclick=e=>{
   if(e.target.closest('[data-back]')){const c=curNode();leavesFold(c);select(c.p0||TREE,false);return}
