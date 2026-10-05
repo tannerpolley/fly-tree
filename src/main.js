@@ -3,6 +3,7 @@ import { initTree } from './ui/tree.js';
 import { initRig } from './ui/rig.js';
 import { initLightbox } from './ui/lightbox.js';
 import { initAnatomy } from './ui/anatomy.js';
+import { initExpand } from './ui/expand.js';
 import { initNav, show, TABS } from './ui/nav.js';
 import { initLearn, initLearnUI } from './ui/learn.js';
 
@@ -10,6 +11,7 @@ initTree();
 initRig();
 initLightbox();
 initAnatomy();
+initExpand();
 initNav();
 initLearn();
 initLearnUI();

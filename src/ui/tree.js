@@ -4,6 +4,7 @@ import { r1 } from '../engine/core.js';
 import { $ } from './dom.js';
 import { flyImg, flyPic, setMeasure } from './images.js';
 import { info } from './info.js';
+import { isFull } from './expand.js';
 import { goTo } from './learn.js';
 
 export const open=new Set();export let sel=TREE;
@@ -84,11 +85,11 @@ export let rz;
 
 
 
-export function modeCheck(){const m=isMobile();if(m!==lastMode){lastMode=m;draw();fixInfoHeight()}}
+export function modeCheck(){const m=isMobile();if(m!==lastMode&&!isFull()){lastMode=m;draw();fixInfoHeight()}}
 
 export function initTree(){
   reset();
-  addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(fixInfoHeight,150)});
+  addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(!isFull())fixInfoHeight()},150)});
   $('#infobox').onclick=e=>{
   const c=e.target.closest('[data-go]');if(c)goTo(ALLN[+c.dataset.go])};
   $('#treebox').onclick=e=>{
