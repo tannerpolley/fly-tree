@@ -11,8 +11,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
-<header><div class="hrow"><h1>🪰 Fly Family Tree</h1></div><div class="sub">Click any box: it opens its branch and explains it below the chart.</div></header>
-<nav id="nav"></nav>
+<header id="bar">
+  <button id="menu" aria-label="Menu" aria-expanded="false" aria-controls="nav"><span></span></button>
+  <h1>🪰 Fly Family Tree</h1><span id="cur"></span>
+  <nav id="nav"></nav>
+  <div id="scrim"></div>
+</header>
 
 <section id="tree">
   <div class="tb"><button id="expAll">Expand all</button><button id="colAll">Collapse all</button><button id="reset">Reset</button></div>
