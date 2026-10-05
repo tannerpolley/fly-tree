@@ -7,7 +7,7 @@ import { INSECT_VIEW, LOOKALIKES, VIS } from '../data/vis.js';
 import { $ } from './dom.js';
 import { MEASURE, flyImg, picCredit } from './images.js';
 import { show } from './nav.js';
-import { select } from './tree.js';
+import { open, select } from './tree.js';
 
 export const FAMC=n=>{while(n.d>1)n=n.p0;return n};
 export const leavesOf=n=>n.k.length?n.k.flatMap(leavesOf):[n];
