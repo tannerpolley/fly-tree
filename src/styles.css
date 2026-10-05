@@ -113,9 +113,9 @@ summary{cursor:pointer}.fold>summary.famh,.fold>summary.glh{list-style:none}.fol
 
 /* widescreen diagrams */
 html.hasfull{overflow:hidden}
-.rigblock.full,.wrap.full{position:fixed;inset:0;z-index:300;background:var(--bg);overflow:auto;padding:12px 16px;margin:0}
-.rigblock.full .rigstage{aspect-ratio:auto;height:calc(100dvh - 120px);min-height:220px}
-.wrap.full #anatSvg{max-height:calc(100dvh - 130px)}
+.rigblock.full,.wrap.full{position:fixed;inset:0;z-index:300;background:var(--bg);overflow:auto;padding:52px 16px 12px;margin:0}
+.rigblock.full .rigstage{aspect-ratio:auto;height:calc(100dvh - 150px);min-height:220px}
+.wrap.full #anatSvg{max-height:calc(100dvh - 150px)}
 .rzoom button[data-full],.expbtn{width:auto!important;padding:3px 11px;font-size:12.5px!important;font-weight:500!important;border:1px solid var(--line);background:#fff;border-radius:999px;cursor:pointer;font:inherit}
-.rigblock.full .rzoom,.wrap.full .expbtn{position:sticky;top:0}
+.full [data-full]{position:fixed;top:8px;right:12px;z-index:310;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #rigcard{z-index:400}
