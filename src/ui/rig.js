@@ -3,13 +3,15 @@
 import { rigFlies, rigFor, rigKFor } from '../data/rigs.js';
 import { buildScene } from './rigscene.js';
 import { COLORS, overlaySVG, sceneSVG } from './rigdraw.js';
-import { closeup, knotText } from './rigcloseups.js';
+import { closeup, knotText, knotThumb } from './rigcloseups.js';
 import { MEASURE, flyImg, flyPic } from './images.js';
 import { aiPhotoOf } from './photos.js';
-import { isMobile } from './tree.js';
+import { fixInfoHeight, isMobile } from './tree.js';
 
 const ASPECT=2.35;
 const SCENES=new Map();let nextId=0;
+/* open/closed state of the collapsible parts, kept when another fly is selected */
+let rigOpen=true,knotsOpen=null;   // knotsOpen is set on first use: isMobile() can't be called while modules load
 
 function sceneFor(n){
   const r=rigFor(n),K=rigKFor(n);if(!r||!K)return null;
@@ -21,18 +23,20 @@ export function rigHTML(n){
   const x=sceneFor(n);if(!x)return'';
   const {r,K,sc}=x,leaf=!n.k.length,name=leaf?n.n:'this fly';
   const knots=sc.knots;
-  const knotRow=knots.length?`<div class="knotrow"><b>🪢 Knots to tie:</b> ${knots.map((k,i)=>{const[t,d]=knotText(k.key);return `<span class="kchip" data-part="knot:${k.key}"><i>${i+1}</i><b>${t}</b>: ${d}</span>`}).join('')}</div>`:'';
+  knotsOpen??=!isMobile();
+  const knotRow=knots.length?`<details class="knotd"${knotsOpen?' open':''}><summary>🪢 <b>Knots to tie</b> <span class="small mute">· ${isMobile()?'tap':'hover over'} one for a bigger picture</span></summary><div class="knotrow">${knots.map((k,i)=>{const[t,d]=knotText(k.key);return `<span class="kchip" data-part="knot:${k.key}"><span class="kthumb">${knotThumb(k.key)}</span><span><i>${i+1}</i><b>${t}</b>: ${d}</span></span>`}).join('')}</div></details>`:'';
   const chips=`<div class="chain">${r.c.map((c,i)=>(i?'<i>→</i>':'')+(c.startsWith('★')?`<span class="fl">${name}${c.slice(1)}</span>`:`<span>${c}</span>`)).join('')}</div>`;
-  const head=`<div class="row"><span class="ic">🪢</span><div><b>Rig:</b> ${r.t} <span class="small mute">· to scale · ${isMobile()?'tap':'hover over'} any part for a close-up</span></div></div>`;
+  const head=`<summary class="row rigsum"><span class="ic">🪢</span><div><b>Rig:</b> ${r.t} <span class="small mute">· to scale · ${isMobile()?'tap':'hover over'} any part for a close-up</span></div></summary>`;
   const parts=new Set(sc.strands.map(s=>s.part).concat(sc.items.map(i=>i.part)));
   const legend=`<div class="riglegend">${[['line','Fly line'],['sinktip','Sink-tip'],['leader','Leader'],['sighter','Sighter'],['tippet','Tippet'],['indicator','Indicator'],['shot','Split shot']].filter(([p])=>parts.has(p)).map(([p,t])=>`<span><i style="background:${COLORS[p]}"></i>${t}</span>`).join('')}<span class="mute">Lengths, depths and fly sizes are real; thin line and tiny parts are drawn a little thicker until you zoom in. ${isMobile()?'Swipe sideways to pan, pinch to zoom.':'Drag to pan; Ctrl + scroll or double-click to zoom.'}</span></div>`;
   const views=[['all','Whole rig'],['reel','Reel & grip'],['tip','Rod tip'],sc.views.junction&&['junction','Line → leader'],sc.views.rigging&&['rigging',sc.kind==='tight'?'Sighter & fly':'Indicator & flies'],['flies','Fly up close'],sc.views.fly2&&['fly2',sc.flies.find(f=>!f.isThis).role==='dropper'?'Dropper fly':'Top fly']].filter(Boolean);
   const tools=`<div class="rigtools">${views.map(([k,t])=>`<button data-view="${k}">${t}</button>`).join('')}<span class="rzoom"><button data-zoom="out" aria-label="Zoom out">−</button><button data-zoom="in" aria-label="Zoom in">+</button></span></div>`;
   const tail=`${knotRow}${isMobile()?chips:''}${r.n?`<div class="small mute" style="margin-left:34px">${r.n}</div>`:''}`;
-  if(MEASURE)return `<div class="rigblock">${head}${tools}<div class="rigstage"></div>${legend}<div class="rigpin" hidden></div>${tail}</div>`;
+  const wrap=body=>`<div class="rigblock"><details class="rigd"${rigOpen?' open':''}>${head}${body}</details></div>`;
+  if(MEASURE)return wrap(`${tools}<div class="rigstage"></div>${legend}<div class="rigpin" hidden></div>${tail}`);
   const id='rig'+(nextId++);SCENES.set(id,{sc});
   setTimeout(mountAll,0);
-  return `<div class="rigblock">${head}${tools}<div class="rigstage" data-rig="${id}"><svg class="rigscene" role="img" aria-label="To-scale rig diagram">${sceneSVG(sc,imgOf)}</svg><svg class="rigover"></svg></div>${legend}<div class="rigpin" hidden></div>${tail}</div>`;
+  return wrap(`${tools}<div class="rigstage" data-rig="${id}"><svg class="rigscene" role="img" aria-label="To-scale rig diagram">${sceneSVG(sc,imgOf)}</svg><svg class="rigover"></svg></div>${legend}<div class="rigpin" hidden></div>${tail}`);
 }
 
 /* ---------------- view (viewBox) handling ---------------- */
@@ -119,8 +123,17 @@ export function initRig(){
       if(b.dataset.view)goView(st,b.dataset.view);
       else{const k=b.dataset.zoom==='in'?.55:1.8,[x,y,w,h]=st.vb;animateTo(st,[x+w*(1-k)/2,y+h*(1-k)/2,w*k,h*k],300);setActive(st,'')}
       return}
-    if(e.target.closest('.rpx')){e.target.closest('.rigpin').hidden=true}
+    if(e.target.closest('.rpx')){e.target.closest('.rigpin').hidden=true;return}
+    const kc=e.target.closest('.kchip');   // touch has no hover: tap a knot to open its bigger picture
+    if(kc&&matchMedia('(hover:none)').matches){const st=kc.closest('.rigblock').querySelector('.rigstage')._rig;if(st)pin(st,kc.dataset.part)}
   });
+  /* the info pane keeps a constant height, so re-measure it when a fold opens or closes */
+  document.addEventListener('toggle',e=>{
+    const d=e.target,rig=d.classList.contains('rigd'),kn=d.classList.contains('knotd');
+    if(!(rig||kn)||d.open===(rig?rigOpen:knotsOpen))return;
+    if(rig)rigOpen=d.open;else knotsOpen=d.open;
+    fixInfoHeight();
+  },true);
   document.addEventListener('dblclick',e=>{const st=stOf(e);if(!st)return;const r=st.el.getBoundingClientRect();zoomAt(st,.4,e.clientX-r.left,e.clientY-r.top);setActive(st,'')});
   document.addEventListener('wheel',e=>{const st=stOf(e);if(!st||!(e.ctrlKey||e.metaKey))return;e.preventDefault();const r=st.el.getBoundingClientRect();zoomAt(st,Math.exp(e.deltaY*.0025),e.clientX-r.left,e.clientY-r.top);setActive(st,'')},{passive:false});
   document.addEventListener('pointerdown',e=>{const st=stOf(e);if(!st)return;st.ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY});st.moved=false;st.el.setPointerCapture&&st.el.setPointerCapture(e.pointerId)});

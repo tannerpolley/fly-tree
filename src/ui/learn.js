@@ -13,15 +13,13 @@ export const FAMC=n=>{while(n.d>1)n=n.p0;return n};
 export const leavesOf=n=>n.k.length?n.k.flatMap(leavesOf):[n];
 
 export const zoomImg=n=>MEASURE?'<div style="aspect-ratio:332/186"></div><div class="credit">&nbsp;</div>':`<div class="zoomable" data-zoom="${n.id}" title="Click to enlarge">${flyImg(n.n,{studio:true})}<span class="zoomhint">🔍 Click to enlarge</span></div><div class="credit">${picCredit(n.n)}</div>`;
-export const fig=(n,w)=>ART[n.n]?`<figure>${flyImg(n.n,{studio:true})}<figcaption>${n.n}</figcaption></figure>`:'';
-
+/* A leaf shows its picture. A branch whose children are families shows one picture per child, named by the family
+   and clickable. A branch whose children are flies shows nothing here: the chart already has those picture cards. */
 export function figure(n){
-  if(!n.k.length&&ART[n.n])return {img:zoomImg(n),txt:`<div class="dl"><b class="lab">Spot it</b>${ART[n.n].v}</div>`};
-  let ls=leavesOf(n).filter(x=>ART[x.n]);
-  if(n.d===0)ls=TREE.k.map(f=>leavesOf(f).find(x=>ART[x.n])).filter(Boolean);
-  ls=ls.slice(0,6);
-  const vis=VIS[n.n];
-  return {img:`<div class="mont">${ls.map(x=>fig(x)).join('')}</div>`,txt:vis?`<div class="dl"><b class="lab">How to recognise this group by sight</b><ul style="margin:4px 0;padding-left:18px">${vis.map(v=>`<li>${v}</li>`).join('')}</ul></div>`:''};
+  if(!n.k.length)return {img:ART[n.n]?zoomImg(n):''};
+  if(!n.k[0].k.length)return {img:''};
+  const kid=c=>{const r=leavesOf(c).find(x=>ART[x.n]);return r?`<figure class="kid" data-go="${c.id}" style="border-color:${c.c}">${flyImg(r.n,{studio:true})}<figcaption style="color:${c.c}">${c.n}</figcaption></figure>`:''};
+  return {img:`<div class="mont">${n.k.map(kid).join('')}</div>`};
 }
 
 export function goTo(n){open.clear();for(let p=n.p0;p;p=p.p0)open.add(p.id);if(n.k.length)open.add(n.id);show('tree');select(n,false)}
@@ -35,14 +33,14 @@ export function buildGallery(){
    ['Near bottom','Heavy nymphs','Pat’s Rubber Legs','Czech Nymph','Zebra Midge'],
    ['Any depth','Streamers','Woolly Bugger','Clouser Minnow','Slumpbuster']];
   let h=`<div class="card"><h2 style="margin-top:0">Where each family rides in the water</h2><div class="small mute">Same fly shown in the water: the picture tells you the family.</div>${rows.map(r=>`<div class="colrow"><div><b>${r[0]}</b><div class="small mute">${r[1]}</div></div><div class="imgs">${r.slice(2).map(nm=>`<figure style="margin:0">${flyImg(nm)}<figcaption class="small" style="text-align:center">${nm}</figcaption></figure>`).join('')}</div></div>`).join('')}</div>`;
-  TREE.k.forEach(f=>{
+  TREE.k.forEach((f,fi)=>{
     const ls=leavesOf(f).filter(x=>ART[x.n]);
-    h+=`<div class="famh" style="border-color:${f.c}"><h2 style="color:${f.c}">${f.n}</h2><span class="small mute">${ls.length} patterns</span></div>`;
+    h+=`<details class="fold"${fi?'':' open'}><summary class="famh" style="border-color:${f.c}"><h2 style="color:${f.c}">${f.n}</h2><span class="small mute">${ls.length} patterns</span></summary>`;
     h+=`<div class="card"><b>Shared traits</b><ul class="traits">${(VIS[f.n]||[]).map(v=>`<li>${v}</li>`).join('')}</ul>`;
     f.k.forEach(g=>{const gl=leavesOf(g).filter(x=>ART[x.n]);h+=`<h3 style="margin:14px 0 4px;color:${g.c}">${g.n}</h3><div class="small mute" style="margin-bottom:6px">${(VIS[g.n]||[]).join(' ')}</div><div class="gal">${gl.map(x=>`<div class="gcard" data-go="${x.id}">${flyImg(x.n,{studio:true})}<b>${x.n}</b><div>${x.z||''} · ${ART[x.n].v}</div></div>`).join('')}</div>`});
-    h+='</div>';
+    h+='</div></details>';
   });
-  h+=`<div class="famh" style="border-color:#c4622d"><h2>Look-alike pairs (exam favourites)</h2></div>`+LOOKALIKES.map(([a,b,t])=>`<div class="card"><div class="pair"><figure style="margin:0">${flyImg(a,{studio:true})}<b>${a}</b></figure><figure style="margin:0">${flyImg(b,{studio:true})}<b>${b}</b></figure></div><div class="small" style="margin-top:6px">${t}</div></div>`).join('');
+  h+=`<details class="fold"><summary class="famh" style="border-color:#c4622d"><h2>Look-alike pairs (exam favourites)</h2><span class="small mute">${LOOKALIKES.length} pairs</span></summary>`+LOOKALIKES.map(([a,b,t])=>`<div class="card"><div class="pair"><figure style="margin:0">${flyImg(a,{studio:true})}<b>${a}</b></figure><figure style="margin:0">${flyImg(b,{studio:true})}<b>${b}</b></figure></div><div class="small" style="margin-top:6px">${t}</div></div>`).join('')+'</details>';
   $('#galleryBody').innerHTML=h;
   $('#galleryBody').onclick=e=>{const g=e.target.closest('[data-go]');if(g)goTo(ALLN[+g.dataset.go])};
 }
@@ -111,7 +109,7 @@ export function buildGlossary(){
   Object.keys(GCATS).forEach(c=>{
     const items=list.filter(g=>g[1]===c).sort((a,b)=>a[0].localeCompare(b[0]));
     if(!items.length)return;
-    html+=`<h2 class="glh">${GCATS[c][0]} ${GCATS[c][1]} <span class="mute small">(${items.length})</span></h2><div class="glgrid">${items.map(g=>`<div class="glcard"><b>${g[0]}</b><div>${g[2]}</div></div>`).join('')}</div>`;
+    html+=`<details class="fold"${q||glCat!=='all'?' open':''}><summary class="glh"><h2>${GCATS[c][0]} ${GCATS[c][1]} <span class="mute small">(${items.length})</span></h2></summary><div class="glgrid">${items.map(g=>`<div class="glcard"><b>${g[0]}</b><div>${g[2]}</div></div>`).join('')}</div></details>`;
   });
   $('#glBody').innerHTML=html||'<div class="card">No matching terms. Try a shorter word.</div>';
 }

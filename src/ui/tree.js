@@ -90,7 +90,7 @@ export function initTree(){
   reset();
   addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(fixInfoHeight,150)});
   $('#infobox').onclick=e=>{
-  const c=e.target.dataset.go;if(c!=null)goTo(ALLN[+c])};
+  const c=e.target.closest('[data-go]');if(c)goTo(ALLN[+c.dataset.go])};
   $('#treebox').onclick=e=>{
   if(e.target.closest('[data-back]')){const c=curNode();leavesFold(c);select(c.p0||TREE,false);return}
   const g=e.target.closest('.node');if(!g)return;

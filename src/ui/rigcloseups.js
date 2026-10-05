@@ -73,6 +73,8 @@ const KNOT_TEXT={
   sight:['Sighter → tippet','Clinch knots to a tippet ring, or a double surgeon’s knot.'],
 };
 export const knotText=k=>KNOT_TEXT[k];
+/* small picture of a knot for the knot list (own gradient id, so it still draws while a hidden copy exists) */
+export const knotThumb=k=>KNOT_ART[k]().replace(/\bmt\b/g,'kt'+k);
 
 /* ---------------- part drawings ---------------- */
 function rodArt(sc){

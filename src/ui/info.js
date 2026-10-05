@@ -12,7 +12,7 @@ export const icoDepth=k=>{const y={surf:3,film:6,mid:11,bot:17,any:11}[k];return
 export const fs=t=>{if(!t)return'';const m=t.match(/^.*?[.!?](?=\s+[A-Z“]|$)/);return m?m[0]:t};
 export const strip=t=>t.replace(/<[^>]+>/g,'');
 export function calHTML(set,c){
-  return `<div class="cal">${[1,4,7,10].map((m,i)=>`<div class="se" style="grid-column:${m}/span 3">${['❄️','🌱','☀️','🍂'][i]}</div>`).join('')}${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((l,i)=>`<div class="${set.has(i+1)?'on':''}" style="${set.has(i+1)?`background:${c}`:''}">${l}</div>`).join('')}</div>`;
+  return `<div class="cal" role="img" aria-label="Months it fishes best" title="Months it fishes best">${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((l,i)=>`<div class="${set.has(i+1)?'on':''}" style="${set.has(i+1)?`background:${c}`:''}">${l}</div>`).join('')}</div>`;
 }
 export function info(n){
   const path=[];for(let p=n;p;p=p.p0)path.unshift(p);
@@ -21,7 +21,7 @@ export function info(n){
   if(n.s)t+=`<div>${fs(n.s)}</div>`;
   const wl={r:icoRiver('#1d6fa5')+' River',s:icoPond('#2a8a6a')+' Still water'};
   const chipRow=(ic,lab,items)=>items?`<div class="row"><span class="ic tall">${ic}</span><span class="facts"><b>${lab}:</b> ${items}</span></div>`:'';
-  if(m.m.size)t+=`<div class="row"><span class="ic">📅</span><div><b>Season:</b>${calHTML(m.m,n.c)}</div></div>`;
+  if(m.m.size)t+=`<div class="row crow"><span class="ic">📅</span>${calHTML(m.m,n.c)}</div>`;
   t+=chipRow('💧','Water',[...m.w].sort().map(w=>`<span class="fact">${wl[w]}</span>`).join(''));
   t+=chipRow('⬇️','Depth',[...m.d].map(d=>`<span class="fact">${icoDepth(d)} ${DEPTHN[d]}</span>`).join(''));
   t+=chipRow('📏','Size',n.z?`<span class="fact">${n.z}</span>`:'');
@@ -30,6 +30,5 @@ export function info(n){
   else if(VIS[n.n])u+=`<div class="row"><span class="ic">🔍</span><ul>${VIS[n.n].slice(0,3).map(v=>`<li>${v}</li>`).join('')}</ul></div>`;
   if(n.i)u+=`<div class="row"><span class="ic">🪲</span><span><b>Imitates:</b> ${strip(n.i)}</span></div>`;
   if(n.h)u+=`<div class="row"><span class="ic">🎣</span><span>${fs(strip(n.h))}</span></div>`;
-  if(n.k.length)u+=`<div class="row"><span class="ic">📂</span><span>${n.k.map(k=>`<span class="chip" data-go="${k.id}">${k.n}</span>`).join('')}</span></div>`;
-  return `<div class="pgrid"><div>${t}</div><div>${f.img}</div></div><hr class="rowsep">${rigHTML(n)}<hr class="rowsep">${u}`;
+  return `${f.img?`<div class="pgrid"><div>${t}</div><div>${f.img}</div></div>`:t}<hr class="rowsep">${rigHTML(n)}<hr class="rowsep">${u}`;
 }
