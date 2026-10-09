@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Utah County Fly Fishing — Black-Box Fly &amp; Rig Selector</title>
+<style>
+:root{--bg:#f6f4ee;--card:#fff;--ink:#1f2a30;--mute:#5d6b73;--line:#d9d5c8;--river:#1d6fa5;--still:#2a8a6a;--accent:#c4622d;--dry:#e0a82e;--emerg:#8e6bbf;--nymph:#3c8d5a;--stream:#b8443a;--terr:#7a6a3a;--attr:#d06a9a}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:22px 28px 10px}
+h1{margin:0;font-size:24px}h2{margin:0 0 6px;font-size:19px}h3{margin:14px 0 6px;font-size:15px}
+.sub{color:var(--mute);margin-top:4px}
+nav{display:flex;gap:6px;flex-wrap:wrap;padding:8px 28px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+nav button{border:1px solid var(--line);background:#fff;padding:7px 14px;border-radius:999px;cursor:pointer;font:inherit}
+nav button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+main{padding:18px 28px 60px;max-width:1200px;margin:auto}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.pill{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12px;color:#fff;margin-right:4px}
+.mute{color:var(--mute)}.small{font-size:13px}
+table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top;font-size:14px}th{background:#efece2}
+/* black box */
+.bb{display:grid;grid-template-columns:1fr 40px 1.25fr 40px 1fr;align-items:stretch;gap:0}
+.col{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.box{border:2px solid var(--ink);border-radius:10px;padding:8px 11px;background:#fff;font-size:14px}
+.box b{display:block;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}
+.arrow{display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--accent)}
+.core{background:#1f2a30;color:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px}
+.core .st{background:#2d3d46;border-radius:9px;padding:9px 11px;font-size:14px}
+.core .st b{color:#ffcf8a}
+.out{border-color:var(--accent)}
+@media(max-width:800px){.bb{grid-template-columns:1fr}.arrow{transform:rotate(90deg);height:34px}}
+/* recommender */
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+label{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);display:block}
+select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff}
+.fly{display:grid;grid-template-columns:34px 1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.fly:last-child{border:none}
+.rank{width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.bar{height:6px;border-radius:3px;background:#e7e3d5;margin-top:5px;width:150px}.bar i{display:block;height:100%;border-radius:3px;background:var(--accent)}
+.chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.chain span{background:#eef3f6;border:1px solid #c9d7df;border-radius:8px;padding:5px 9px;font-size:13px}
+.chain em{color:var(--accent);font-style:normal}
+.warn{background:#fff4e5;border:1px solid #f0c98d;border-radius:8px;padding:8px 11px;font-size:13px;margin-top:8px}
+/* water column */
+.col-diag{display:grid;grid-template-columns:140px 1fr;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.col-diag>div{padding:12px;border-bottom:1px solid rgba(0,0,0,.08)}
+.z1{background:#eaf4fb}.z2{background:#d6e9f5}.z3{background:#bcd9ec}.z4{background:#9fc4de}.z5{background:#c9b99a}
+/* heat */
+.heat{display:grid;grid-template-columns:150px repeat(12,1fr);gap:2px;font-size:12px}
+.heat div{padding:5px 2px;text-align:center;border-radius:3px}
+.heat .h{font-weight:700;background:none}.heat .n{text-align:left;padding-left:4px;font-weight:600;background:none}
+.l0{background:#eeebe0}.l1{background:#bfdcc9}.l2{background:#6fb58a}.l3{background:#2f8a57;color:#fff}
+.legend span{display:inline-block;width:14px;height:14px;border-radius:3px;margin:0 4px -2px 10px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎣 Utah County Fly Fishing — Black-Box Fly &amp; Rig Selector</h1>
+  <div class="sub">Inputs (water, fish, month, time, weather, depth) → ranked flies + rig + gear. Tuned for the Provo River (lower &amp; middle), the Forks, and Bartholomew Pond.</div>
+</header>
+<nav id="nav"></nav>
+<main>
+
+<!-- 1. OVERVIEW -->
+<section id="overview">
+  <div class="card">
+    <h2>The black-box model</h2>
+    <div class="mute small" style="margin-bottom:12px">You supply six conditions; the box filters by water type, scores flies, then maps the winners to a rig and gear list. The “Recommender” tab runs exactly this.</div>
+    <div class="bb">
+      <div class="col">
+        <div class="box"><b>1 · Water body</b>Middle / Lower Provo, Fork streams, Bartholomew Pond, other</div>
+        <div class="box"><b>2 · Target fish</b>Rainbow, brown, cutthroat, tiger, whitefish, bass</div>
+        <div class="box"><b>3 · Month</b>Drives hatch + water temp</div>
+        <div class="box"><b>4 · Time of day</b>Dawn → evening</div>
+        <div class="box"><b>5 · Weather</b>Sun, overcast, rain, wind, cold</div>
+        <div class="box"><b>6 · Expected depth</b>Shallow · medium · deep</div>
+      </div>
+      <div class="arrow">➜</div>
+      <div class="core">
+        <div style="font-weight:700;font-size:16px">⬛ Fly &amp; Rig Selector</div>
+        <div class="st"><b>Stage 1 — Filter</b><br>River vs still-water flies. Drop anything that doesn’t fit the water type.</div>
+        <div class="st"><b>Stage 2 — Score</b><br>+ hatch/season match &nbsp;+ fish &nbsp;+ light/time &nbsp;+ weather &nbsp;+ depth zone</div>
+        <div class="st"><b>Stage 3 — Map to rig</b><br>Top fly’s role (dry / nymph / streamer) + depth → rig style, leader, tippet, shot, line.</div>
+        <div class="st"><b>Stage 4 — Gear &amp; notes</b><br>Rod weight, wading need, local regulation reminders.</div>
+      </div>
+      <div class="arrow">➜</div>
+      <div class="col">
+        <div class="box out"><b>A · Top flies</b>Ranked, with size + reason</div>
+        <div class="box out"><b>B · Rig</b>Rod-to-fly chain</div>
+        <div class="box out"><b>C · Equipment</b>Rod, line, waders, extras</div>
+        <div class="box out"><b>D · Local tips</b>Hatch notes, regs, plan B</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Does something open-source already exist?</h2>
+    <table>
+      <tr><th>Project</th><th>What it does</th><th>Fit for you</th></tr>
+      <tr><td><a href="https://github.com/edwardphill/fly-picker">edwardphill/fly-picker</a></td><td>Region + water type + date + fly type → top-10 flies. 43 food items (<code>foods.json</code>), 366 flies (<code>flies.json</code>), Python/SQLite, catch log.</td><td>Closest match in concept. <b>No license stated</b> and Utah coverage is thin, so I used it as a design reference, not copied code.</td></tr>
+      <tr><td><a href="https://github.com/springscrupulousness893/colorado-fly-fishing-hub">colorado-fly-fishing-hub</a></td><td>Browser-only picker: river + season + flow/clarity sliders → dry/nymph/streamer list, hatch chart, editable <code>flies.json</code>.</td><td>GPL-3.0, Colorado rivers only. Same architecture as this page (single-page, JSON-style data).</td></tr>
+      <tr><td><a href="https://github.com/defenestrator/hatches-api">defenestrator/hatches-api</a></td><td>Fly-fishing tools API for hatch prediction.</td><td>Backend only; not Utah-specific.</td></tr>
+      <tr><td><a href="https://github.com/stianmidtdal-sudo/hatchwatch-norway">hatchwatch-norway</a></td><td>Hatch-prediction dashboard for Norwegian rivers.</td><td>Wrong region; interesting if you later want live water-temp-driven hatches.</td></tr>
+    </table>
+    <div class="small mute" style="margin-top:8px">Verdict: nothing covers Utah County, so this page is a self-contained rule table (<code>FLIES</code> in the script) you can edit as you learn what works.</div>
+  </div>
+  <div class="card">
+    <h2>Your waters at a glance</h2>
+    <div class="grid g3">
+      <div><span class="pill" style="background:var(--river)">River</span><b>Middle Provo</b><div class="small mute">Below Jordanelle to Deer Creek. Tailwater, stable cold flows, heavy midge / BWO / PMD / drake / sow-bug diet. Rainbows, browns, cutthroat, whitefish. Waders needed.</div></div>
+      <div><span class="pill" style="background:var(--river)">River</span><b>Lower Provo</b><div class="small mute">Provo Canyon below Deer Creek. Bigger, faster, more pocket water and runs; caddis, BWO, stoneflies, streamers for browns. Waders needed.</div></div>
+      <div><span class="pill" style="background:var(--river)">Small stream</span><b>The “Forks”</b><div class="small mute">I assumed American Fork / Spanish Fork / Hobble Creek-type freestone streams. Smaller water, shorter casts, runoff in May–June, terrestrials in summer. <i>Tell me if you meant something else.</i></div></div>
+      <div><span class="pill" style="background:var(--still)">Still water</span><b>Bartholomew Pond, Springville</b><div class="small mute">Spring-fed park pond at the mouth of Hobble Creek Canyon. Regularly stocked rainbows (also cutthroat / tiger), some largemouth bass. Fish from the north shore; no waders needed. Park hours only; seasonal closure around Oct 10 (verify).</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. RECOMMENDER -->
+<section id="rec">
+  <div class="card">
+    <h2>Recommender</h2>
+    <div class="form" id="form"></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h2>🪰 Best flies</h2><div id="flies"></div></div>
+    <div>
+      <div class="card"><h2>🧵 Rig</h2><div id="rig"></div></div>
+      <div class="card"><h2>🎒 Equipment</h2><div id="gear"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. TAXONOMY -->
+<section id="tax">
+  <div class="card">
+    <h2>Fly categories (where they ride in the water column)</h2>
+    <div class="col-diag">
+      <div class="z1"><b>Surface</b></div><div class="z1"><span class="pill" style="background:var(--dry)">Dry</span> Parachute Adams, Elk Hair Caddis, Comparadun, Stimulator &nbsp;<span class="pill" style="background:var(--terr)">Terrestrial</span> hopper, ant, beetle &nbsp;<span class="pill" style="background:var(--attr)">Attractor</span> Chubby Chernobyl, popper (bass)</div>
+      <div class="z2"><b>Surface film</b></div><div class="z2"><span class="pill" style="background:var(--emerg)">Emerger</span> RS2, Sparkle Dun, CDC emerger, Griffith’s Gnat (midge cluster) — fish sip these when they refuse dries</div>
+      <div class="z3"><b>Mid-column</b></div><div class="z3"><span class="pill" style="background:var(--emerg)">Wet / soft hackle</span> Partridge &amp; Orange &nbsp;<span class="pill" style="background:var(--nymph)">Nymph</span> Pheasant Tail, Prince, caddis pupa</div>
+      <div class="z4"><b>Near bottom</b></div><div class="z4"><span class="pill" style="background:var(--nymph)">Nymph</span> Zebra Midge, Hare’s Ear / Copper John, sow bug, scud, stonefly nymph, San Juan Worm &nbsp;<span class="pill" style="background:var(--attr)">Egg / pellet</span> for fresh-stocked trout</div>
+      <div class="z5"><b>Any level (stripped / swung)</b></div><div class="z5"><span class="pill" style="background:var(--stream)">Streamer</span> Woolly Bugger, sculpin, Zonker, Clouser, leech — depth set by line &amp; weight</div>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>Dry flies & emergers — match the insect</h3>
+      <table><tr><th>Insect</th><th>Imitations</th><th>Size</th></tr>
+      <tr><td>Midge</td><td>Griffith’s Gnat, Zebra Midge, RS2, Mother-shucker</td><td>18–26</td></tr>
+      <tr><td>Mayfly (BWO, PMD, Green Drake)</td><td>Parachute Adams, Comparadun, Paradrake, Pheasant Tail</td><td>BWO 18–24 · PMD 14–18 · Drake 10–12</td></tr>
+      <tr><td>Caddis</td><td>Elk Hair Caddis, caddis pupa, soft hackle</td><td>12–16</td></tr>
+      <tr><td>Stonefly</td><td>Stimulator, Yellow Sally, Pat’s Rubber Legs</td><td>Sally 12–14 · Golden 8–10</td></tr>
+      <tr><td>Terrestrial</td><td>Hopper, foam ant, foam beetle</td><td>6–16</td></tr></table></div>
+    <div class="card"><h3>Other food fish eat</h3>
+      <table><tr><th>Food</th><th>Imitations</th><th>Where</th></tr>
+      <tr><td>Sow bug / scud</td><td>Tan/pink sow bug, scud</td><td>Provo (year-round), ponds</td></tr>
+      <tr><td>Baitfish / sculpin</td><td>Woolly Bugger, Slumpbuster, Zonker, Clouser</td><td>River + pond</td></tr>
+      <tr><td>Leech</td><td>Mohair/balanced leech, Woolly Bugger</td><td>Pond</td></tr>
+      <tr><td>Damsel / dragon</td><td>Damsel nymph, marabou dragon</td><td>Pond, May–Aug</td></tr>
+      <tr><td>Hatchery pellets / eggs</td><td>Egg, Mop, orange/tan pellet flies</td><td>Stocked pond, right after stocking</td></tr>
+      <tr><td>Worms</td><td>San Juan Worm</td><td>High, stained water</td></tr></table></div>
+  </div>
+</section>
+
+<!-- 4. RIVER VS STILL -->
+<section id="vs">
+  <div class="card">
+    <h2>Rivers vs still water</h2>
+    <table>
+      <tr><th></th><th style="color:var(--river)">River / stream (Provo, Forks)</th><th style="color:var(--still)">Still water (Bartholomew Pond)</th></tr>
+      <tr><td><b>Where fish sit</b></td><td>Seams, runs, pocket water, tail-outs, behind rocks, undercut banks. Look for slow water next to fast.</td><td>Drop-offs, weed edges, inlets, shade, cruising lanes along the shoreline.</td></tr>
+      <tr><td><b>Presentation</b></td><td>Dead drift — fly moves at current speed. Mend line.</td><td>Static or slow retrieve — fish hunt, so <i>you</i> create movement (strip, hand-twist, pause).</td></tr>
+      <tr><td><b>Best fly types</b></td><td>Nymphs (≈70–80% of feeding), dry in hatches, streamers for browns.</td><td>Chironomids, leeches, Woolly Buggers, damsels, egg/pellet (stocked), poppers for bass.</td></tr>
+      <tr><td><b>Rig</b></td><td>Indicator nymph, tight-line, dry-dropper, single dry, streamer.</td><td>Floating line + long leader + indicator (chironomid), strip streamer, sink-tip / intermediate if deep.</td></tr>
+      <tr><td><b>Leader</b></td><td>9′ 4X–5X (6X in low clear water).</td><td>9–12′ 3X–5X; longer = more stealth.</td></tr>
+      <tr><td><b>Wading</b></td><td>Waders + boots essential (cold, deep, current).</td><td>Bank fishing; waders optional.</td></tr>
+      <tr><td><b>Time of day</b></td><td>Winter: midday warmth. Summer: early / late + hatches. Hatches follow insect timing.</td><td>Low light (dawn/dusk) best; stocked trout feed most of the day.</td></tr>
+      <tr><td><b>Weather effect</b></td><td>Overcast/drizzle → BWO and mayfly hatches. Rain raises/clouds water → worms, big dark flies.</td><td>Wind pushes food to a shore → fish that bank. Sun → fish go deeper.</td></tr>
+    </table>
+  </div>
+  <div class="card"><h2>Tailwater vs freestone (why Provo ≠ the Forks)</h2>
+    <div class="grid g2">
+      <div><b>Middle Provo (tailwater)</b><div class="small mute">Dam-controlled so temps/flows are steady; fish feed on midges, sow bugs, BWO all year; selective, so small flies and light tippets. Heavy pressure.</div></div>
+      <div><b>Forks (freestone)</b><div class="small mute">Snowmelt-driven: high and stained in May–June (go big & dark, fish slow edges), clear and low by late summer (smaller flies, terrestrials, longer leaders). Fish are less picky.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. HATCH CALENDAR -->
+<section id="hatch">
+  <div class="card">
+    <h2>Provo River hatch calendar</h2>
+    <div class="legend small mute">Intensity: <span class="l0"></span>none <span class="l1"></span>some <span class="l2"></span>good <span class="l3"></span>peak</div>
+    <div class="heat" id="heat" style="margin-top:10px"></div>
+    <div class="small mute" style="margin-top:10px">Built from the Provo hatch charts at Norrik, Big Y Fly Co, Backcountry Chronicles, and FlyFishFinder (see Sources); intensity is my reading of the date ranges they give. Conditions shift year to year with runoff and temperature.</div>
+  </div>
+</section>
+
+<!-- 6. RIGS & GEAR -->
+<section id="gear-tab">
+  <div class="card"><h2>Rig recipes</h2>
+    <div class="grid g2" id="rigcards"></div>
+  </div>
+  <div class="card"><h2>Core kit for your waters</h2>
+    <table>
+      <tr><th>Item</th><th>Provo (waders)</th><th>Forks</th><th>Bartholomew Pond</th></tr>
+      <tr><td>Rod</td><td>9′ 5wt all-round (10–11′ 3wt if tight-line nymphing)</td><td>8′–8′6″ 3–4wt</td><td>9′ 5wt (6wt if windy / bass)</td></tr>
+      <tr><td>Line</td><td>Weight-forward floating; sink-tip for streamers</td><td>Floating</td><td>Floating; add intermediate / sink-tip for deep or leeches</td></tr>
+      <tr><td>Leader/tippet</td><td>9′ 4X leader; 4X–6X tippet</td><td>7.5–9′ 4X–5X</td><td>9–12′ 3X–5X</td></tr>
+      <tr><td>Footwear</td><td>Breathable waders + wading boots (studs/rubber)</td><td>Waders or wet-wade in summer</td><td>Hiking shoes/boots</td></tr>
+      <tr><td>Always</td><td colspan="3">Polarized glasses, nippers, forceps, split shot, floatant, indicators, rubber net, thermometer, wading belt/staff, layers. Clean-Drain-Dry your gear between waters (Utah aquatic-invasive-species rules).</td></tr>
+    </table>
+    <div class="warn">Regulations differ by section (Provo has artificial-flies-only and special-limit stretches). Check the current <a href="https://wildlife.utah.gov/">Utah DWR fishing proclamation</a> and your license before fishing.</div>
+  </div>
+</section>
+
+<!-- 7. SOURCES -->
+<section id="src">
+  <div class="card"><h2>Sources</h2>
+    <ul class="small">
+      <li><a href="https://github.com/edwardphill/fly-picker">edwardphill/fly-picker</a> · <a href="https://github.com/springscrupulousness893/colorado-fly-fishing-hub">colorado-fly-fishing-hub</a> · <a href="https://github.com/defenestrator/hatches-api">hatches-api</a> · <a href="https://github.com/stianmidtdal-sudo/hatchwatch-norway">hatchwatch-norway</a></li>
+      <li><a href="https://norrik.com/fly-hatches/provo-river-hatch-chart/">Norrik — Provo River hatch chart</a> · <a href="https://bigyflyco.com/pages/provo-river">Big Y Fly Co</a> · <a href="https://www.backcountrychronicles.com/hatch-chart/">Backcountry Chronicles</a> · <a href="https://flyfishfinder.com/pages/fly-hatches-utah/">FlyFishFinder Utah</a></li>
+      <li><a href="https://junesucker.com/lakes/central/wayne-bartholomew-park-pond/">Junesucker — Wayne Bartholomew Park Pond</a> · <a href="https://www.heraldextra.com/news/2026/mar/31/get-out-early-heres-where-the-fish-are-in-utah-county-as-angling-season-gets-a-head-start/">Daily Herald 2026 Utah County fishing</a> · <a href="https://dwrapps.utah.gov/fishstocking/Fish?sort=watername&sortorder=ASC&sortspecific=BARTHOLOMEW+PARK+POND&whichSpecific=watername">Utah DWR stocking</a></li>
+    </ul>
+    <div class="small mute">Fly timing, rig and gear details beyond the cited hatch dates come from general fly-fishing practice, not a verified local source. Treat the model as a strong starting guess and tune <code>FLIES</code> as you log what works.</div>
+  </div>
+</section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const rng=(a,b)=>{const r=[];for(let m=a;;m=m%12+1){r.push(m);if(m===b)break}return r};
+const ALL=rng(1,12);
+
+/* ---------- DATA: edit here ----------
+ w: r=river, s=still · m: months · f: fish · t: time of day · x: weather · d: depth s/m/d · role: dry|emerger|nymph|streamer|attractor|terrestrial */
+const D=['dawn','morning','midday','afternoon','evening'],LOW=['dawn','evening'];
+const FLIES=[
+ {n:'Parachute Adams',sz:'14–20',role:'dry',w:'rs',m:rng(4,10),f:['rbt','brn','cut','tig'],t:D,x:['overcast','rain','sun'],d:['s'],why:'Universal mayfly dry; works anytime fish are rising.'},
+ {n:'BWO Comparadun / CDC',sz:'18–22 (fall 22–24)',role:'dry',w:'r',m:[3,4,5,9,10,11],f:['rbt','brn','cut'],t:['midday','afternoon'],x:['overcast','rain'],d:['s'],why:'Blue-winged olives hatch best on gray, drizzly afternoons.'},
+ {n:'RS2 / Sparkle emerger',sz:'18–24',role:'emerger',w:'r',m:[3,4,5,9,10,11,12,1,2],f:['rbt','brn','cut','wf'],t:['midday','afternoon','morning'],x:['overcast','cold','rain'],d:['s','m'],why:'Fish refuse dries and eat emergers in the film during BWO/midge hatches.'},
+ {n:'PMD Comparadun / Sparkle Dun',sz:'14–18',role:'dry',w:'r',m:rng(6,9),f:['rbt','brn','cut'],t:['morning','midday'],x:['sun','overcast'],d:['s'],why:'Pale Morning Dun hatch, June–mid Sept on the Provo.'},
+ {n:'Paradrake (Green Drake)',sz:'10–12',role:'dry',w:'r',m:[6,7],f:['brn','rbt'],t:['evening','afternoon'],x:['overcast','rain'],d:['s'],why:'Big Western Green Drake hatch pulls the larger trout up.'},
+ {n:'Elk Hair Caddis',sz:'12–16',role:'dry',w:'r',m:rng(5,10),f:['rbt','brn','cut'],t:['evening','afternoon','dawn'],x:['sun','wind','overcast'],d:['s'],why:'Caddis and spotted sedge, strongest at dusk.'},
+ {n:'Stimulator / Yellow Sally',sz:'8–14',role:'dry',w:'r',m:[5,6,7,8],f:['brn','rbt','cut'],t:['morning','afternoon'],x:['sun','wind'],d:['s'],why:'Golden/olive stoneflies May–June, Yellow Sally May 15–June 30; floats well as a dropper rig dry.'},
+ {n:'Hopper (foam/dubbed)',sz:'6–10',role:'terrestrial',w:'r',m:rng(7,10),f:['brn','rbt'],t:['midday','afternoon'],x:['sun','wind'],d:['s'],why:'Terrestrial season; wind blows hoppers into the water.'},
+ {n:'Foam ant / beetle',sz:'12–16',role:'terrestrial',w:'rs',m:rng(6,10),f:['brn','rbt','cut','tig'],t:['midday','afternoon'],x:['sun','wind'],d:['s'],why:'Dependable terrestrial along grassy banks and pond edges.'},
+ {n:'Chubby Chernobyl',sz:'8–10',role:'attractor',w:'r',m:rng(6,9),f:['brn','rbt','cut'],t:['morning','midday','afternoon'],x:['sun'],d:['s'],why:'Big buoyant dry that carries a nymph dropper; good on the Forks.'},
+ {n:'Griffith’s Gnat / midge cluster',sz:'20–24',role:'emerger',w:'rs',m:ALL,f:['rbt','brn','cut','wf','tig'],t:['midday','afternoon','morning'],x:['overcast','cold','sun'],d:['s'],why:'Midges are active every month; clusters on calm water.'},
+ {n:'Zebra Midge',sz:'18–22',role:'nymph',w:'rs',m:ALL,f:['rbt','brn','cut','wf','tig'],t:D,x:['cold','overcast','sun','rain'],d:['m','d'],why:'The Provo staple year-round, best late fall–early spring.'},
+ {n:'Sow bug (tan/pink)',sz:'14–18',role:'nymph',w:'r',m:ALL,f:['rbt','brn','wf'],t:D,x:['cold','overcast','sun','rain'],d:['m','d'],why:'Sow bugs live in Provo weed beds all year; a big trout food source.'},
+ {n:'Scud',sz:'14–18',role:'nymph',w:'rs',m:ALL,f:['rbt','cut','tig','brn'],t:D,x:['cold','overcast','sun'],d:['m'],why:'Common crustacean in both Provo and spring-fed ponds.'},
+ {n:'Pheasant Tail',sz:'14–20',role:'nymph',w:'rs',m:rng(3,11),f:['rbt','brn','cut','wf','tig'],t:D,x:['overcast','sun','rain'],d:['m','d'],why:'Mayfly nymph: BWO / PMD pre-hatch and general searching.'},
+ {n:'Hare’s Ear / Copper John',sz:'14–18',role:'nymph',w:'r',m:rng(4,10),f:['rbt','brn','cut'],t:D,x:['overcast','sun','rain'],d:['m','d'],why:'Heavy, flashy attractor-nymph that gets down fast; good first fly on a dropper.'},
+ {n:'Rainbow Warrior / Perdigon',sz:'16–20',role:'nymph',w:'r',m:ALL,f:['rbt','brn','cut'],t:D,x:['overcast','sun','cold'],d:['m','d'],why:'Slim, quick-sinking pattern for the 2nd nymph in a two-fly rig.'},
+ {n:'Caddis pupa',sz:'14–16',role:'nymph',w:'r',m:rng(4,9),f:['rbt','brn','cut'],t:['morning','afternoon','evening'],x:['sun','overcast'],d:['m'],why:'Pupae drift before the caddis hatch; fish the swing at the end of the drift.'},
+ {n:'Golden stone / Pat’s Rubber Legs',sz:'6–10',role:'nymph',w:'r',m:[4,5,6,7],f:['brn','rbt'],t:D,x:['rain','overcast','sun'],d:['d','m'],why:'Stonefly nymphs in runoff and the May–June stonefly hatch; top fly for high water.'},
+ {n:'Prince Nymph',sz:'12–16',role:'nymph',w:'r',m:rng(4,10),f:['rbt','brn','cut'],t:D,x:['sun','overcast'],d:['m','d'],why:'Classic searching nymph for stoneflies, caddis and attractor use.'},
+ {n:'San Juan Worm',sz:'12–14',role:'nymph',w:'r',m:rng(3,7),f:['rbt','brn','wf'],t:D,x:['rain'],d:['m','d'],why:'Rain and runoff wash worms in; stained water suits bright, simple flies.'},
+ {n:'Soft hackle (Partridge & Orange)',sz:'14–18',role:'emerger',w:'rs',m:rng(4,10),f:['rbt','brn','cut','tig'],t:D,x:['overcast','sun','rain'],d:['m'],why:'Swung or dead-drifted; imitates emerging caddis and mayflies.'},
+ {n:'Woolly Bugger (olive/black)',sz:'6–10',role:'streamer',w:'rs',m:ALL,f:['rbt','brn','cut','tig','bass'],t:LOW.concat(['morning']),x:['overcast','rain','cold','sun'],d:['m','d'],why:'The single most versatile streamer — leech, baitfish and crayfish in one.'},
+ {n:'Sculpin / Slumpbuster',sz:'4–8',role:'streamer',w:'r',m:rng(3,11),f:['brn','rbt'],t:LOW.concat(['morning']),x:['overcast','rain'],d:['d','m'],why:'Browns key on sculpins; low light and cloud bring big fish out.'},
+ {n:'White/olive Zonker',sz:'4–8',role:'streamer',w:'r',m:[9,10,11,3,4],f:['brn'],t:LOW,x:['overcast','rain','cold'],d:['d','m'],why:'Pre-spawn browns in fall get aggressive and territorial.'},
+ {n:'Mohair / balanced leech',sz:'8–10',role:'streamer',w:'s',m:ALL,f:['rbt','tig','cut','bass'],t:LOW.concat(['morning']),x:['overcast','cold','sun'],d:['m','d'],why:'Slow strip or hang under an indicator; pond trout love leeches.'},
+ {n:'Chironomid / bloodworm',sz:'12–16',role:'nymph',w:'s',m:ALL,f:['rbt','cut','tig'],t:D,x:['overcast','cold','sun'],d:['m','d'],why:'Midge pupa under an indicator is the stillwater trout staple.'},
+ {n:'Damselfly nymph',sz:'10–12',role:'nymph',w:'s',m:rng(5,8),f:['rbt','cut','tig','bass'],t:['morning','midday','afternoon'],x:['sun','overcast'],d:['s','m'],why:'Damsel migrations to shore in late spring–summer.'},
+ {n:'Egg / Mop / pellet',sz:'10–14',role:'attractor',w:'s',m:rng(3,10),f:['rbt','tig','cut'],t:D,x:['overcast','sun','cold','rain'],d:['s','m'],why:'Newly stocked rainbows look for hatchery food. Check stocking dates.'},
+ {n:'Clouser Minnow',sz:'4–8',role:'streamer',w:'s',m:rng(5,10),f:['bass','rbt','tig'],t:LOW.concat(['morning']),x:['sun','overcast'],d:['m','d'],why:'Sinks quickly; strong choice for largemouth bass or trout cruising a drop-off.'},
+ {n:'Foam popper',sz:'4–8',role:'attractor',w:'s',m:rng(6,9),f:['bass'],t:LOW,x:['sun','overcast'],d:['s'],why:'Surface strikes from largemouth bass at dawn and dusk.'},
+];
+
+const FISH={rbt:'Rainbow',brn:'Brown',cut:'Cutthroat',tig:'Tiger trout',wf:'Mountain whitefish',bass:'Largemouth bass'};
+const WATER={
+ mprovo:{n:'Middle Provo (tailwater)',g:'r',fish:['rbt','brn','cut','wf']},
+ lprovo:{n:'Lower Provo',g:'r',fish:['brn','rbt','cut','wf']},
+ fork:{n:'Forks (American Fork / Spanish Fork / Hobble Cr.)',g:'r',fish:['brn','rbt','cut']},
+ bart:{n:'Bartholomew Pond, Springville',g:'s',fish:['rbt','tig','cut','bass']},
+ otherr:{n:'Other river / stream',g:'r',fish:['rbt','brn','cut']},
+ others:{n:'Other pond / lake',g:'s',fish:['rbt','tig','cut','bass']}
+};
+const OPT={
+ water:['Water body',Object.entries(WATER).map(([k,v])=>[k,v.n])],
+ fish:['Target fish',[['rbt','Rainbow'],['brn','Brown'],['cut','Cutthroat'],['tig','Tiger trout'],['wf','Whitefish'],['bass','Largemouth bass']]],
+ month:['Month',MN.map((m,i)=>[i+1,m])],
+ time:['Time of day',[['dawn','Dawn'],['morning','Morning'],['midday','Midday'],['afternoon','Afternoon'],['evening','Evening / dusk']]],
+ wx:['Weather',[['sun','Bright sun'],['overcast','Overcast'],['rain','Rain / drizzle'],['wind','Windy'],['cold','Cold snap']]],
+ depth:['Expected depth',[['s','Shallow (<2 ft)'],['m','Medium (2–5 ft)'],['d','Deep (5 ft+)']]]
+};
+const S={water:'mprovo',fish:'rbt',month:new Date().getMonth()+1,time:'morning',wx:'overcast',depth:'m'};
+
+function score(f){
+  const g=WATER[S.water].g; if(!f.w.includes(g))return null;
+  let sc=0;
+  if(f.m.includes(+S.month))sc+=3; else sc-=2;
+  if(f.f.includes(S.fish))sc+=1.5;
+  if(f.t.includes(S.time))sc+=1.5;
+  if(f.x.includes(S.wx))sc+=1.5;
+  if(f.d.includes(S.depth))sc+=2; else if(f.role==='dry'||f.role==='terrestrial')sc-=1;
+  // surface flies only make sense when fish can see them
+  if(S.depth==='d'&&['dry','terrestrial','attractor'].includes(f.role)&&f.n!=='Egg / Mop / pellet')sc-=2;
+  if(S.wx==='cold'&&['dry','terrestrial'].includes(f.role))sc-=1;
+  // high-water runoff on the Forks (May–June)
+  if(S.water==='fork'&&[5,6].includes(+S.month)&&(f.role==='streamer'||/Stone|San Juan/.test(f.n)))sc+=1.5;
+  return sc;
+}
+const ROLEC={dry:'--dry',emerger:'--emerg',nymph:'--nymph',streamer:'--stream',terrestrial:'--terr',attractor:'--attr'};
+const pill=r=>`<span class="pill" style="background:var(${ROLEC[r]})">${r}</span>`;
+
+function rig(top){
+  const g=WATER[S.water].g,r0=top[0].role,d=S.depth;
+  const shot=d==='d'?'2–3 split shot':d==='m'?'1–2 split shot':'no/1 tiny shot';
+  if(r0==='streamer'){
+    return g==='r'
+    ?{name:'Streamer rig',chain:['9′ 5–6wt rod','Floating line (sink-tip if deep/high flow)','4–6′ leader 0X–2X',`<em>${top[0].n}</em>`],tips:['Cast across & slightly down; strip 6–12″ with pauses; swing through runs.','Best in low light and cloud; strikes often come as the fly “hangs” at the end of the swing.']}
+    :{name:'Strip-streamer rig',chain:['9′ 5–6wt rod','Floating (or intermediate/sink-tip if deep) line','9′ 3X leader',`<em>${top[0].n}</em>`],tips:['Count the fly down; try 2–4 variations of strip speed.','Slow strip with long pauses for stocked trout; faster for bass.']};
+  }
+  if(g==='s'){
+    if(r0==='dry'||r0==='terrestrial'||r0==='emerger'&&d==='s')
+      return {name:'Pond dry fly',chain:['9′ 5wt rod','Floating line','10–12′ 5X leader',`<em>${top[0].n}</em>`],tips:['Look for rises and wind lanes; cast ahead of cruising fish; wait before you lift.']};
+    return {name:'Indicator under a pond fly',chain:['9′ 5wt rod','Floating line','10–12′ 4X–5X leader',`Indicator (fly ~1–2 ft off bottom)`,`<em>${top[0].n}</em>`,top[1]?`<em>${top[1].n}</em> (dropper 18″ up)`:''].filter(Boolean),tips:['Cast out, let it settle, then twitch/hand-twist slowly; strikes show as the indicator dips.','If nothing in 15 min, move depth first, then fly color.']};
+  }
+  if(r0==='dry'||r0==='terrestrial'||r0==='attractor'&&d==='s'){
+    return {name:top[0].role==='terrestrial'||top[0].n.includes('Chubby')?'Dry-dropper':'Dry fly (+ optional dropper)',chain:['9′ 4–5wt rod','Floating line','9′ 4X leader → 5X tippet',`<em>${top[0].n}</em>`,top[1]?`24–30″ 5X → <em>${(top.find(x=>x.role==='nymph')||top[1]).n}</em> (dropper)`:''].filter(Boolean),tips:['Dead drift without drag; lengthen tippet in clear, low water.','The dropper nymph is your insurance when fish aren’t looking up.']};
+  }
+  if(d==='s'&&r0==='emerger')
+    return {name:'Film rig (dry + emerger)',chain:['9′ 4–5wt rod','Floating line','9–12′ leader → 6X tippet',`<em>${top[0].n}</em>`],tips:['Fish sipping in slow, flat seams: single emerger, long fine leader, upstream presentation.']};
+  const euro=d!=='d'&&S.water!=='lprovo';
+  return euro?
+   {name:'Tight-line / indicator nymphing',chain:['9′ 5wt (or 10–11′ 3wt)','Floating line / sighter','9′ 4X→5X tippet (+ sighter)',`<em>${top[0].n}</em> (point)`,top[1]?`<em>${top[1].n}</em> (dropper 14–18″)`:'',shot].filter(Boolean),tips:[`Set depth to ~1.5× water depth. Add or remove shot until you tick bottom occasionally.`,'Two flies where legal; confirm two-fly limit for your section.']}
+  :{name:'Indicator nymph rig',chain:['9′ 5wt rod','Floating line','9′ 4X leader + indicator',`<em>${top[0].n}</em> (heavier fly first)`,top[1]?`<em>${top[1].n}</em> (dropper 18″)`:'',shot].filter(Boolean),tips:['Deep, fast runs: bump up weight and lengthen the indicator-to-fly distance.','Mend upstream right after the cast to get down fast.']};
+}
+function gear(){
+  const g=WATER[S.water].g, w=S.water;
+  const l=[];
+  if(g==='r'){
+    l.push(['Rod',w==='fork'?'8′–8′6″ 3–4wt':'9′ 5wt (4wt for delicate dry fly work)']);
+    l.push(['Waders','Breathable waders + wading boots (studs or rubber) + wading belt'+(w==='fork'&&[7,8].includes(+S.month)?' — or wet-wade in summer':'')]);
+    l.push(['Line','Weight-forward floating; sink-tip if fishing streamers deep']);
+  }else{
+    l.push(['Rod','9′ 5wt'+(S.fish==='bass'||S.wx==='wind'?' (6wt for bass/wind)':'')]);
+    l.push(['Waders',w==='bart'?'Not needed — fish from the north shore; boots optional':'Optional; boots and waders for soft shores']);
+    l.push(['Line','Floating; intermediate or sink-tip for deep water and leeches']);
+  }
+  l.push(['Other','Polarized glasses, nippers, forceps, split shot, floatant, indicators, net, thermometer'+(S.wx==='cold'||[11,12,1,2].includes(+S.month)?'; insulated layers, gloves':'')]);
+  return l;
+}
+function notes(){
+  const n=[],m=+S.month,g=WATER[S.water].g;
+  if(S.water==='bart'){
+    n.push('Pond is open during park hours only; the season closes around Oct 10 (tentative — verify). Daily limit 2 trout; bass catch-and-release encouraged.');
+    n.push('Stocking happens in spring/summer; fish right after stocking with egg/pellet flies, then go to chironomids/leeches as fish settle.');
+  }
+  if(S.water==='mprovo'||S.water==='lprovo'){
+    if([3,4].includes(m))n.push('Early season: BWOs and buffalo midge hatch; fish soft-hackle/emerger in the afternoon on cloudy days.');
+    if([5,6].includes(m))n.push('Runoff + stoneflies/caddis. Stonefly nymphs and San Juan worms in high water; check flow gauges.');
+    if([6,7,8,9].includes(m))n.push('PMDs through mid-Sept, Green Drakes in June–July, then terrestrials.');
+    if([9,10,11].includes(m))n.push('Fall BWOs (22–24) and aggressive pre-spawn browns — streamers in low light.');
+    if([12,1,2].includes(m))n.push('Winter: midges, sow bugs, and slow streamers; fish the warmest hours (11am–3pm).');
+  }
+  if(S.water==='fork'&&[5,6].includes(m))n.push('Runoff — water high and stained; fish slow edges with big dark nymphs/streamers.');
+  if(S.wx==='rain')n.push('Rain/clouds improve mayfly hatches; if water muddies, go bigger, darker, and slower.');
+  if(S.wx==='wind'&&g==='r')n.push('Wind → terrestrials; fish the bank the wind is blowing toward.');
+  n.push('Check the current Utah DWR proclamation for section regulations (artificial flies only, bag limits).');
+  return n;
+}
+function render(){
+  const all=FLIES.map(f=>({...f,sc:score(f)})).filter(f=>f.sc!==null).sort((a,b)=>b.sc-a.sc);
+  const top=all.slice(0,6),max=Math.max(...top.map(t=>t.sc),1);
+  $('#flies').innerHTML=top.map((f,i)=>`<div class="fly"><div class="rank">${i+1}</div><div><b>${f.n}</b> <span class="mute small">size ${f.sz}</span><div>${pill(f.role)}</div><div class="small mute">${f.why}</div></div><div><div class="bar"><i style="width:${Math.max(8,f.sc/9.5*100)}%"></i></div></div></div>`).join('');
+  const r=rig(top);
+  $('#rig').innerHTML=`<b>${r.name}</b><div class="chain">${r.chain.map((c,i)=>(i?'<em>→</em>':'')+`<span>${c}</span>`).join('')}</div><ul class="small">${r.tips.map(t=>`<li>${t}</li>`).join('')}</ul><div class="small"><b>Plan B:</b> if no takes in ~20 min, change depth, then size, then pattern — and switch to <i>${top.find(x=>x.role==='streamer')?.n||'Woolly Bugger'}</i> in low light.</div>`;
+  $('#gear').innerHTML=`<table>${gear().map(([a,b])=>`<tr><th style="width:80px">${a}</th><td>${b}</td></tr>`).join('')}</table>${notes().map(n=>`<div class="warn">${n}</div>`).join('')}`;
+}
+function buildForm(){
+  $('#form').innerHTML=Object.entries(OPT).map(([k,[lab,opts]])=>`<div><label>${lab}</label><select data-k="${k}">${opts.map(([v,t])=>`<option value="${v}"${String(S[k])===String(v)?' selected':''}>${t}</option>`).join('')}</select></div>`).join('');
+  $('#form').onchange=e=>{S[e.target.dataset.k]=e.target.value;
+    if(e.target.dataset.k==='water'&&!WATER[S.water].fish.includes(S.fish)){S.fish=WATER[S.water].fish[0];buildForm()}
+    render()};
+}
+
+/* hatch heat map: 0-3 per month */
+const HEAT={
+ 'Midges (18–26)':[3,3,3,2,1,1,1,1,2,3,3,3],
+ 'BWO (16–24)':[0,0,2,3,2,0,0,0,1,3,3,0],
+ 'Stoneflies (8–14)':[0,0,0,1,3,3,1,0,0,0,0,0],
+ 'Yellow Sally (12–14)':[0,0,0,0,2,3,0,0,0,0,0,0],
+ 'Caddis (12–16)':[0,0,0,1,2,3,3,3,2,1,0,0],
+ 'PMD (14–18)':[0,0,0,0,0,3,3,3,2,0,0,0],
+ 'Green Drake (10–12)':[0,0,0,0,0,3,3,0,0,0,0,0],
+ 'Terrestrials (6–18)':[0,0,0,0,0,1,3,3,3,2,0,0],
+ 'Sow bug / scud':[2,2,2,2,2,2,2,2,2,2,2,2],
+ 'Streamers (browns)':[1,1,2,2,1,1,1,1,2,3,3,1]
+};
+$('#heat').innerHTML='<div class="n"></div>'+MN.map(m=>`<div class="h">${m}</div>`).join('')+
+ Object.entries(HEAT).map(([k,v])=>`<div class="n">${k}</div>`+v.map(x=>`<div class="l${x}"></div>`).join('')).join('');
+
+const RIGS=[
+ ['Dry fly','Rod 9′ 4–5wt → floating line → 9–12′ leader to 5X–6X → dry. Best: visible rises, hatches, calm seams.'],
+ ['Dry-dropper','Floating line → 9′ 4X → buoyant dry (Chubby/hopper/Stimulator) → 24–30″ of 5X → beadhead nymph. Best: summer, Forks, mixed feeding.'],
+ ['Indicator nymphing','Floating line → 9′ 4X + indicator → 1–2 nymphs, 14–18″ apart + split shot. Best: Provo most of the year.'],
+ ['Tight-line (Euro) nymphing','10–11′ 3wt → sighter + 4X–5X tippet → weighted nymphs. No indicator, no line on water. Best: pocket water, close range.'],
+ ['Streamer','Rod 9′ 5–6wt → floating (or sink-tip) → 3–4′ 0X–2X → Woolly Bugger / sculpin. Best: fall, low light, high water.'],
+ ['Stillwater indicator','Floating line → 10–12′ 4X–5X → indicator → chironomid / leech / scud. Best: Bartholomew Pond, any month.'],
+ ['Stillwater strip','Floating or intermediate line → 9′ 3X → Woolly Bugger / Clouser, slow strip with pauses. Best: dawn/dusk, deeper areas.']
+];
+$('#rigcards').innerHTML=RIGS.map(([t,b])=>`<div class="card" style="margin:0"><b>${t}</b><div class="small mute">${b}</div></div>`).join('');
+
+const TABS=[['overview','Black box'],['rec','Recommender'],['tax','Fly types'],['vs','Rivers vs ponds'],['hatch','Hatch calendar'],['gear-tab','Rigs & gear'],['src','Sources']];
+$('#nav').innerHTML=TABS.map(([id,t])=>`<button data-id="${id}">${t}</button>`).join('');
+function show(id){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.id===id));history.replaceState(null,'','#'+id)}
+$('#nav').onclick=e=>e.target.dataset.id&&show(e.target.dataset.id);
+show(location.hash.slice(1)||'overview');
+buildForm();render();
+</script>
+</body>
+</html>
