@@ -2,6 +2,7 @@
 import { ART } from '../data/art.js';
 import { DEPTHN, metaOf } from '../data/meta.js';
 import { VIS } from '../data/vis.js';
+import { watersFor } from '../data/water.js';
 import { figure } from './learn.js';
 import { rigHTML } from './rig.js';
 
@@ -29,6 +30,8 @@ export function info(n){
   if(leaf&&a)u+=`<div class="row"><span class="ic">🔍</span><span><b>Spot it:</b> ${a.v}</span></div>`;
   else if(VIS[n.n])u+=`<div class="row"><span class="ic">🔍</span><ul>${VIS[n.n].slice(0,3).map(v=>`<li>${v}</li>`).join('')}</ul></div>`;
   if(n.i)u+=`<div class="row"><span class="ic">🪲</span><span><b>Imitates:</b> ${strip(n.i)}</span></div>`;
+  const ws=leaf?watersFor(n):[];
+  if(ws.length)u+=`<div class="row"><span class="ic">🌊</span><span><b>Where to fish it:</b> ${ws.map(w=>`<span class="chip" data-pick="${w.id}">${w.n}</span>`).join('')}</span></div>`;
   if(n.h)u+=`<div class="row"><span class="ic">🎣</span><span>${fs(strip(n.h))}</span></div>`;
   return `${f.img?`<div class="pgrid"><div>${t}</div><div>${f.img}</div></div>`:t}<hr class="rowsep">${rigHTML(n)}<hr class="rowsep">${u}`;
 }
