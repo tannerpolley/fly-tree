@@ -6,6 +6,7 @@ import { initAnatomy } from './ui/anatomy.js';
 import { initExpand } from './ui/expand.js';
 import { initNav, show, TABS } from './ui/nav.js';
 import { initLearn, initLearnUI } from './ui/learn.js';
+import { initWater } from './ui/water.js';
 
 initTree();
 initRig();
@@ -15,6 +16,7 @@ initExpand();
 initNav();
 initLearn();
 initLearnUI();
+initWater();
 const tab = location.hash.replace(/^#\/?/, '');
 show(TABS.some(([id]) => id === tab) ? tab : 'tree');
 
